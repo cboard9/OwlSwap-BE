@@ -1,7 +1,9 @@
 package com.cboard.marketplace.marketplace_backend.controller;
 
-import com.cboard.marketplace.marketplace_backend.model.Question;
-import com.cboard.marketplace.marketplace_backend.service.TestService;
+import com.cboard.marketplace.marketplace_backend.model.Item;
+import com.cboard.marketplace.marketplace_backend.service.ItemService;
+
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,15 +13,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("question")
-public class TestController
+@RequestMapping("item")
+public class ItemController
 {
     @Autowired
-    TestService testService;
+    ItemService service;
 
-    @GetMapping("allQuestions")
-    public ResponseEntity<List<Question>> getAllQuestions()
+    @GetMapping("allItems")
+    public ResponseEntity<List<Item>> getAllItems()
     {
-        return testService.getAllQuestions();
+        return service.getAllItems();
     }
+
+
 }

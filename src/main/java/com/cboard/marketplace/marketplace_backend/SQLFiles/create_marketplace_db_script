@@ -1,0 +1,104 @@
+//this is database script setup for now -- could change
+
+DROP DATABASE IF EXISTS marketplace_db;
+
+CREATE DATABASE marketplace_db;
+USE marketplace_db;
+
+CREATE table location
+(
+	location_id int primary key auto_increment,
+    name varchar(50)
+)auto_increment = 1;
+
+-- do we want a whole category table?
+CREATE table category
+(
+	category_id int primary key auto_increment,
+    name varchar(50)
+)auto_increment = 1;
+
+CREATE Table item
+(
+	item_id int primary key auto_increment,
+    name varchar(50),
+    description varchar(150),
+    price double,
+    -- category varchar(50),
+    category_id int,
+    release_date date default (current_date),
+    available bit(1),
+    -- location varchar(5),
+    location_id int,
+    item_type varchar(50) not null,
+    image_name varchar(255),
+    image_type varchar(255),
+    image_date longblob,
+
+    CONSTRAINT location_id_fk FOREIGN KEY (location_id) REFERENCES location(location_id)
+		ON DELETE SET NULL -- if a location is deleted the location here will be set to null
+        ON UPDATE CASCADE,
+
+	CONSTRAINT category_id_fk FOREIGN KEY (category_id) REFERENCES category(category_id)
+		ON DELETE SET NULL
+        ON UPDATE CASCADE
+
+
+)auto_increment = 1;
+
+CREATE table product
+(
+	product_id int primary key,
+    quantity int,
+    brand varchar(100),
+
+    CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES item(item_id)
+		ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+CREATE table service
+(
+	service_id int primary key,
+    duration_minutes int,
+
+    CONSTRAINT service_id_fk FOREIGN KEY (service_id) REFERENCES item(item_id)
+		ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+CREATE table request
+(
+	request_id int primary key,
+    deadline date,
+
+	CONSTRAINT request_id_fk FOREIGN KEY (request_id) REFERENCES item(item_id)
+		ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+
+CREATE table user
+(
+	user_id int primary key auto_increment,
+    first_name varchar(25) not null,
+    last_name varchar(25) not null,
+    email varchar(255),
+    username varchar(255) unique not null,
+    password varchar(255) not null
+)auto_increment = 1;
+
+
+CREATE table user_items
+(
+	user_id int,
+    item_id int,
+
+    CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES user(user_id)
+		ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT item_id_fk FOREIGN KEY (item_id) REFERENCES item(item_id)
+		ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
