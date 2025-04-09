@@ -1,5 +1,3 @@
-//this is database script setup for now -- could change
-
 DROP DATABASE IF EXISTS marketplace_db;
 
 CREATE DATABASE marketplace_db;
@@ -32,13 +30,13 @@ CREATE Table item
     location_id int,
     item_type varchar(50) not null,
     image_name varchar(255),
-    image_type varchar(255),
-    image_date longblob,
-
+    image_type varchar(100),
+    image_date varbinary(255),
+    
     CONSTRAINT location_id_fk FOREIGN KEY (location_id) REFERENCES location(location_id)
 		ON DELETE SET NULL -- if a location is deleted the location here will be set to null
         ON UPDATE CASCADE,
-
+        
 	CONSTRAINT category_id_fk FOREIGN KEY (category_id) REFERENCES category(category_id)
 		ON DELETE SET NULL
         ON UPDATE CASCADE
@@ -46,34 +44,35 @@ CREATE Table item
 
 )auto_increment = 1;
 
+
 CREATE table product
 (
-	product_id int primary key,
+	item_id int primary key,
     quantity int,
     brand varchar(100),
-
-    CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES item(item_id)
-		ON DELETE CASCADE
+    
+    CONSTRAINT product_id_fk FOREIGN KEY (item_id) REFERENCES item(item_id)
+		ON DELETE CASCADE 
         ON UPDATE CASCADE
 );
 
 CREATE table service
 (
-	service_id int primary key,
+	item_id int primary key,
     duration_minutes int,
-
-    CONSTRAINT service_id_fk FOREIGN KEY (service_id) REFERENCES item(item_id)
-		ON DELETE CASCADE
+    
+    CONSTRAINT service_id_fk FOREIGN KEY (item_id) REFERENCES item(item_id)
+		ON DELETE CASCADE 
         ON UPDATE CASCADE
 );
 
 CREATE table request
 (
-	request_id int primary key,
+	item_id int primary key,
     deadline date,
 
-	CONSTRAINT request_id_fk FOREIGN KEY (request_id) REFERENCES item(item_id)
-		ON DELETE CASCADE
+	CONSTRAINT request_id_fk FOREIGN KEY (item_id) REFERENCES item(item_id)
+		ON DELETE CASCADE 
         ON UPDATE CASCADE
 );
 
@@ -93,12 +92,67 @@ CREATE table user_items
 (
 	user_id int,
     item_id int,
-
+    
     CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES user(user_id)
 		ON UPDATE CASCADE
         ON DELETE CASCADE,
-
+	
     CONSTRAINT item_id_fk FOREIGN KEY (item_id) REFERENCES item(item_id)
 		ON UPDATE CASCADE
         ON DELETE CASCADE
 );
+
+
+-- Inserting into location table
+INSERT INTO location (name) VALUES
+('Campus Library'),
+('Student Union'),
+('Main Quad'),
+('North Dorm'),
+('South Dorm');
+
+-- Inserting into category table
+INSERT INTO category (name) VALUES
+('Books'),
+('Electronics'),
+('Clothing'),
+('Services'),
+('Furniture');
+
+-- Inserting into item table (using valid category_id and location_id)
+INSERT INTO item (name, description, price, category_id, release_date, available, location_id, item_type, image_name, image_type, image_date) VALUES
+('Laptop', 'A high-performance laptop for programming.', 899.99, 2, '2025-04-02', 1, 2, 'product', 'laptop.jpg', 'image/jpeg', NULL),
+('Winter Jacket', 'A warm jacket for winter.', 79.99, 3, '2025-04-05', 1, 3, 'product', 'jacket.jpg', 'image/jpeg', NULL),
+('Dining Table', 'A wooden dining table for home.', 250.00, 5, '2025-04-03', 1, 5, 'service', 'dining_table.jpg', 'image/jpeg', NULL),
+('Desk Chair', 'Ergonomic desk chair.', 150.00, 2, '2025-04-10', 1, 2, 'request', 'desk_chair.jpg', 'image/jpeg', NULL);
+
+
+-- Inserting into product table (valid product_id references item_id)
+INSERT INTO product (item_id, quantity, brand) VALUES
+(1, 10, 'TechBooks'),
+(2, 5, 'Dell');
+
+
+-- Inserting into service table (valid service_id references item_id)
+INSERT INTO service (item_id, duration_minutes) VALUES
+(3, 120);
+
+-- Inserting into request table (valid request_id references item_id)
+INSERT INTO request (item_id, deadline) VALUES
+(4, '2025-05-01');
+
+
+-- Inserting into user table
+INSERT INTO user (first_name, last_name, email, username, password) VALUES
+('John', 'Doe', 'john.doe@example.com', 'johndoe', 'password123'),
+('Jane', 'Smith', 'jane.smith@example.com', 'janesmith', 'password456'),
+('Alice', 'Johnson', 'alice.johnson@example.com', 'alicej', 'password789');
+
+-- Inserting into user_items table (valid user_id references user(user_id) and item_id references item(item_id))
+INSERT INTO user_items (user_id, item_id) VALUES
+(1, 1),
+(1, 2),
+(2, 3),
+(3, 4);
+
+

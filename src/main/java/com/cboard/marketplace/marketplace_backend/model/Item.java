@@ -3,15 +3,14 @@ package com.cboard.marketplace.marketplace_backend.model;
 import com.cboard.marketplace.marketplace_common.*;
 
 import jakarta.persistence.*;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.processing.Generated;
 
 //entity maps this saying this is a table
 
 @Entity
+@Table(name = "item")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Item
+public abstract class Item
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

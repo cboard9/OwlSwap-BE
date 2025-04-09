@@ -17,10 +17,12 @@ public class ItemService
     @Autowired
     ItemDao dao;
 
-
-    public ResponseEntity<List<Item>> getAllItems()
+    //ResponseEntity<List<Item>>
+    public List<Item> getAllItems()
     {
-        try
+        return dao.findAll();
+
+        /*try
         {
             return new ResponseEntity<>(dao.findAll(), HttpStatus.OK);
         }
@@ -28,6 +30,6 @@ public class ItemService
         {
             e.printStackTrace();
         }
-        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);*/
     }
 }

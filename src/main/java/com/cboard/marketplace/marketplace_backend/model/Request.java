@@ -4,31 +4,21 @@ import jakarta.persistence.Entity;
 import com.cboard.marketplace.marketplace_common.*;
 
 import jakarta.persistence.*;
-import org.springframework.stereotype.Component;
 
 @Entity
-@DiscriminatorValue("request")
-public class Request
+@Table(name = "request")
+//@DiscriminatorValue("request")
+public class Request extends Item
 {
-    @Id
-    private int requestId;
     private String deadline;
 
     public Request() {
     }
 
-    public Request(int requestId, String deadline) {
-        this.requestId = requestId;
+    public Request(String deadline) {
         this.deadline = deadline;
     }
 
-    public int getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(int requestId) {
-        this.requestId = requestId;
-    }
 
     public String getDeadline() {
         return deadline;
