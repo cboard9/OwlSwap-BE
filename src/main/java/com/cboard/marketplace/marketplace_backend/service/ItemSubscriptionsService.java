@@ -1,9 +1,7 @@
 package com.cboard.marketplace.marketplace_backend.service;
 
-import com.cboard.marketplace.marketplace_backend.dao.UserDao;
-import com.cboard.marketplace.marketplace_backend.dao.UserItemsDao;
-import com.cboard.marketplace.marketplace_backend.model.User;
-import com.cboard.marketplace.marketplace_backend.model.UserItems;
+import com.cboard.marketplace.marketplace_backend.dao.ItemSubscriptionsDao;
+import com.cboard.marketplace.marketplace_backend.model.ItemSubscriptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,19 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class UserService
+public class ItemSubscriptionsService
 {
     @Autowired
-    UserDao userDao;
+    ItemSubscriptionsDao dao;
 
-
-
-
-    public ResponseEntity<List<User>> getAllUsers()
+    public ResponseEntity<List<ItemSubscriptions>> getAllItemSubscriptions(int itemId)
     {
         try
         {
-            return new ResponseEntity<>(userDao.findAll(), HttpStatus.OK);
+            List<ItemSubscriptions> itemSubscriptions = dao.findByItemItemId(itemId);
+            return new ResponseEntity<>(itemSubscriptions, HttpStatus.OK);
         }
         catch(Exception e)
         {
@@ -33,6 +29,4 @@ public class UserService
         }
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
     }
-
-
 }

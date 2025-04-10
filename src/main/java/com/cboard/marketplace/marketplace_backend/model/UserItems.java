@@ -2,8 +2,6 @@ package com.cboard.marketplace.marketplace_backend.model;
 
 import jakarta.persistence.*;
 
-import java.io.Serializable;
-
 @Entity
 @Table(name = "user_items")
 public class UserItems

@@ -121,14 +121,14 @@ CREATE table transaction
 
 )auto_increment = 1;
 
-CREATE table item_subscription
+CREATE table item_subscriptions
 (
 	item_id int,
     user_id int,
 
-    CONSTRAINT item_subscription_id PRIMARY KEY (item_id, user_id),
+    CONSTRAINT item_subscriptions_id PRIMARY KEY (item_id, user_id),
 
-    CONSTRAINT item_subscription_fk FOREIGN KEY (item_id) REFERENCES item(item_id)
+    CONSTRAINT item_subscriptions_fk FOREIGN KEY (item_id) REFERENCES item(item_id)
 		ON DELETE CASCADE
         ON UPDATE CASCADE,
 
@@ -138,14 +138,14 @@ CREATE table item_subscription
 
 );
 
-CREATE table user_subscription
+CREATE table user_subscriptions
 (
 	user_id int,
     subscriber_id int,
 
-    CONSTRAINT user_subscription_pk PRIMARY KEY (user_id, subscriber_id),
+    CONSTRAINT user_subscriptions_id PRIMARY KEY (user_id, subscriber_id),
 
-	CONSTRAINT user_subscription_fk FOREIGN KEY (user_id) REFERENCES user(user_id)
+	CONSTRAINT user_subscriptions_fk FOREIGN KEY (user_id) REFERENCES user(user_id)
 		ON DELETE CASCADE
         ON UPDATE CASCADE,
 
@@ -239,14 +239,14 @@ INSERT INTO transaction (buyer_id, seller_id, payment_type, cost) VALUES
 (1, 2, 'CashApp', 30.00); -- Alice paid Bob for moving help
 
 -- 🔔 ITEM SUBSCRIPTIONS
-INSERT INTO item_subscription (item_id, user_id) VALUES
+INSERT INTO item_subscriptions (item_id, user_id) VALUES
 (1, 2),  -- Bob subscribes to calculator
 (2, 3),  -- Charlie subscribes to desk chair
 (3, 1),  -- Alice subscribes to tutoring
 (5, 4);  -- Diana subscribes to desk request
 
 -- 🧑‍🤝‍🧑 USER SUBSCRIPTIONS
-INSERT INTO user_subscription (user_id, subscriber_id) VALUES
+INSERT INTO user_subscriptions (user_id, subscriber_id) VALUES
 (1, 2),  -- Bob subscribes to Alice
 (2, 3),  -- Charlie subscribes to Bob
 (3, 1),  -- Alice subscribes to Charlie

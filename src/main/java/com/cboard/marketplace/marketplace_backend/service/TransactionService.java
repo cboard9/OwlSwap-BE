@@ -1,7 +1,8 @@
 package com.cboard.marketplace.marketplace_backend.service;
 
-import com.cboard.marketplace.marketplace_backend.dao.UserDao;
-import com.cboard.marketplace.marketplace_backend.dao.UserItemsDao;
+
+import com.cboard.marketplace.marketplace_backend.dao.TransactionDao;
+import com.cboard.marketplace.marketplace_backend.model.Transaction;
 import com.cboard.marketplace.marketplace_backend.model.User;
 import com.cboard.marketplace.marketplace_backend.model.UserItems;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,19 +14,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class UserService
+public class TransactionService
 {
     @Autowired
-    UserDao userDao;
+    TransactionDao dao;
 
 
-
-
-    public ResponseEntity<List<User>> getAllUsers()
+    public ResponseEntity<List<Transaction>> getAllTransactions()
     {
         try
         {
-            return new ResponseEntity<>(userDao.findAll(), HttpStatus.OK);
+            return new ResponseEntity<>(dao.findAll(), HttpStatus.OK);
         }
         catch(Exception e)
         {
@@ -33,6 +32,5 @@ public class UserService
         }
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
     }
-
 
 }
