@@ -3,6 +3,7 @@ package com.cboard.marketplace.marketplace_backend.model;
 import com.cboard.marketplace.marketplace_common.*;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 
 //entity maps this saying this is a table
@@ -15,9 +16,11 @@ public abstract class Item
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int itemId;
+    @NotNull(message = "Name is required...")
     private String name;
     String description;
-    private double price;
+    @NotNull(message = "Price is required...")
+    private Double price;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
@@ -36,7 +39,7 @@ public abstract class Item
     public Item() {
     }
 
-    public Item(int itemId, String name, String description, double price, Category category, String releaseDate, boolean available, Location location, String itemType, String image_name, String image_type, byte[] image_date) {
+    public Item(int itemId, String name, String description, Double price, Category category, String releaseDate, boolean available, Location location, String itemType, String image_name, String image_type, byte[] image_date) {
         this.itemId = itemId;
         this.name = name;
         this.description = description;

@@ -2,6 +2,7 @@ package com.cboard.marketplace.marketplace_backend.controller;
 
 import com.cboard.marketplace.marketplace_backend.model.UserItems;
 import com.cboard.marketplace.marketplace_backend.service.UserItemsService;
+import com.cboard.marketplace.marketplace_common.ItemDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +19,14 @@ public class UserItemsController
     @Autowired
     UserItemsService service;
 
-    @GetMapping("{id}/items")
+/*    @GetMapping("{id}/items")
     public ResponseEntity<List<UserItems>> getAllUserItems(@PathVariable("id") int userId)
+    {
+        return service.getAllUserItems(userId);
+    }*/
+
+    @GetMapping("{id}/items")
+    public ResponseEntity<List<ItemDto>> getAllUserItems(@PathVariable("id") int userId)
     {
         return service.getAllUserItems(userId);
     }

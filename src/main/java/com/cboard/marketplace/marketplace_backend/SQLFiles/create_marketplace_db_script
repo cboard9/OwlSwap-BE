@@ -21,7 +21,7 @@ CREATE Table item
 	item_id int primary key auto_increment,
     name varchar(50),
     description varchar(150),
-    price double,
+    price double not null,
     category_id int,
     release_date date default (current_date),
     available bit(1),
@@ -46,7 +46,7 @@ CREATE Table item
 CREATE table product
 (
 	item_id int primary key,
-    quantity int,
+    quantity int not null,
     brand varchar(100),
 
     CONSTRAINT product_id_fk FOREIGN KEY (item_id) REFERENCES item(item_id)
@@ -57,7 +57,7 @@ CREATE table product
 CREATE table service
 (
 	item_id int primary key,
-    duration_minutes int,
+    duration_minutes int not null,
 
     CONSTRAINT service_id_fk FOREIGN KEY (item_id) REFERENCES item(item_id)
 		ON DELETE CASCADE
@@ -67,7 +67,7 @@ CREATE table service
 CREATE table request
 (
 	item_id int primary key,
-    deadline date,
+    deadline date not null,
 
 	CONSTRAINT request_id_fk FOREIGN KEY (item_id) REFERENCES item(item_id)
 		ON DELETE CASCADE

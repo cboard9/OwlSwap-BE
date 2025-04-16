@@ -7,6 +7,7 @@ import com.cboard.marketplace.marketplace_backend.model.Service;
 import com.cboard.marketplace.marketplace_backend.service.ItemService;
 import com.cboard.marketplace.marketplace_common.*;
 
+import jakarta.validation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,43 +23,14 @@ public class ItemController
     ItemService service;
 
     @GetMapping("allItems")
-    public ResponseEntity<List<Item>> getAllItems()
-    {
-        List<Item> items = service.getAllItems();
-
-        for (Item item : items) {
-            if (item instanceof Product) {
-                Product product = (Product) item;
-                System.out.println("Type: " + product.getItemType());
-                System.out.println("Product: " + product.getQuantity());
-                System.out.println("Brand: " + product.getBrand());
-            } else if (item instanceof Service) {
-                Service service = (Service) item;
-                System.out.println("Type: " + service.getItemType());
-                System.out.println("Service duration: " + service.getDurationMinutes() + " minutes");
-            } else if (item instanceof Request) {
-                Request request = (Request) item;
-                System.out.println("Type: " + request.getItemType());
-                System.out.println("Request deadline: " + request.getDeadline());
-            }
-        }
-
-        //return service.getAllItems();
-        return new ResponseEntity<>(service.getAllItems(), HttpStatus.OK);
-    }
-
-    @GetMapping("allDtoItems")
-    public ResponseEntity<List<ItemDto>> getAllDtoItems()
+    public ResponseEntity<List<ItemDto>> getAllItems()
     {
         //could potentially throw a runtime exception if cant map an item, consider handling this later?
-        List<ItemDto> items = service.getAllDtoItems();
-
-        //return service.getAllItems();
-        return new ResponseEntity<>(service.getAllDtoItems(), HttpStatus.OK);
+        return service.getAllItems();
     }
 
     @PostMapping("add")
-    public ResponseEntity<String> addItem(@RequestBody ItemDto itemDto)
+    public ResponseEntity<String> addItem(@Valid @RequestBody ItemDto itemDto)
     {
         //could potentially throw a runtime exception if cant map an item, consider handling this later?
         return service.addItem(itemDto);

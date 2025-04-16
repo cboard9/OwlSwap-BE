@@ -1,7 +1,10 @@
 package com.cboard.marketplace.marketplace_backend.service;
 
 import com.cboard.marketplace.marketplace_backend.dao.UserItemsDao;
+import com.cboard.marketplace.marketplace_backend.model.DtoMapping.toDto.ItemToDtoFactory;
+import com.cboard.marketplace.marketplace_backend.model.Item;
 import com.cboard.marketplace.marketplace_backend.model.UserItems;
+import com.cboard.marketplace.marketplace_common.ItemDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,19 +18,52 @@ public class UserItemsService
 {
     @Autowired
     UserItemsDao dao;
+    @Autowired
+    ItemToDtoFactory toDtoFactory;
 
-    public ResponseEntity<List<UserItems>> getAllUserItems(int userId)
+/*    public ResponseEntity<List<UserItems>> getAllUserItems(int userId)
     {
         try
         {
-            /* only return the items, no user info?
+            *//* only return the items, no user info?
             List<UserItems> userItems = userItemsDao.findByUserUserId(userId);
             List<Item> items = userItems.stream()
                     .map(UserItems::getItem)
                     .toList();
-                    */
+                    *//*
 
             List<UserItems> items = dao.findByUserUserId(userId);
+            return new ResponseEntity<>(items, HttpStatus.OK);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
+    }*/
+
+    public ResponseEntity<List<ItemDto>> getAllUserItems(int userId)
+    {
+        try
+        {
+            //only return the items, no user info?
+            List<UserItems> userItems = dao.findByUserUserId(userId);
+            List<ItemDto> items = userItems.stream()
+                    .map(UserItems::getItem)
+                    .map(item -> {
+                                try
+                                {
+                                    return toDtoFactory.toDto(item);
+                                }
+                                catch(IllegalAccessException e)
+                                {
+                                    e.printStackTrace();
+                                    throw new RuntimeException("Error converting item to DTO: " + item, e);
+                                }
+                            }
+                    )
+                    .toList();
+
             return new ResponseEntity<>(items, HttpStatus.OK);
         }
         catch(Exception e)

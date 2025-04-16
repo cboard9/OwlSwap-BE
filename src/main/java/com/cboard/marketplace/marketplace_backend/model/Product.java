@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import com.cboard.marketplace.marketplace_common.*;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 
 @Entity
@@ -11,13 +12,14 @@ import jakarta.persistence.*;
 //@DiscriminatorValue("product")
 public class Product extends Item
 {
-    private int quantity;
+    @NotNull(message = "Quantity is required...")
+    private Integer quantity;
     private String brand;
 
     public Product() {
     }
 
-    public Product(int itemId, String name, String description, double price, Category category, String releaseDate, boolean available, Location location, String itemType, String image_name, String image_type, byte[] image_date, int quantity, String brand)
+    public Product(int itemId, String name, String description, Double price, Category category, String releaseDate, boolean available, Location location, String itemType, String image_name, String image_type, byte[] image_date, Integer quantity, String brand)
     {
         super(itemId, name, description, price, category, releaseDate, available, location, itemType, image_name, image_type, image_date);
         this.quantity = quantity;
