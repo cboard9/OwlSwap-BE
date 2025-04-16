@@ -15,6 +15,7 @@ public class RequestToDtoMapper implements ItemToDtoMapper<Request>
                 r.getName(),
                 r.getDescription(),
                 r.getPrice(),
+                r.getUser().getUserId(),
                 r.getCategory().getName(),
                 r.getReleaseDate(),
                 r.isAvailable(),

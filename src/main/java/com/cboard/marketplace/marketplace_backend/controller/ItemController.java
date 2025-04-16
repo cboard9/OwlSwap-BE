@@ -1,9 +1,6 @@
 package com.cboard.marketplace.marketplace_backend.controller;
 
-import com.cboard.marketplace.marketplace_backend.model.Item;
-import com.cboard.marketplace.marketplace_backend.model.Product;
-import com.cboard.marketplace.marketplace_backend.model.Request;
-import com.cboard.marketplace.marketplace_backend.model.Service;
+import com.cboard.marketplace.marketplace_backend.model.*;
 import com.cboard.marketplace.marketplace_backend.service.ItemService;
 import com.cboard.marketplace.marketplace_common.*;
 
@@ -14,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("item")
@@ -34,6 +32,13 @@ public class ItemController
     {
         //could potentially throw a runtime exception if cant map an item, consider handling this later?
         return service.addItem(itemDto);
+
+    }
+
+    @GetMapping("{id}/owner")
+    public ResponseEntity<User> getItemOwner(@PathVariable("id") int itemId)
+    {
+        return service.getItemOwner(itemId);
 
     }
 

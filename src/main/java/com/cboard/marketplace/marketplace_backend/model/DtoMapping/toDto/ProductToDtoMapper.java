@@ -19,6 +19,7 @@ public class ProductToDtoMapper implements ItemToDtoMapper<Product>
                 p.getName(),
                 p.getDescription(),
                 p.getPrice(),
+                p.getUser().getUserId(),
                 p.getCategory().getName(),
                 p.getReleaseDate(),
                 p.isAvailable(),

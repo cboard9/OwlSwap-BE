@@ -5,6 +5,7 @@ import com.cboard.marketplace.marketplace_backend.dao.ItemDao;
 import com.cboard.marketplace.marketplace_backend.model.DtoMapping.fromDto.DtoToItemFactory;
 import com.cboard.marketplace.marketplace_backend.model.DtoMapping.toDto.ItemToDtoFactory;
 import com.cboard.marketplace.marketplace_backend.model.Item;
+import com.cboard.marketplace.marketplace_backend.model.User;
 import com.cboard.marketplace.marketplace_common.ItemDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpOutputMessage;
@@ -13,7 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class ItemService
@@ -49,6 +53,24 @@ public class ItemService
                 .toList();
 
         return new ResponseEntity<>(items, HttpStatus.OK);
+
+    }
+
+    public ResponseEntity<User> getItemOwner(int itemId)
+    {
+        try
+        {
+            User user = dao.findById(itemId)
+                    .map(Item::getUser)
+                    .orElseThrow(() -> new NoSuchElementException("User not found for item..."));
+
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>(new User(), HttpStatus.BAD_REQUEST);
 
     }
 

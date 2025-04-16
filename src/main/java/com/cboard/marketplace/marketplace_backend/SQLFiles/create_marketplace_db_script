@@ -3,6 +3,17 @@ DROP DATABASE IF EXISTS marketplace_db;
 CREATE DATABASE marketplace_db;
 USE marketplace_db;
 
+CREATE table user
+(
+	user_id int primary key auto_increment,
+    first_name varchar(25) not null,
+    last_name varchar(25) not null,
+    email varchar(255),
+    username varchar(255) unique not null,
+    password varchar(255) not null,
+    is_deleted boolean default false -- this is so information is not lost for TRANSACTIONS, might need more filtering involved for other tables though
+)auto_increment = 1;
+
 CREATE table location
 (
 	location_id int primary key auto_increment,
@@ -22,6 +33,7 @@ CREATE Table item
     name varchar(50),
     description varchar(150),
     price double not null,
+    user_id int,
     category_id int,
     release_date date default (current_date),
     available bit(1),
@@ -30,6 +42,10 @@ CREATE Table item
     image_name varchar(255),
     image_type varchar(100),
     image_date varbinary(255),
+
+	CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES user(user_id)
+		ON DELETE SET NULL -- if a location is deleted the location here will be set to null, we dont want whole item record deleted
+        ON UPDATE CASCADE,
 
     CONSTRAINT location_id_fk FOREIGN KEY (location_id) REFERENCES location(location_id)
 		ON DELETE SET NULL -- if a location is deleted the location here will be set to null, we dont want whole item record deleted
@@ -74,19 +90,7 @@ CREATE table request
         ON UPDATE CASCADE
 );
 
-
-CREATE table user
-(
-	user_id int primary key auto_increment,
-    first_name varchar(25) not null,
-    last_name varchar(25) not null,
-    email varchar(255),
-    username varchar(255) unique not null,
-    password varchar(255) not null,
-    is_deleted boolean default false -- this is so information is not lost for TRANSACTIONS, might need more filtering involved for other tables though
-)auto_increment = 1;
-
-
+/*
 CREATE table user_items
 (
 	user_id int,
@@ -102,6 +106,7 @@ CREATE table user_items
 		ON UPDATE CASCADE
         ON DELETE CASCADE
 );
+*/
 
 CREATE table transaction
 (
@@ -185,28 +190,28 @@ INSERT INTO user (first_name, last_name, email, username, password) VALUES
 
 -- 📦 ITEMS (MIXED TYPES)
 -- Product: Calculator
-INSERT INTO item (name, description, price, category_id, available, location_id, item_type, image_name, image_type, image_date)
-VALUES ('TI-84 Calculator', 'Gently used graphing calculator.', 45.00, 1, 1, 1, 'product', 'calc.jpg', 'image/jpeg', NULL);
+INSERT INTO item (name, description, price, user_id, category_id, available, location_id, item_type, image_name, image_type, image_date)
+VALUES ('TI-84 Calculator', 'Gently used graphing calculator.', 45.00, 1, 1, 1, 1, 'product', 'calc.jpg', 'image/jpeg', NULL);
 
 -- Product: Desk Chair
-INSERT INTO item (name, description, price, category_id, available, location_id, item_type, image_name, image_type, image_date)
-VALUES ('Desk Chair', 'Comfortable ergonomic chair.', 20.00, 5, 1, 2, 'product', 'chair.jpg', 'image/jpeg', NULL);
+INSERT INTO item (name, description, price, user_id, category_id, available, location_id, item_type, image_name, image_type, image_date)
+VALUES ('Desk Chair', 'Comfortable ergonomic chair.', 20.00, 2, 5, 1, 2, 'product', 'chair.jpg', 'image/jpeg', NULL);
 
 -- Service: Math Tutoring
-INSERT INTO item (name, description, price, category_id, available, location_id, item_type, image_name, image_type, image_date)
-VALUES ('Math Tutoring', '1-hour session of calculus tutoring.', 25.00, 3, 1, 3, 'service', 'tutor.png', 'image/png', NULL);
+INSERT INTO item (name, description, price, user_id, category_id, available, location_id, item_type, image_name, image_type, image_date)
+VALUES ('Math Tutoring', '1-hour session of calculus tutoring.', 25.00, 3, 3, 1, 3, 'service', 'tutor.png', 'image/png', NULL);
 
 -- Service: Moving Help
-INSERT INTO item (name, description, price, category_id, available, location_id, item_type, image_name, image_type, image_date)
-VALUES ('Moving Help', 'Help moving into dorm.', 30.00, 4, 1, 4, 'service', 'moving.jpg', 'image/jpeg', NULL);
+INSERT INTO item (name, description, price, user_id, category_id, available, location_id, item_type, image_name, image_type, image_date)
+VALUES ('Moving Help', 'Help moving into dorm.', 30.00, 4, 4, 1, 4, 'service', 'moving.jpg', 'image/jpeg', NULL);
 
 -- Request: Need Desk
-INSERT INTO item (name, description, price, category_id, available, location_id, item_type, image_name, image_type, image_date)
-VALUES ('Need a Desk', 'Looking to buy a cheap desk.', 50.00, 5, 1, 1, 'request', 'desk.jpg', 'image/jpeg', NULL);
+INSERT INTO item (name, description, price, user_id, category_id, available, location_id, item_type, image_name, image_type, image_date)
+VALUES ('Need a Desk', 'Looking to buy a cheap desk.', 50.00, 1, 5, 1, 1, 'request', 'desk.jpg', 'image/jpeg', NULL);
 
 -- Request: Study Group
-INSERT INTO item (name, description, price, category_id, available, location_id, item_type, image_name, image_type, image_date)
-VALUES ('Study Partner Needed', 'Need help studying for CS exam.', 0.00, 3, 1, 2, 'request', 'study.jpg', 'image/jpeg', NULL);
+INSERT INTO item (name, description, price, user_id, category_id, available, location_id, item_type, image_name, image_type, image_date)
+VALUES ('Study Partner Needed', 'Need help studying for CS exam.', 0.00, 1, 3, 1, 2, 'request', 'study.jpg', 'image/jpeg', NULL);
 
 -- 🛠️ PRODUCTS (for product items only)
 INSERT INTO product (item_id, quantity, brand) VALUES
@@ -223,6 +228,7 @@ INSERT INTO request (item_id, deadline) VALUES
 (5, '2025-04-20'),  -- Need a Desk
 (6, '2025-04-15');  -- Study Group
 
+/*
 -- 🔗 USER-ITEM OWNERSHIP
 INSERT INTO user_items (user_id, item_id) VALUES
 (1, 1),  -- Alice owns calculator
@@ -231,6 +237,7 @@ INSERT INTO user_items (user_id, item_id) VALUES
 (2, 4),  -- Bob offers moving help
 (3, 5),  -- Charlie made a desk request
 (4, 6);  -- Diana made study group request
+*/
 
 -- 💸 TRANSACTIONS
 INSERT INTO transaction (buyer_id, seller_id, payment_type, cost) VALUES

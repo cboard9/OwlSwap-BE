@@ -15,6 +15,7 @@ public class ServiceToDtoMapper implements ItemToDtoMapper<Service>
                 s.getName(),
                 s.getDescription(),
                 s.getPrice(),
+                s.getUser().getUserId(),
                 s.getCategory().getName(),
                 s.getReleaseDate(),
                 s.isAvailable(),

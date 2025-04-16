@@ -18,9 +18,9 @@ public class Service extends Item
     public Service() {
     }
 
-    public Service(int itemId, String name, String description, Double price, Category category, String releaseDate, boolean available, Location location, String itemType, String image_name, String image_type, byte[] image_date, Integer durationMinutes)
+    public Service(int itemId, String name, String description, Double price, User user, Category category, String releaseDate, boolean available, Location location, String itemType, String image_name, String image_type, byte[] image_date, Integer durationMinutes)
     {
-        super(itemId, name, description, price, category, releaseDate, available, location, itemType, image_name, image_type, image_date);
+        super(itemId, name, description, price, user, category, releaseDate, available, location, itemType, image_name, image_type, image_date);
         this.durationMinutes = durationMinutes;
     }
 

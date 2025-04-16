@@ -2,7 +2,7 @@ package com.cboard.marketplace.marketplace_backend.service;
 
 import com.cboard.marketplace.marketplace_backend.dao.UserItemsDao;
 import com.cboard.marketplace.marketplace_backend.model.DtoMapping.toDto.ItemToDtoFactory;
-import com.cboard.marketplace.marketplace_backend.model.Item;
+import com.cboard.marketplace.marketplace_backend.model.*;
 import com.cboard.marketplace.marketplace_backend.model.UserItems;
 import com.cboard.marketplace.marketplace_common.ItemDto;
 import org.springframework.beans.factory.annotation.Autowired;
