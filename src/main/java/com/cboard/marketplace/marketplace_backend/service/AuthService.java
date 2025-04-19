@@ -2,9 +2,9 @@ package com.cboard.marketplace.marketplace_backend.service;
 
 import com.cboard.marketplace.marketplace_backend.security.JwtUtil;
 import com.cboard.marketplace.marketplace_backend.dao.UserDao;
-import com.cboard.marketplace.marketplace_backend.dto.AuthResponse;
-import com.cboard.marketplace.marketplace_backend.dto.LoginRequest;
-import com.cboard.marketplace.marketplace_backend.dto.SignupRequest;
+import com.cboard.marketplace.marketplace_common.dto.AuthResponse;
+import com.cboard.marketplace.marketplace_common.dto.LoginRequest;
+import com.cboard.marketplace.marketplace_common.dto.SignupRequest;
 import com.cboard.marketplace.marketplace_backend.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
