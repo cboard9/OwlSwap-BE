@@ -7,6 +7,7 @@ import com.cboard.marketplace.marketplace_backend.model.DtoMapping.toDto.ItemToD
 import com.cboard.marketplace.marketplace_backend.model.Item;
 import com.cboard.marketplace.marketplace_backend.model.User;
 import com.cboard.marketplace.marketplace_common.ItemDto;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,7 @@ public class ItemService
     public ResponseEntity<List<ItemDto>> getAllItems()
     {
         List<ItemDto> items = dao.findAll().stream()
+                .filter(Item::isAvailable)
                 .map(item -> {
                     try
                     {
@@ -55,6 +57,28 @@ public class ItemService
         return new ResponseEntity<>(items, HttpStatus.OK);
 
     }
+
+    //returns an item from its id if it exists and it is available
+    public ResponseEntity<?> getItem(int itemId)
+    {
+        Optional<Item> optionalItem = dao.findById(itemId);
+
+        if (optionalItem.isEmpty() || !optionalItem.get().isAvailable()) {
+            return new ResponseEntity<>("Item not found...", HttpStatus.NOT_FOUND);
+        }
+
+        try
+        {
+            ItemDto dto = toDtoFactory.toDto(optionalItem.get());
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        }
+        catch (IllegalAccessException e)
+        {
+            e.printStackTrace();
+            return new ResponseEntity<>("Internal error...", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     public ResponseEntity<User> getItemOwner(int itemId)
     {
@@ -90,5 +114,36 @@ public class ItemService
             throw new RuntimeException("Error converting DTO to item: " + itemDto, e);
         }
 
+    }
+
+
+    public ResponseEntity<?> updateItem(int itemId, ItemDto dto)
+    {
+        if (!dao.existsById(itemId))
+            return new ResponseEntity<>("Item not found", HttpStatus.NOT_FOUND);
+
+        try
+        {
+            Item item = fromDtoFactory.fromDto(dto);
+            item.setItemId(itemId); // Force the ID to match the path variable
+
+            dao.save(item);
+            return ResponseEntity.ok("Item updated");
+        }
+        catch(IllegalAccessException e)
+        {
+            e.printStackTrace();
+            return new ResponseEntity<>("Illegal access error", HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    public ResponseEntity<String> deleteItem(int itemId)
+    {
+        if(!dao.existsById(itemId))
+            return new ResponseEntity<>("Item not found", HttpStatus.NOT_FOUND);
+
+        dao.softDeleteItem(itemId);
+        return new ResponseEntity<>("Item deleted", HttpStatus.OK);
     }
 }

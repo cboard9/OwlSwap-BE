@@ -10,8 +10,17 @@ CREATE table user
     last_name varchar(25) not null,
     email varchar(255),
     username varchar(255) unique not null,
-    password varchar(255) not null,
-    is_deleted boolean default false -- this is so information is not lost for TRANSACTIONS, might need more filtering involved for other tables though
+    password varchar(255) not null
+)auto_increment = 1;
+
+CREATE table user_archive
+(
+	user_id int primary key auto_increment,
+    first_name varchar(25) not null,
+    last_name varchar(25) not null,
+    email varchar(255),
+    username varchar(255) unique not null,
+    is_active boolean
 )auto_increment = 1;
 
 CREATE table location
@@ -44,7 +53,7 @@ CREATE Table item
     image_date varbinary(255),
 
 	CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES user(user_id)
-		ON DELETE SET NULL -- if a location is deleted the location here will be set to null, we dont want whole item record deleted
+		ON DELETE CASCADE -- if a user, all the items they own (have listed) are deleted
         ON UPDATE CASCADE,
 
     CONSTRAINT location_id_fk FOREIGN KEY (location_id) REFERENCES location(location_id)
@@ -90,38 +99,25 @@ CREATE table request
         ON UPDATE CASCADE
 );
 
-/*
-CREATE table user_items
-(
-	user_id int,
-    item_id int,
-
-    CONSTRAINT user_items_id PRIMARY KEY (user_id, item_id),
-
-    CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES user(user_id)
-		ON UPDATE CASCADE
-        ON DELETE CASCADE,
-
-    CONSTRAINT item_id_fk FOREIGN KEY (item_id) REFERENCES item(item_id)
-		ON UPDATE CASCADE
-        ON DELETE CASCADE
-);
-*/
-
 CREATE table transaction
 (
 	transaction_id int primary key auto_increment,
     buyer_id int,
     seller_id int,
-    payment_type varchar(100),
-    cost double,
+    -- payment_type varchar(100),
+    -- cost double,
+    item_id int,
 
-    CONSTRAINT buyer_id_fk FOREIGN KEY (buyer_id) REFERENCES user(user_id)
-		ON DELETE SET NULL -- using is_deleted in user to not lose that data here but if a nonuser wants to remove a user's data for some reason then we will set to null here
+    CONSTRAINT item_id_fk FOREIGN KEY (item_id) REFERENCES item(item_id)
+		ON DELETE SET NULL
         ON UPDATE CASCADE,
 
-	CONSTRAINT seller_id_fk FOREIGN KEY (seller_id) REFERENCES user(user_id)
-		ON DELETE SET NULL -- using is_deleted in user to not lose that data here but if a nonuser wants to remove a user's data for some reason then we will set to null here
+    CONSTRAINT buyer_id_fk FOREIGN KEY (buyer_id) REFERENCES user_archive(user_id)
+		ON DELETE SET NULL
+        ON UPDATE CASCADE,
+
+	CONSTRAINT seller_id_fk FOREIGN KEY (seller_id) REFERENCES user_archive(user_id)
+		ON DELETE SET NULL
         ON UPDATE CASCADE
 
 )auto_increment = 1;
@@ -159,6 +155,70 @@ CREATE table user_subscriptions
         ON UPDATE CASCADE
 
 );
+
+
+--
+-- ----------------------------------------------------------------------------------------------------------------------------
+-- TRIGGERS
+
+
+DELIMITER $$
+CREATE TRIGGER archive_user
+	AFTER INSERT ON user
+    FOR EACH ROW
+BEGIN
+	INSERT INTO user_archive VALUES
+    (NEW.user_id, NEW.first_name, NEW.last_name, NEW.email, NEW.username, true);
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER update_archive_user_on_delete
+	BEFORE DELETE ON user
+    FOR EACH ROW
+BEGIN
+	UPDATE user_archive
+    SET is_active = false
+    WHERE user_id = OLD.user_id;
+END $$
+DELIMITER ;
+
+/*
+DELIMITER $$
+CREATE TRIGGER soft_delete_user
+	BEFORE DELETE ON user
+	FOR EACH ROW
+BEGIN
+    -- Perform the update instead of deletion
+    UPDATE user
+    SET is_deleted = TRUE
+    WHERE user_id = OLD.user_id;
+
+    -- Prevent the actual delete by raising an error
+    SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Delete blocked: user marked as deleted instead.';
+END $$
+DELIMITER ;
+*/
+
+
+
+--
+-- ------------------------------------------------------------------------------------------------------------------------------
+-- PROCEDURES
+
+
+
+DELIMITER $$
+CREATE PROCEDURE soft_delete_item(IN id INT)
+BEGIN
+    UPDATE item
+    SET available = false
+    WHERE item_id = id;
+END $$
+DELIMITER ;
+
+
 
 
 --
@@ -229,21 +289,19 @@ INSERT INTO request (item_id, deadline) VALUES
 (6, '2025-04-15');  -- Study Group
 
 /*
--- 🔗 USER-ITEM OWNERSHIP
-INSERT INTO user_items (user_id, item_id) VALUES
-(1, 1),  -- Alice owns calculator
-(1, 2),  -- Alice owns desk chair
-(2, 3),  -- Bob offers tutoring
-(2, 4),  -- Bob offers moving help
-(3, 5),  -- Charlie made a desk request
-(4, 6);  -- Diana made study group request
-*/
-
 -- 💸 TRANSACTIONS
 INSERT INTO transaction (buyer_id, seller_id, payment_type, cost) VALUES
 (3, 1, 'Cash', 45.00),  -- Charlie bought calculator from Alice
 (4, 2, 'Venmo', 25.00), -- Diana paid Bob for tutoring
 (1, 2, 'CashApp', 30.00); -- Alice paid Bob for moving help
+*/
+
+
+-- 💸 TRANSACTIONS
+INSERT INTO transaction (buyer_id, seller_id, item_id) VALUES
+(3, 1, 1),  -- Charlie bought calculator from Alice
+(4, 2, 3), -- Diana paid Bob for tutoring
+(1, 2, 2); -- Alice paid Bob for moving help
 
 -- 🔔 ITEM SUBSCRIPTIONS
 INSERT INTO item_subscriptions (item_id, user_id) VALUES
@@ -258,4 +316,5 @@ INSERT INTO user_subscriptions (user_id, subscriber_id) VALUES
 (2, 3),  -- Charlie subscribes to Bob
 (3, 1),  -- Alice subscribes to Charlie
 (4, 1);  -- Diana subscribes to Alice
+
 

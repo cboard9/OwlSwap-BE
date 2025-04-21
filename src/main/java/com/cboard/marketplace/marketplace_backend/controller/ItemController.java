@@ -20,11 +20,18 @@ public class ItemController
     @Autowired
     ItemService service;
 
+    //returns all available items
     @GetMapping("allItems")
     public ResponseEntity<List<ItemDto>> getAllItems()
     {
         //could potentially throw a runtime exception if cant map an item, consider handling this later?
         return service.getAllItems();
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<?> getItem(@PathVariable("id") int itemId)
+    {
+        return service.getItem(itemId);
     }
 
     @PostMapping("add")
@@ -35,12 +42,26 @@ public class ItemController
 
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateItem(@PathVariable("id") int itemId, @RequestBody ItemDto dto)
+    {
+        return service.updateItem(itemId, dto);
+    }
+
     @GetMapping("{id}/owner")
     public ResponseEntity<User> getItemOwner(@PathVariable("id") int itemId)
     {
         return service.getItemOwner(itemId);
 
     }
+
+    //soft deletes an item -- instead of actually deleting an item, turns its available attribute to false
+    @DeleteMapping("{id}/delete")
+    public ResponseEntity<String> deleteItem(@PathVariable("id") int itemId)
+    {
+        return service.deleteItem(itemId);
+    }
+
 
 
 }

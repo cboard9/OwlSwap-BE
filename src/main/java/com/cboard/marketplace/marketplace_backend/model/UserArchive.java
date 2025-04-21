@@ -3,8 +3,8 @@ package com.cboard.marketplace.marketplace_backend.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "user")
-public class User
+@Table(name = "user_archive")
+public class UserArchive
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,18 +13,16 @@ public class User
     private String lastName;
     private String email;
     private String username;
-    private String password;
 
-    public User() {
+    public UserArchive() {
     }
 
-    public User(int userId, String firstName, String lastName, String email, String username, String password) {
+    public UserArchive(int userId, String firstName, String lastName, String email, String username) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.username = username;
-        this.password = password;
     }
 
     public int getUserId() {
@@ -65,14 +63,6 @@ public class User
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
 }
