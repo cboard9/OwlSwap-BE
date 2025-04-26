@@ -3,6 +3,7 @@ package com.cboard.marketplace.marketplace_backend.controller;
 import com.cboard.marketplace.marketplace_backend.dao.UserDao;
 import com.cboard.marketplace.marketplace_backend.model.*;
 import com.cboard.marketplace.marketplace_backend.service.ItemService;
+import com.cboard.marketplace.marketplace_backend.service.RatingService;
 import com.cboard.marketplace.marketplace_backend.service.UserService;
 import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class UserController
     @Autowired
     UserDao userDao;
 
+    @Autowired
+    RatingService ratingService;
+
     @GetMapping("allUsers")
     public ResponseEntity<List<User>> getAllUsers()
     {
@@ -40,6 +44,15 @@ public class UserController
         String username = auth.getName();
         User user = userDao.findByUsername(username).orElseThrow();
         user.setPassword(null);
+
+        Double avgRating = ratingService.calculateAverageRating(user.getUserId());
+        user.setAverageRating(avgRating);
+
         return ResponseEntity.ok(user);
+    }
+
+    @PostMapping("/api/rate/{userId}")
+    public ResponseEntity<String> rateUser(@PathVariable int userId, @RequestParam double score) {
+        return ratingService.addRating(userId, score);
     }
 }
