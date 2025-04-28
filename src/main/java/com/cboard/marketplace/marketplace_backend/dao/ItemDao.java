@@ -12,7 +12,8 @@ import java.util.Optional;
 @Repository
 public interface ItemDao extends JpaRepository<Item, Integer>
 {
-    Optional<Item> findByItemId(int itemId);
+    Item findByItemId(int itemId);
+
 
     @Procedure(procedureName = "soft_delete_item")
     public void softDeleteItem(int itemId);

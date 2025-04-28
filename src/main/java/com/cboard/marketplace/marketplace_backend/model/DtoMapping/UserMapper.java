@@ -14,7 +14,8 @@ public class UserMapper
                 dto.getFirstName(),
                 dto.getLastName(),
                 dto.getEmail(),
-                dto.getUsername()
+                dto.getUsername(),
+                dto.getAverageRating()
         );
     }
 
@@ -25,7 +26,8 @@ public class UserMapper
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
-                user.getUsername()
+                user.getUsername(),
+                user.getAverageRating()
         );
 
     }

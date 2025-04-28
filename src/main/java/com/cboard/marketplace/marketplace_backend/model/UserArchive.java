@@ -13,16 +13,18 @@ public class UserArchive
     private String lastName;
     private String email;
     private String username;
+    private Double averageRating;
 
     public UserArchive() {
     }
 
-    public UserArchive(int userId, String firstName, String lastName, String email, String username) {
+    public UserArchive(int userId, String firstName, String lastName, String email, String username, Double averageRating) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.username = username;
+        this.averageRating = averageRating;
     }
 
     public int getUserId() {
@@ -65,4 +67,11 @@ public class UserArchive
         this.username = username;
     }
 
+    public Double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
+    }
 }

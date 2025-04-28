@@ -14,17 +14,19 @@ public class User
     private String email;
     private String username;
     private String password;
+    private Double averageRating;
 
     public User() {
     }
 
-    public User(int userId, String firstName, String lastName, String email, String username, String password) {
+    public User(int userId, String firstName, String lastName, String email, String username, String password, Double averageRating) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.username = username;
         this.password = password;
+        this.averageRating = averageRating;
     }
 
     public int getUserId() {
@@ -75,4 +77,11 @@ public class User
         this.password = password;
     }
 
+    public Double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
+    }
 }

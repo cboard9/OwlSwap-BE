@@ -36,6 +36,13 @@ public class TransactionController
     }
 
 
+    @PostMapping("purchase/{itemId}/{buyerId}")
+    public ResponseEntity<String> purchaseItem(@PathVariable("itemId") int itemId, @PathVariable("buyerId") int buyerId)
+    {
+        return transactionService.purchaseItem(itemId, buyerId);
+    }
+
+
 
 
 }

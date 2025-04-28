@@ -21,7 +21,7 @@ public class ItemController
     ItemService service;
 
     //returns all available items
-    @GetMapping("allItems")
+    @GetMapping("all")
     public ResponseEntity<List<ItemDto>> getAllItems()
     {
         //could potentially throw a runtime exception if cant map an item, consider handling this later?
@@ -42,10 +42,10 @@ public class ItemController
 
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateItem(@PathVariable("id") int itemId, @RequestBody ItemDto dto)
+    @PutMapping("update")
+    public ResponseEntity<?> updateItem(@Valid @RequestBody ItemDto dto)
     {
-        return service.updateItem(itemId, dto);
+        return service.updateItem(dto);
     }
 
     @GetMapping("{id}/owner")
@@ -61,7 +61,6 @@ public class ItemController
     {
         return service.deleteItem(itemId);
     }
-
 
 
 }
