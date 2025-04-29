@@ -5,6 +5,7 @@ import com.cboard.marketplace.marketplace_backend.model.*;
 import com.cboard.marketplace.marketplace_backend.service.ItemService;
 import com.cboard.marketplace.marketplace_backend.service.RatingService;
 import com.cboard.marketplace.marketplace_backend.service.UserService;
+import com.cboard.marketplace.marketplace_common.UserDto;
 import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,18 +38,27 @@ public class UserController
     }
 
     @GetMapping("/api/profile")
-    public ResponseEntity<User> getProfile() {
+    public ResponseEntity<UserDto> getProfile() {
         //retrieve authenticated username directly
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         String username = auth.getName();
         User user = userDao.findByUsername(username).orElseThrow();
-        user.setPassword(null);
 
         Double avgRating = ratingService.calculateAverageRating(user.getUserId());
         user.setAverageRating(avgRating);
 
-        return ResponseEntity.ok(user);
+        // convert user to userDto
+        UserDto userDto = new UserDto(
+                user.getUserId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getUsername(),
+                user.getAverageRating()
+        );
+
+        return ResponseEntity.ok(userDto);
     }
 
     @PostMapping("/api/rate/{userId}")
