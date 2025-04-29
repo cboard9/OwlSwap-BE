@@ -19,16 +19,24 @@ public class User
     private String username;
     private String password;
 
+    @Transient
+    private Double averageRating;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Rating> ratings = new ArrayList<>();
+
     public User() {
     }
 
-    public User(int userId, String firstName, String lastName, String email, String username, String password) {
+    public User(int userId, String firstName, String lastName, String email, String username, String password, Double averageRating) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.username = username;
         this.password = password;
+        this.averageRating = averageRating;
     }
 
     public int getUserId() {
@@ -79,12 +87,13 @@ public class User
         this.password = password;
     }
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<Rating> ratings = new ArrayList<>();
+    public Double getAverageRating() {
+        return averageRating;
+    }
 
-    @Transient
-    private Double averageRating;
+    public void setAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
+    }
 
     public List<Rating> getRatings() {
         return ratings;
@@ -92,13 +101,5 @@ public class User
 
     public void setRatings(List<Rating> ratings) {
         this.ratings = ratings;
-    }
-
-    public Double getAverageRating() {
-        return averageRating;
-    }
-
-    public void setAverageRating(Double averageRating) {
-        this.averageRating = averageRating;
     }
 }

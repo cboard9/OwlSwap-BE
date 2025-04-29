@@ -7,7 +7,7 @@ public class Transaction
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int transaction_id;
+    private int transactionId;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "buyer_id")
     private UserArchive buyer;
@@ -23,8 +23,8 @@ public class Transaction
     public Transaction() {
     }
 
-    public Transaction(int transaction_id, UserArchive buyer, UserArchive seller, Item item) {
-        this.transaction_id = transaction_id;
+    public Transaction(int transactionId, UserArchive buyer, UserArchive seller, Item item) {
+        this.transactionId = transactionId;
         this.buyer = buyer;
         this.seller = seller;
         this.item = item;
@@ -37,12 +37,12 @@ public class Transaction
         this.cost = cost;
     }*/
 
-    public int getTransaction_id() {
-        return transaction_id;
+    public int getTransactionId() {
+        return transactionId;
     }
 
-    public void setTransaction_id(int transaction_id) {
-        this.transaction_id = transaction_id;
+    public void setTransactionId(int transaction_id) {
+        this.transactionId = transaction_id;
     }
 
     public UserArchive getBuyer() {

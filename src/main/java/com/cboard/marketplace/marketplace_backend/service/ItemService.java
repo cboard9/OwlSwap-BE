@@ -61,21 +61,20 @@ public class ItemService
     //returns an item from its id if it exists and it is available
     public ResponseEntity<?> getItem(int itemId)
     {
-        Optional<Item> optionalItem = dao.findById(itemId);
-
-        if (optionalItem.isEmpty() || !optionalItem.get().isAvailable()) {
-            return new ResponseEntity<>("Item not found...", HttpStatus.NOT_FOUND);
-        }
-
         try
         {
-            ItemDto dto = toDtoFactory.toDto(optionalItem.get());
+            Item item = dao.findByItemId(itemId);
+
+            if (!item.isAvailable())
+                return new ResponseEntity<>("Item not available...", HttpStatus.NOT_FOUND);
+
+            ItemDto dto = toDtoFactory.toDto(item);
             return new ResponseEntity<>(dto, HttpStatus.OK);
         }
-        catch (IllegalAccessException e)
+        catch(Exception e)
         {
             e.printStackTrace();
-            return new ResponseEntity<>("Internal error...", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -117,18 +116,18 @@ public class ItemService
     }
 
 
-    public ResponseEntity<?> updateItem(int itemId, ItemDto dto)
+    public ResponseEntity<String> updateItem(ItemDto dto)
     {
-        if (!dao.existsById(itemId))
+        if (!dao.existsById(dto.getItemId()))
             return new ResponseEntity<>("Item not found", HttpStatus.NOT_FOUND);
 
         try
         {
             Item item = fromDtoFactory.fromDto(dto);
-            item.setItemId(itemId); // Force the ID to match the path variable
+            item.setItemId(dto.getItemId());
 
             dao.save(item);
-            return ResponseEntity.ok("Item updated");
+            return new ResponseEntity<>("Item updated", HttpStatus.OK);
         }
         catch(IllegalAccessException e)
         {

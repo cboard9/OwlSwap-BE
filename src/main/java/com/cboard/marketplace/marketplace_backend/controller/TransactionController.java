@@ -1,14 +1,10 @@
 package com.cboard.marketplace.marketplace_backend.controller;
 
 import com.cboard.marketplace.marketplace_backend.model.*;
-import com.cboard.marketplace.marketplace_backend.service.ItemService;
 
 import com.cboard.marketplace.marketplace_backend.service.TransactionService;
-import com.cboard.marketplace.marketplace_backend.service.UserService;
-import org.apache.catalina.connector.Response;
+import com.cboard.marketplace.marketplace_common.TransactionDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,12 +15,31 @@ import java.util.List;
 public class TransactionController
 {
     @Autowired
-    TransactionService service;
+    TransactionService transactionService;
 
-    @GetMapping("allTransactions")
-    public ResponseEntity<List<Transaction>> getAllTransactions()
+    @GetMapping("all")
+    public ResponseEntity<List<TransactionDto>> getAllTransactions()
     {
-        return service.getAllTransactions();
+        return transactionService.getAllTransactions();
+    }
+
+    @GetMapping("buyer/{id}/all")
+    public ResponseEntity<List<TransactionDto>> getAllTransactionsByBuyer(@PathVariable("id") int buyerId)
+    {
+        return transactionService.getAllTransactionsByBuyer(buyerId);
+    }
+
+    @GetMapping("seller/{id}/all")
+    public ResponseEntity<List<TransactionDto>> getAllTransactionsBySeller(@PathVariable("id") int sellerId)
+    {
+        return transactionService.getAllTransactionsBySeller(sellerId);
+    }
+
+
+    @PostMapping("purchase/{itemId}/{buyerId}")
+    public ResponseEntity<String> purchaseItem(@PathVariable("itemId") int itemId, @PathVariable("buyerId") int buyerId)
+    {
+        return transactionService.purchaseItem(itemId, buyerId);
     }
 
 
