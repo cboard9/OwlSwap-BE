@@ -10,6 +10,7 @@ CREATE table user
     last_name varchar(25) not null,
     email varchar(255),
     username varchar(255) unique not null,
+    average_rating double,
     password varchar(255) not null
 )auto_increment = 1;
 
@@ -20,6 +21,7 @@ CREATE table user_archive
     last_name varchar(25) not null,
     email varchar(255),
     username varchar(255) unique not null,
+    average_rating double,
     is_active boolean
 )auto_increment = 1;
 
@@ -168,7 +170,7 @@ CREATE TRIGGER archive_user
     FOR EACH ROW
 BEGIN
 	INSERT INTO user_archive VALUES
-    (NEW.user_id, NEW.first_name, NEW.last_name, NEW.email, NEW.username, true);
+    (NEW.user_id, NEW.first_name, NEW.last_name, NEW.email, NEW.username, NEW.average_rating, true);
 END $$
 DELIMITER ;
 
@@ -183,23 +185,7 @@ BEGIN
 END $$
 DELIMITER ;
 
-/*
-DELIMITER $$
-CREATE TRIGGER soft_delete_user
-	BEFORE DELETE ON user
-	FOR EACH ROW
-BEGIN
-    -- Perform the update instead of deletion
-    UPDATE user
-    SET is_deleted = TRUE
-    WHERE user_id = OLD.user_id;
 
-    -- Prevent the actual delete by raising an error
-    SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Delete blocked: user marked as deleted instead.';
-END $$
-DELIMITER ;
-*/
 
 
 
@@ -242,24 +228,24 @@ INSERT INTO category (name) VALUES
 ('Furniture');
 
 -- 👤 USERS
-INSERT INTO user (first_name, last_name, email, username, password) VALUES
-('Alice', 'Smith', 'alice@campus.edu', 'alice123', 'passAlice'),
-('Bob', 'Johnson', 'bob@campus.edu', 'bobbyJ', 'passBob'),
-('Charlie', 'Lee', 'charlie@campus.edu', 'charlieL', 'passCharlie'),
-('Diana', 'Miller', 'diana@campus.edu', 'dianaM', 'passDiana');
+INSERT INTO user (first_name, last_name, email, username, average_rating, password) VALUES
+('Alice', 'Smith', 'alice@campus.edu', 'alice123', 3.33, 'passAlice'),
+('Bob', 'Johnson', 'bob@campus.edu', 'bobbyJ', 4.69, 'passBob'),
+('Charlie', 'Lee', 'charlie@campus.edu', 'charlieL', 4.50, 'passCharlie'),
+('Diana', 'Miller', 'diana@campus.edu', 'dianaM', 5.1, 'passDiana');
 
 -- 📦 ITEMS (MIXED TYPES)
 -- Product: Calculator
 INSERT INTO item (name, description, price, user_id, category_id, available, location_id, item_type, image_name, image_type, image_date)
-VALUES ('TI-84 Calculator', 'Gently used graphing calculator.', 45.00, 1, 1, 1, 1, 'product', 'calc.jpg', 'image/jpeg', NULL);
+VALUES ('TI-84 Calculator', 'Gently used graphing calculator.', 45.00, 1, 1, 0, 1, 'product', 'calc.jpg', 'image/jpeg', NULL);
 
 -- Product: Desk Chair
 INSERT INTO item (name, description, price, user_id, category_id, available, location_id, item_type, image_name, image_type, image_date)
-VALUES ('Desk Chair', 'Comfortable ergonomic chair.', 20.00, 2, 5, 1, 2, 'product', 'chair.jpg', 'image/jpeg', NULL);
+VALUES ('Desk Chair', 'Comfortable ergonomic chair.', 20.00, 2, 5, 0, 2, 'product', 'chair.jpg', 'image/jpeg', NULL);
 
 -- Service: Math Tutoring
 INSERT INTO item (name, description, price, user_id, category_id, available, location_id, item_type, image_name, image_type, image_date)
-VALUES ('Math Tutoring', '1-hour session of calculus tutoring.', 25.00, 3, 3, 1, 3, 'service', 'tutor.png', 'image/png', NULL);
+VALUES ('Math Tutoring', '1-hour session of calculus tutoring.', 25.00, 3, 3, 0, 3, 'service', 'tutor.png', 'image/png', NULL);
 
 -- Service: Moving Help
 INSERT INTO item (name, description, price, user_id, category_id, available, location_id, item_type, image_name, image_type, image_date)
@@ -288,13 +274,6 @@ INSERT INTO request (item_id, deadline) VALUES
 (5, '2025-04-20'),  -- Need a Desk
 (6, '2025-04-15');  -- Study Group
 
-/*
--- 💸 TRANSACTIONS
-INSERT INTO transaction (buyer_id, seller_id, payment_type, cost) VALUES
-(3, 1, 'Cash', 45.00),  -- Charlie bought calculator from Alice
-(4, 2, 'Venmo', 25.00), -- Diana paid Bob for tutoring
-(1, 2, 'CashApp', 30.00); -- Alice paid Bob for moving help
-*/
 
 
 -- 💸 TRANSACTIONS
