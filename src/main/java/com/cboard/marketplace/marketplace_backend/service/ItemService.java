@@ -79,21 +79,31 @@ public class ItemService
     }
 
 
-    public ResponseEntity<User> getItemOwner(int itemId)
+    public ResponseEntity<List<ItemDto>> getItemByOwner(int userId)
     {
         try
         {
-            User user = dao.findById(itemId)
-                    .map(Item::getUser)
-                    .orElseThrow(() -> new NoSuchElementException("User not found for item..."));
-
-            return new ResponseEntity<>(user, HttpStatus.OK);
+             List<ItemDto> items = dao.findAllByUser_UserId(userId).stream()
+                    .map(item -> {
+                    try
+                    {
+                        return toDtoFactory.toDto(item);
+                    }
+                    catch(IllegalAccessException e)
+                    {
+                        e.printStackTrace();
+                        throw new RuntimeException("Error converting item to DTO: " + item, e);
+                    }
+                }
+        )
+                .toList();
+            return new ResponseEntity<>(items, HttpStatus.OK);
         }
         catch(Exception e)
         {
             e.printStackTrace();
         }
-        return new ResponseEntity<>(new User(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
 
     }
 

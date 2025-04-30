@@ -48,12 +48,21 @@ public class ItemController
         return service.updateItem(dto);
     }
 
-    @GetMapping("{id}/owner")
+/*    @GetMapping("{id}/owner")
     public ResponseEntity<User> getItemOwner(@PathVariable("id") int itemId)
     {
         return service.getItemOwner(itemId);
 
+    }*/
+
+    @GetMapping("{id}/owner")
+    public ResponseEntity<List<ItemDto>> getItemByOwner(@PathVariable("id") int userId)
+    {
+        return service.getItemByOwner(userId);
+
     }
+
+
 
     //soft deletes an item -- instead of actually deleting an item, turns its available attribute to false
     @DeleteMapping("{id}/delete")
