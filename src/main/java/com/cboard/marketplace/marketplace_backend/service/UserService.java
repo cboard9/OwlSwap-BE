@@ -39,6 +39,21 @@ public class UserService
         return dao.findById(userId);
     }
 
+    public ResponseEntity<String> deleteUser(int userId)
+    {
+        try
+        {
+            User user = dao.findById(userId);
+            dao.delete(user);
+            return new ResponseEntity<>("Account deleted", HttpStatus.OK);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return new ResponseEntity<>("Error deleting user", HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
 
 
