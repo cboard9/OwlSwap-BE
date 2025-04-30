@@ -28,7 +28,10 @@ CREATE table user_archive
 CREATE table location
 (
 	location_id int primary key auto_increment,
-    name varchar(50)
+    name varchar(50) not null,
+    address varchar(255) not null,
+    latitude double,
+    longitude double
 )auto_increment = 1;
 
 -- do we want a whole category table?
@@ -224,11 +227,11 @@ DELIMITER ;
 
 
 -- 🌍 LOCATIONS
-INSERT INTO location (name) VALUES
-('Library Pickup Spot'),
-('Dorm A Lounge'),
-('Campus Center Table'),
-('Gym Locker Area');
+INSERT INTO location (name, address, latitude, longitude) VALUES
+('Library Pickup Spot', '577 Western Ave, Westfield, MA', 42.1268, -72.7550),
+('Dorm A Lounge', 'Dorm A, Westfield State University', 42.1271, -72.7541),
+('Campus Center Table', 'Campus Center, Westfield MA', 42.1284, -72.7560),
+('Gym Locker Area', 'Recreation Center, Westfield MA', 42.1290, -72.7555);
 
 -- 🗂️ CATEGORIES
 INSERT INTO category (name) VALUES
