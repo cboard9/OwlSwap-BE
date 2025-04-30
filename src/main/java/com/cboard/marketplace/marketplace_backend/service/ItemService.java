@@ -83,7 +83,7 @@ public class ItemService
     {
         try
         {
-             List<ItemDto> items = dao.findAllByUser_UserId(userId).stream()
+             List<ItemDto> items = dao.findAllByUser_UserId(userId).stream().filter(Item::isAvailable)
                     .map(item -> {
                     try
                     {
