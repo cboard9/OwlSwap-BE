@@ -12,18 +12,17 @@ public class ProductToDtoMapper implements ItemToDtoMapper<Product>
     }
 
     @Override
-    public ItemDto mapToDto(Product p)
-    {
+    public ItemDto mapToDto(Product p) {
         ProductDto dto = new ProductDto(
                 p.getItemId(),
                 p.getName(),
                 p.getDescription(),
                 p.getPrice(),
-                p.getUser().getUserId(),
-                p.getCategory().getName(),
+                (p.getUser() != null) ? p.getUser().getUserId() : -1,
+                (p.getCategory() != null) ? p.getCategory().getName() : null,
                 p.getReleaseDate(),
                 p.isAvailable(),
-                p.getLocation().getName(),
+                (p.getLocation() != null) ? p.getLocation().getName() : null,
                 p.getItemType(),
                 p.getImage_name(),
                 p.getImage_type(),

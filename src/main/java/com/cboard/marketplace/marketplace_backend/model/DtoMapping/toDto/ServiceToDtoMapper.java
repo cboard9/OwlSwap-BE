@@ -8,18 +8,17 @@ import org.springframework.stereotype.Component;
 public class ServiceToDtoMapper implements ItemToDtoMapper<Service>
 {
     @Override
-    public ItemDto mapToDto(Service s)
-    {
+    public ItemDto mapToDto(Service s) {
         ServiceDto dto = new ServiceDto(
                 s.getItemId(),
                 s.getName(),
                 s.getDescription(),
                 s.getPrice(),
-                s.getUser().getUserId(),
-                s.getCategory().getName(),
+                (s.getUser() != null) ? s.getUser().getUserId() : -1,
+                (s.getCategory() != null) ? s.getCategory().getName() : null,
                 s.getReleaseDate(),
                 s.isAvailable(),
-                s.getLocation().getName(),
+                (s.getLocation() != null) ? s.getLocation().getName() : null,
                 s.getItemType(),
                 s.getImage_name(),
                 s.getImage_type(),

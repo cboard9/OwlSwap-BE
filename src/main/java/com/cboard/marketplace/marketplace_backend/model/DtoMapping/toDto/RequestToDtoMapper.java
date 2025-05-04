@@ -8,18 +8,17 @@ import org.springframework.stereotype.Component;
 public class RequestToDtoMapper implements ItemToDtoMapper<Request>
 {
     @Override
-    public ItemDto mapToDto(Request r)
-    {
+    public ItemDto mapToDto(Request r) {
         RequestDto dto = new RequestDto(
                 r.getItemId(),
                 r.getName(),
                 r.getDescription(),
                 r.getPrice(),
-                r.getUser().getUserId(),
-                r.getCategory().getName(),
+                r.getUser() != null ? r.getUser().getUserId() : -1,
+                r.getCategory() != null ? r.getCategory().getName() : null,
                 r.getReleaseDate(),
                 r.isAvailable(),
-                r.getLocation().getName(),
+                r.getLocation() != null ? r.getLocation().getName() : null,
                 r.getItemType(),
                 r.getImage_name(),
                 r.getImage_type(),

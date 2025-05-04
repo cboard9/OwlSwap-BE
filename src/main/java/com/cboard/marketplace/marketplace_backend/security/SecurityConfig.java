@@ -32,9 +32,9 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // .requestMatchers("/api/auth/**").permitAll()
-                        // .anyRequest().authenticated());
-                                .anyRequest().permitAll()); // delete this and uncomment above to turn auth back on
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .anyRequest().authenticated());
+                                // .anyRequest().permitAll()); // delete this and uncomment above to turn auth back on
 
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

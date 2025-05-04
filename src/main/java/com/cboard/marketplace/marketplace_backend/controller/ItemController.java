@@ -71,5 +71,10 @@ public class ItemController
         return service.deleteItem(itemId);
     }
 
+    @GetMapping("types")
+    public ResponseEntity<List<String>> getItemTypes() {
+        List<String> itemTypes = List.of("Product", "Service", "Request");
+        return ResponseEntity.ok(itemTypes);
+    }
 
 }
