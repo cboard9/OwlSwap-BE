@@ -1,9 +1,11 @@
 package com.cboard.marketplace.marketplace_backend.controller;
 
 import com.cboard.marketplace.marketplace_backend.model.*;
+import com.cboard.marketplace.marketplace_backend.service.CategoryService;
 import com.cboard.marketplace.marketplace_backend.service.ItemService;
 import com.cboard.marketplace.marketplace_common.*;
 
+import com.cboard.marketplace.marketplace_common.CategoryDto;
 import jakarta.validation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,9 @@ public class ItemController
 {
     @Autowired
     ItemService service;
+
+    @Autowired
+    private CategoryService categoryService;
 
     //returns all available items
     @GetMapping("all")
@@ -77,4 +82,8 @@ public class ItemController
         return ResponseEntity.ok(itemTypes);
     }
 
+    @GetMapping("/categories")
+    public List<CategoryDto> getAllCategories() {
+        return categoryService.getAll();
+    }
 }
