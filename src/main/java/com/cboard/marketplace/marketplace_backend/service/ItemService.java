@@ -5,11 +5,8 @@ import com.cboard.marketplace.marketplace_backend.dao.ItemDao;
 import com.cboard.marketplace.marketplace_backend.model.DtoMapping.fromDto.DtoToItemFactory;
 import com.cboard.marketplace.marketplace_backend.model.DtoMapping.toDto.ItemToDtoFactory;
 import com.cboard.marketplace.marketplace_backend.model.Item;
-import com.cboard.marketplace.marketplace_backend.model.User;
 import com.cboard.marketplace.marketplace_common.ItemDto;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,8 +14,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 public class ItemService
@@ -147,12 +142,21 @@ public class ItemService
 
     }
 
-    public ResponseEntity<String> deleteItem(int itemId)
+    public ResponseEntity<String> softDeleteItem(int itemId)
     {
         if(!dao.existsById(itemId))
             return new ResponseEntity<>("Item not found", HttpStatus.NOT_FOUND);
 
         dao.softDeleteItem(itemId);
+        return new ResponseEntity<>("Item deleted", HttpStatus.OK);
+    }
+
+    public ResponseEntity<String> deleteItem(int itemId)
+    {
+        if(!dao.existsById(itemId))
+            return new ResponseEntity<>("Item not found", HttpStatus.NOT_FOUND);
+
+        dao.delete(dao.findByItemId(itemId));
         return new ResponseEntity<>("Item deleted", HttpStatus.OK);
     }
 }
