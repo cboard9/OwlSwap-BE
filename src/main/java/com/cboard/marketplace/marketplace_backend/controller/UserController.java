@@ -57,6 +57,27 @@ public class UserController
         return ResponseEntity.ok(userDto);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getUserById(@PathVariable("id") int userId) {
+        User user = userDao.findById(userId);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Double avgRating = ratingService.calculateAverageRating(user.getUserId());
+        user.setAverageRating(avgRating);
+
+        UserDto userDto = new UserDto(
+                user.getUserId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getUsername(),
+                user.getAverageRating()
+        );
+        return ResponseEntity.ok(userDto);
+    }
+
     @PostMapping("/api/rate/{userId}")
     public ResponseEntity<String> rateUser(@PathVariable int userId, @RequestParam double score) {
         return ratingService.addRating(userId, score);
