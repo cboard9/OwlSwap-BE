@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -158,5 +160,64 @@ public class ItemService
 
         dao.delete(dao.findByItemId(itemId));
         return new ResponseEntity<>("Item deleted", HttpStatus.OK);
+    }
+
+    public ResponseEntity<String> uploadImage(int itemId, MultipartFile file) throws IOException
+    {
+        Item item = dao.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+
+        item.setImage_name(file.getOriginalFilename());
+        item.setImage_type(file.getContentType());
+        item.setImage_date(file.getBytes());
+
+        dao.save(item);
+        return ResponseEntity.ok("Image uploaded");
+    }
+
+    public ResponseEntity<String> addItemWithImage(ItemDto dto, MultipartFile image) throws IOException
+    {
+        try
+        {
+            Item item = fromDtoFactory.fromDto(dto);
+            if(item.getReleaseDate() == null)
+                item.setReleaseDate(String.valueOf(LocalDate.now()));
+
+            item.setImage_name(image.getOriginalFilename());
+            item.setImage_type(image.getContentType());
+            item.setImage_date(image.getBytes());
+            dao.save(item);
+
+            return new ResponseEntity<>("Item created with image!", HttpStatus.CREATED);
+        }
+        catch(IllegalAccessException e)
+        {
+            e.printStackTrace();
+            throw new RuntimeException("Error converting DTO to item: " + dto, e);
+        }
+    }
+
+    public ResponseEntity<String> updateItemWithImage(ItemDto dto, MultipartFile image) throws IOException
+    {
+        if (!dao.existsById(dto.getItemId()))
+            return new ResponseEntity<>("Item not found", HttpStatus.NOT_FOUND);
+
+        try
+        {
+            Item item = fromDtoFactory.fromDto(dto);
+            item.setItemId(dto.getItemId());
+
+            item.setImage_name(image.getOriginalFilename());
+            item.setImage_type(image.getContentType());
+            item.setImage_date(image.getBytes());
+
+            dao.save(item);
+            return new ResponseEntity<>("Item updated with image", HttpStatus.OK);
+        }
+        catch(IllegalAccessException e)
+        {
+            e.printStackTrace();
+            return new ResponseEntity<>("Illegal access error", HttpStatus.BAD_REQUEST);
+        }
     }
 }

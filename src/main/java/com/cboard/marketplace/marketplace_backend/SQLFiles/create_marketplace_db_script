@@ -55,7 +55,7 @@ CREATE Table item
     item_type varchar(50) not null,
     image_name varchar(255),
     image_type varchar(100),
-    image_date varbinary(255),
+    image_date LONGBLOB,
 
 	CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES user(user_id)
 		ON DELETE CASCADE -- if a user, all the items they own (have listed) are deleted
