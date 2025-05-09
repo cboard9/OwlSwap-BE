@@ -56,12 +56,21 @@ public class ItemController
         return service.updateItem(dto);
     }
 
-/*    @GetMapping("{id}/owner")
-    public ResponseEntity<User> getItemOwner(@PathVariable("id") int itemId)
+    @PutMapping("update/with-image")
+    public ResponseEntity<String> updateItemWithImage(@Valid @RequestPart("item") ItemDto dto, @RequestPart("image") MultipartFile image)
     {
-        return service.getItemOwner(itemId);
+        try
+        {
+            return service.updateItemWithImage(dto, image);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
+        }
+    }
 
-    }*/
+
 
     @GetMapping("{id}/owner")
     public ResponseEntity<List<ItemDto>> getItemByOwner(@PathVariable("id") int userId)

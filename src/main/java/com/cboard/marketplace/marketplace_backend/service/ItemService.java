@@ -196,4 +196,28 @@ public class ItemService
             throw new RuntimeException("Error converting DTO to item: " + dto, e);
         }
     }
+
+    public ResponseEntity<String> updateItemWithImage(ItemDto dto, MultipartFile image) throws IOException
+    {
+        if (!dao.existsById(dto.getItemId()))
+            return new ResponseEntity<>("Item not found", HttpStatus.NOT_FOUND);
+
+        try
+        {
+            Item item = fromDtoFactory.fromDto(dto);
+            item.setItemId(dto.getItemId());
+
+            item.setImage_name(image.getOriginalFilename());
+            item.setImage_type(image.getContentType());
+            item.setImage_date(image.getBytes());
+
+            dao.save(item);
+            return new ResponseEntity<>("Item updated with image", HttpStatus.OK);
+        }
+        catch(IllegalAccessException e)
+        {
+            e.printStackTrace();
+            return new ResponseEntity<>("Illegal access error", HttpStatus.BAD_REQUEST);
+        }
+    }
 }
