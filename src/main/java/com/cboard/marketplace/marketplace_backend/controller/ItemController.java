@@ -7,11 +7,14 @@ import com.cboard.marketplace.marketplace_common.*;
 
 import com.cboard.marketplace.marketplace_common.CategoryDto;
 import jakarta.validation.*;
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -65,6 +68,37 @@ public class ItemController
     {
         return service.getItemByOwner(userId);
 
+    }
+
+    //upload an image
+    @PostMapping("{id}/upload-image")
+    public ResponseEntity<String> uploadImage(@PathVariable("id") int itemId, @RequestParam("file")MultipartFile file)
+    {
+        try
+        {
+            return service.uploadImage(itemId, file);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    //upload image and item at same time
+    @PostMapping("add/with-image")
+    public ResponseEntity<String> addItemWithImage(@RequestPart("item") ItemDto dto, @RequestPart("image") MultipartFile image)
+    {
+        try
+        {
+            return service.addItemWithImage(dto, image);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
+        }
     }
 
 
