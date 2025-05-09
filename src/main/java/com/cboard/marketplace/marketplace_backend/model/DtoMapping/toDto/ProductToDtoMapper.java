@@ -30,6 +30,10 @@ public class ProductToDtoMapper implements ItemToDtoMapper<Product>
                 p.getQuantity(),
                 p.getBrand()
         );
+
+        if (p.getLocation() != null) {
+            dto.setLocationId(p.getLocation().getLocationId());
+        }
         return dto;
     }
 

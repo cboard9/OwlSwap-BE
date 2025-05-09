@@ -228,10 +228,10 @@ DELIMITER ;
 
 -- 🌍 LOCATIONS
 INSERT INTO location (name, address, latitude, longitude) VALUES
-('Library Pickup Spot', '577 Western Ave, Westfield, MA', 42.1268, -72.7550),
-('Dorm A Lounge', 'Dorm A, Westfield State University', 42.1271, -72.7541),
-('Campus Center Table', 'Campus Center, Westfield MA', 42.1284, -72.7560),
-('Gym Locker Area', 'Recreation Center, Westfield MA', 42.1290, -72.7555);
+('Library', '577 Western Ave, Westfield, MA', 42.132788, -72.796107),
+('New Hall', 'Dorm A, Westfield State University', 42.131639, -72.792583),
+('DC', 'Campus Center, Westfield MA', 42.131885, -72.795549),
+('Gym', 'Recreation Center, Westfield MA', 42.133139, -72.796361);
 
 -- 🗂️ CATEGORIES
 INSERT INTO category (name) VALUES

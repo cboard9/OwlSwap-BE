@@ -22,4 +22,9 @@ public class LocationController {
         System.out.println("Authorization Header: " + authHeader);
         return locationRepository.findAll();
     }
+
+    @GetMapping("/locations/{id}")
+    public Location getLocationById(@PathVariable int id) {
+        return locationRepository.findById(id).orElse(null);
+    }
 }

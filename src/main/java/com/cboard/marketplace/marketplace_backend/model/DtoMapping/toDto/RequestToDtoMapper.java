@@ -25,6 +25,10 @@ public class RequestToDtoMapper implements ItemToDtoMapper<Request>
                 r.getImage_date(),
                 r.getDeadline()
         );
+
+        if (r.getLocation() != null) {
+            dto.setLocationId(r.getLocation().getLocationId());
+        }
         return dto;
     }
 

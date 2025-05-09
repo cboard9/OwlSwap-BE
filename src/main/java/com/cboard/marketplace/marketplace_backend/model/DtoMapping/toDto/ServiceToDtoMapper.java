@@ -25,6 +25,10 @@ public class ServiceToDtoMapper implements ItemToDtoMapper<Service>
                 s.getImage_date(),
                 s.getDurationMinutes()
         );
+
+        if (s.getLocation() != null) {
+            dto.setLocationId(s.getLocation().getLocationId());
+        }
         return dto;
     }
 
