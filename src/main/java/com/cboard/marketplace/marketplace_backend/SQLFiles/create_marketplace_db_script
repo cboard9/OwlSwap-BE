@@ -326,5 +326,5 @@ INSERT INTO rating (user_id, score) VALUES (2, 4.58);
 INSERT INTO rating (user_id, score) VALUES (3, 4.0);
 INSERT INTO rating (user_id, score) VALUES (3, 5.0);
 
--- Diana (5.1 avg)
+-- Diana (4.9 avg)
 INSERT INTO rating (user_id, score) VALUES (4, 4.9);
