@@ -59,8 +59,8 @@ public class UserController
     }
 
     @PostMapping("/api/rate/{userId}")
-    public ResponseEntity<String> rateUser(@PathVariable int userId, @RequestParam double score) {
-        return ratingService.addRating(userId, score);
+    public ResponseEntity<String> rateUser(@PathVariable int userId, @RequestParam double rating) {
+        return ratingService.addRating(userId, rating);
     }
 
     @DeleteMapping("{id}/delete")

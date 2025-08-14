@@ -5,8 +5,11 @@ import com.cboard.marketplace.marketplace_backend.model.*;
 import com.cboard.marketplace.marketplace_backend.model.Dto.TransactionDto;
 import com.cboard.marketplace.marketplace_backend.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -24,15 +27,15 @@ public class TransactionController
     }
 
     @GetMapping("buyer/{id}/all")
-    public ResponseEntity<List<TransactionDto>> getAllTransactionsByBuyer(@PathVariable("id") int buyerId)
+    public ResponseEntity<Page<TransactionDto>> getAllTransactionsByBuyer(@PathVariable("id") int buyerId, @PageableDefault(size=6) Pageable pageable)
     {
-        return transactionService.getAllTransactionsByBuyer(buyerId);
+        return transactionService.getAllTransactionsByBuyer(buyerId, pageable);
     }
 
     @GetMapping("seller/{id}/all")
-    public ResponseEntity<List<TransactionDto>> getAllTransactionsBySeller(@PathVariable("id") int sellerId)
+    public ResponseEntity<Page<TransactionDto>> getAllTransactionsBySeller(@PathVariable("id") int sellerId, @PageableDefault(size=6) Pageable pageable)
     {
-        return transactionService.getAllTransactionsBySeller(sellerId);
+        return transactionService.getAllTransactionsBySeller(sellerId, pageable);
     }
 
 

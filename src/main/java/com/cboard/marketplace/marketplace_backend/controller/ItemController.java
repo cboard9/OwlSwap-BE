@@ -102,9 +102,9 @@ public class ItemController
 
 
     @GetMapping("{id}/owner")
-    public ResponseEntity<List<ItemDto>> getItemByOwner(@PathVariable("id") int userId)
+    public ResponseEntity<Page<ItemDto>> getItemByOwner(@PathVariable("id") int userId, @PageableDefault(size=6) Pageable pageable)
     {
-        return service.getItemByOwner(userId);
+        return service.getItemByOwner(userId, pageable);
 
     }
 

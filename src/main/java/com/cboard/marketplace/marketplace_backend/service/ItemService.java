@@ -13,6 +13,7 @@ import com.cboard.marketplace.marketplace_backend.model.DtoMapping.toDto.ItemToD
 import com.cboard.marketplace.marketplace_backend.model.Item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -93,10 +94,13 @@ public class ItemService {
     }
 
 
-    public ResponseEntity<List<ItemDto>> getItemByOwner(int userId) {
+    public ResponseEntity<Page<ItemDto>> getItemByOwner(int userId, Pageable pageable) {
+        Page<ItemDto> dtos = null;
         try {
-            List<ItemDto> items = dao.findAllByUser_UserId(userId).stream().filter(Item::isAvailable)
-                    .map(item -> {
+            Page<Item> items = dao.findByUserUserIdAndAvailableTrue(userId, pageable);
+            dtos =
+            //List<ItemDto> items = dao.findAllByUser_UserId(userId).stream().filter(Item::isAvailable)
+                    items.map(item -> {
                                 try {
                                     return toDtoFactory.toDto(item);
                                 } catch (IllegalAccessException e) {
@@ -105,12 +109,12 @@ public class ItemService {
                                 }
                             }
                     )
-                    .toList();
-            return new ResponseEntity<>(items, HttpStatus.OK);
+                    ;
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
 
     }
 

@@ -1,12 +1,17 @@
 package com.cboard.marketplace.marketplace_backend.model.Dto;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class RequestDto extends ItemDto
 {
+
+
+    @Pattern(regexp = "^\\d{4}/\\d{2}/\\d{2}$", message = "Deadline must be YYYY/MM/DD")
+
     @NotNull(message = "Deadline is required...")
     private String deadline;
 

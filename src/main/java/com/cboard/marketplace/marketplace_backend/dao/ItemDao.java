@@ -18,6 +18,7 @@ public interface ItemDao extends JpaRepository<Item, Integer>
     Item findByItemId(int itemId);
 
     List<Item> findAllByUser_UserId(int userId);
+    Page<Item> findByUserUserIdAndAvailableTrue(Integer userId, Pageable pageable);
     Page<Item> findByAvailableTrueAndUserUserIdNot(Integer userId, Pageable pageable);
 
    // Page<Item> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(Integer userId, String nameKeyword, String descriptionKeyword, Pageable pageable);
