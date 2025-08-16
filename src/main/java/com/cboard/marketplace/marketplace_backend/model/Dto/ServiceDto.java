@@ -1,14 +1,18 @@
 package com.cboard.marketplace.marketplace_backend.model.Dto;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ServiceDto extends ItemDto
 {
     @NotNull(message = "Duration is required...")
-    private Integer durationMinutes;
+    @Min(value = 0, message = "Duration cannot be less than 0...")
+    private Integer durationMinutes = 0;
 
     public ServiceDto() {
     }
@@ -26,9 +30,9 @@ public class ServiceDto extends ItemDto
     }
 
     @Override
-    public Map<String, String> getSpecificFields() {
-        Map<String, String> fields = new LinkedHashMap<>();
-        fields.put("Duration [minutes]", String.valueOf(durationMinutes));
+    public Map<String, Serializable> getSpecificFields() {
+        Map<String, Serializable> fields = new LinkedHashMap<>();
+        fields.put("Duration [minutes]", durationMinutes);
         return fields;
     }
 
@@ -44,12 +48,12 @@ public class ServiceDto extends ItemDto
         }
     }
 
-    public int getDurationMinutes()
+    public Integer getDurationMinutes()
     {
         return durationMinutes;
     }
 
-    public void setDurationMinutes(int durationMinutes)
+    public void setDurationMinutes(Integer durationMinutes)
     {
         this.durationMinutes = durationMinutes;
     }

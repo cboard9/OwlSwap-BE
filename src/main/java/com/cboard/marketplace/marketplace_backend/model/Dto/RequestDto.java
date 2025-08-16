@@ -3,6 +3,9 @@ package com.cboard.marketplace.marketplace_backend.model.Dto;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -13,7 +16,7 @@ public class RequestDto extends ItemDto
     @Pattern(regexp = "^\\d{4}/\\d{2}/\\d{2}$", message = "Deadline must be YYYY/MM/DD")
 
     @NotNull(message = "Deadline is required...")
-    private String deadline;
+    private String deadline = "";
 
     public RequestDto() {
     }
@@ -34,8 +37,8 @@ public class RequestDto extends ItemDto
 
 
     @Override
-    public Map<String, String> getSpecificFields() {
-        Map<String, String> fields = new LinkedHashMap<>();
+    public Map<String, Serializable> getSpecificFields() {
+        Map<String, Serializable> fields = new LinkedHashMap<>();
         fields.put("Deadline", deadline);
         return fields;
     }

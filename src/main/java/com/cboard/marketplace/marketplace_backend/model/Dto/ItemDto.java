@@ -1,9 +1,13 @@
 package com.cboard.marketplace.marketplace_backend.model.Dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeId;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.*;
+
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 
@@ -48,7 +52,7 @@ public abstract class ItemDto
     private String image_name;
     private String image_type;
     private byte[] image_date;
-    private Map<@NotBlank String, @NotBlank(message="Value cannot be blank") String> specificFields;
+    private Map<@NotBlank String, @NotNull(message="Value cannot be blank") Object> specificFields;
 
 
 
@@ -90,7 +94,7 @@ public abstract class ItemDto
         this.image_date = image_date;
     }
 
-    public Map<String, String> getSpecificFields() {
+    public Map<String, Serializable> getSpecificFields() {
         return Collections.emptyMap(); // base class default
     }
 
@@ -100,6 +104,7 @@ public abstract class ItemDto
 
     }
 
+    @JsonIgnore
     public String getSimpleName()
     {
         return "";
@@ -185,7 +190,7 @@ public abstract class ItemDto
         this.locationId = locationId;
     }
 
-    @JsonTypeId //prevents duplication when fetching from database ?
+    //@JsonTypeId //prevents duplication when fetching from database ?
     public String getItemType() {
         return itemType;
     }

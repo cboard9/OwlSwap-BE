@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -197,19 +198,30 @@ public class ItemService {
     }
 
     public ResponseEntity<String> updateItemWithImage(ItemDto dto, MultipartFile image) throws IOException {
-        if (!dao.existsById(dto.getItemId()))
+        int itemId = dto.getItemId();
+        Item existingItem = dao.findByItemId(itemId);
+        if (existingItem == null)
             return new ResponseEntity<>("Item not found", HttpStatus.NOT_FOUND);
 
         try {
+
             Item item = fromDtoFactory.fromDto(dto);
             item.setItemId(dto.getItemId());
 
-            item.setImage_name(image.getOriginalFilename());
-            item.setImage_type(image.getContentType());
-            item.setImage_date(image.getBytes());
+            if(image != null && !image.isEmpty()) {
+                item.setImage_name(image.getOriginalFilename());
+                item.setImage_type(image.getContentType());
+                item.setImage_date(image.getBytes());
+            }
+            else
+            {
+                item.setImage_name(existingItem.getImage_name());
+                item.setImage_type(existingItem.getImage_type());
+                item.setImage_date(existingItem.getImage_date());
+            }
 
             dao.save(item);
-            return new ResponseEntity<>("Item updated with image", HttpStatus.OK);
+            return new ResponseEntity<>("Item updated", HttpStatus.OK);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             return new ResponseEntity<>("Illegal access error", HttpStatus.BAD_REQUEST);
@@ -266,15 +278,19 @@ public class ItemService {
                 String typeName = instance.getSimpleName();
 
                 // call its getSpecificFields() → Map<String,String>
-                Map<String,String> spec = instance.getSpecificFields();
+                Map<String, Serializable> spec = instance.getSpecificFields();
 
                 // turn that into a List<FieldSchema>
                 List<FieldSchema> fieldList = new ArrayList<>();
                 for (String key : spec.keySet()) {
+                    System.out.println(spec.get(key).getClass().getSimpleName());
+                    System.out.println("Key: " + key);
+                    System.out.println("Value: " + spec.get(key));
                     fieldList.add(new FieldSchema(
                             key,
                             key,        // if you need a prettier label, store it in the class or use a naming strategy
-                            "string"    // you could guess “number” if the value is numeric, etc.
+                            spec.get(key).getClass().getSimpleName() // you could guess “number” if the value is numeric, etc.
+
                     ));
                 }
 
@@ -288,35 +304,3 @@ public class ItemService {
         return new ResponseEntity<>(schemas, HttpStatus.OK);
     }
 }
-
-/*
-
-    public ResponseEntity<Page<ItemDto>> itemsByCat(String category, Pageable pageable)
-    {
-        Integer userId = userService.getProfile().getBody().getUserId();
-
-        Page<Item> items = dao.findByCategoryNameAndAvailableTrueAndUserUserIdNot(category, userId, pageable);
-
-        if(items.isEmpty())
-            return new ResponseEntity<>(Page.empty(pageable), HttpStatus.OK);
-
-        Page<ItemDto> dtoPage = items
-                .map(item -> {
-                            try
-                            {
-
-                                return toDtoFactory.toDto(item);
-                            }
-                            catch(IllegalAccessException e)
-                            {
-                                e.printStackTrace();
-                                throw new RuntimeException("Error converting item to DTO: " + item, e);
-                            }
-                        }
-                )
-                ;
-
-        return new ResponseEntity<>(dtoPage, HttpStatus.OK);
-    }
-}
-*/

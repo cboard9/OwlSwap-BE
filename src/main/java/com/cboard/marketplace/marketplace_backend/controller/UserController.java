@@ -59,7 +59,7 @@ public class UserController
     }
 
     @PostMapping("/api/rate/{userId}")
-    public ResponseEntity<String> rateUser(@PathVariable int userId, @RequestParam double rating) {
+    public ResponseEntity<String> rateUser(@PathVariable int userId, @RequestBody double rating) {
         return ratingService.addRating(userId, rating);
     }
 
