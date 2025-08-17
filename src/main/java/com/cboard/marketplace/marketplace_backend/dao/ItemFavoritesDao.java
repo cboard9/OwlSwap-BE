@@ -14,5 +14,7 @@ public interface ItemFavoritesDao extends JpaRepository<ItemFavorite, ItemFavori
 {
     List<ItemFavorite> findByItemItemId(int itemId);
     Page<ItemFavorite> findByUserUserId(int userId, Pageable pageable);
+    ItemFavorite findItemFavoriteByItemFavoriteId(ItemFavoriteId itemFavoriteId);
+
 
 }

@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 
 
@@ -32,5 +29,17 @@ public class ItemFavoritesController
     public ResponseEntity<Page<ItemDto>> getItemFavoritesByUser(@PathVariable("id") int userId, @PageableDefault(size = 6) Pageable pageable)
     {
         return service.getItemFavoritesByUser(userId, pageable);
+    }
+
+    @PostMapping("add/user{userId}/item{itemId}")
+    public ResponseEntity<String> addFavorite(@PathVariable("userId") int userId, @PathVariable("itemId") int itemId)
+    {
+        return service.addFavorite(userId, itemId);
+    }
+
+    @DeleteMapping("delete/user{userId}/item{itemId}")
+    public ResponseEntity<String> deleteFavorite(@PathVariable("userId") int userId, @PathVariable("itemId") int itemId)
+    {
+        return service.deleteFavorite(userId, itemId);
     }
 }
