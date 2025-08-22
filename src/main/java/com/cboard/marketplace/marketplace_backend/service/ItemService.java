@@ -2,6 +2,7 @@ package com.cboard.marketplace.marketplace_backend.service;
 
 import com.cboard.marketplace.marketplace_backend.dao.ItemDao;
 
+import com.cboard.marketplace.marketplace_backend.dao.ItemImageDao;
 import com.cboard.marketplace.marketplace_backend.model.Dto.ItemDto;
 import com.cboard.marketplace.marketplace_backend.model.Dto.ItemMetadata.FieldSchema;
 import com.cboard.marketplace.marketplace_backend.model.Dto.ItemMetadata.ItemTypeSchema;
@@ -11,6 +12,7 @@ import com.cboard.marketplace.marketplace_backend.model.Dto.ServiceDto;
 import com.cboard.marketplace.marketplace_backend.model.DtoMapping.fromDto.DtoToItemFactory;
 import com.cboard.marketplace.marketplace_backend.model.DtoMapping.toDto.ItemToDtoFactory;
 import com.cboard.marketplace.marketplace_backend.model.Item;
+import com.cboard.marketplace.marketplace_backend.model.ItemImage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -33,6 +35,8 @@ public class ItemService {
     ItemDao dao;
     @Autowired
     UserService userService;
+    @Autowired
+    ItemImageDao itemImageDao;
     private final ItemToDtoFactory toDtoFactory;
     private final DtoToItemFactory fromDtoFactory;
 
@@ -167,7 +171,7 @@ public class ItemService {
         return new ResponseEntity<>("Item deleted", HttpStatus.OK);
     }
 
-    public ResponseEntity<String> uploadImage(int itemId, MultipartFile file) throws IOException {
+/*    public ResponseEntity<String> uploadImage(int itemId, MultipartFile file) throws IOException {
         Item item = dao.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Item not found"));
 
@@ -177,9 +181,9 @@ public class ItemService {
 
         dao.save(item);
         return ResponseEntity.ok("Image uploaded");
-    }
+    }*/
 
-    public ResponseEntity<String> addItemWithImage(ItemDto dto, MultipartFile image) throws IOException {
+/*    public ResponseEntity<String> addItemWithImage(ItemDto dto, MultipartFile image) throws IOException {
         try {
             Item item = fromDtoFactory.fromDto(dto);
             if (item.getReleaseDate() == null)
@@ -195,9 +199,32 @@ public class ItemService {
             e.printStackTrace();
             throw new RuntimeException("Error converting DTO to item: " + dto, e);
         }
+    }*/
+    public ResponseEntity<String> addItemWithImages(ItemDto dto, List<MultipartFile> images) throws IOException {
+        try {
+            Item item = fromDtoFactory.fromDto(dto);
+            if (item.getReleaseDate() == null)
+                item.setReleaseDate(String.valueOf(LocalDate.now()));
+
+            for(MultipartFile file : images)
+            {
+                ItemImage image = new ItemImage();
+                image.setImage_name(file.getOriginalFilename());
+                image.setImage_type(file.getContentType());
+                image.setImage_date(file.getBytes());
+                ItemImage savedImage = itemImageDao.save(image);
+                item.addImage(savedImage);
+            }
+            dao.save(item);
+
+            return new ResponseEntity<>("Item created with image!", HttpStatus.CREATED);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error converting DTO to item: " + dto, e);
+        }
     }
 
-    public ResponseEntity<String> updateItemWithImage(ItemDto dto, MultipartFile image) throws IOException {
+/*    public ResponseEntity<String> updateItemWithImage(ItemDto dto, MultipartFile image) throws IOException {
         int itemId = dto.getItemId();
         Item existingItem = dao.findByItemId(itemId);
         if (existingItem == null)
@@ -218,6 +245,42 @@ public class ItemService {
                 item.setImage_name(existingItem.getImage_name());
                 item.setImage_type(existingItem.getImage_type());
                 item.setImage_date(existingItem.getImage_date());
+            }
+
+            dao.save(item);
+            return new ResponseEntity<>("Item updated", HttpStatus.OK);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Illegal access error", HttpStatus.BAD_REQUEST);
+        }
+    }*/
+
+    public ResponseEntity<String> updateItemWithImages(ItemDto dto, List<MultipartFile> images) throws IOException {
+        int itemId = dto.getItemId();
+        Item existingItem = dao.findByItemId(itemId);
+        if (existingItem == null)
+            return new ResponseEntity<>("Item not found", HttpStatus.NOT_FOUND);
+
+        try {
+
+            Item item = fromDtoFactory.fromDto(dto);
+            item.setItemId(dto.getItemId());
+
+            if(images != null && !images.isEmpty()) {
+                for(MultipartFile file : images)
+                {
+                    ItemImage image = new ItemImage();
+                    image.setImage_name(file.getOriginalFilename());
+                    image.setImage_type(file.getContentType());
+                    image.setImage_date(file.getBytes());
+                    ItemImage savedImage = itemImageDao.save(image);
+                    item.addImage(savedImage);
+                }
+            }
+            else
+            {
+                for(ItemImage image : existingItem.getImages())
+                    item.addImage(image);
             }
 
             dao.save(item);

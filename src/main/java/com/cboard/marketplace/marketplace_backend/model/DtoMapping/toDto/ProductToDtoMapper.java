@@ -3,11 +3,17 @@ package com.cboard.marketplace.marketplace_backend.model.DtoMapping.toDto;
 
 import com.cboard.marketplace.marketplace_backend.model.*;
 import com.cboard.marketplace.marketplace_backend.model.Dto.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class ProductToDtoMapper implements ItemToDtoMapper<Product>
 {
+    @Autowired
+    ImageToDtoMapper imageMapper;
     public ProductToDtoMapper() {
     }
 
@@ -25,12 +31,18 @@ public class ProductToDtoMapper implements ItemToDtoMapper<Product>
                 (p.getLocation() != null) ? p.getLocation().getName() : null,
                 (p.getLocation() != null) ? p.getLocation().getLocationId() : null,
                 p.getItemType(),
-                p.getImage_name(),
+                new ArrayList<>(),
+                /*p.getImage_name(),
                 p.getImage_type(),
-                p.getImage_date(),
+                p.getImage_date(),*/
                 p.getQuantity(),
                 p.getBrand()
         );
+
+        List<ItemImageDto> images = new ArrayList<>();
+        for(ItemImage img : p.getImages())
+            images.add(imageMapper.mapToDto(img));
+        dto.setImages(images);
 
         if (p.getLocation() != null) {
             dto.setLocationId(p.getLocation().getLocationId());

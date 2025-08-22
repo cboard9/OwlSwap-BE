@@ -86,7 +86,7 @@ public class ItemController
     }
 
 
-    @PutMapping(
+/*    @PutMapping(
             value = "update/with-image",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
@@ -105,6 +105,28 @@ public class ItemController
             e.printStackTrace();
             return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
         }
+    }*/
+    @PutMapping(
+            value = "update/with-images",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<String> updateItemWithImage(
+            @Valid @RequestPart("item") ItemDto dto,
+            @RequestPart(value = "image", required = false) List<MultipartFile> images)
+    {
+        System.out.println(
+                dto.getSpecificFields()
+        );
+
+        try
+        {
+            return service.updateItemWithImages(dto, images);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
+        }
     }
 
 
@@ -117,7 +139,7 @@ public class ItemController
     }
 
     //upload an image
-    @PostMapping("{id}/upload-image")
+/*    @PostMapping("{id}/upload-image")
     public ResponseEntity<String> uploadImage(@PathVariable("id") int itemId, @RequestParam("file")MultipartFile file)
     {
         try
@@ -129,11 +151,12 @@ public class ItemController
             e.printStackTrace();
             return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
         }
-    }
+    }*/
+
 
 
     //upload image and item at same time
-    @PostMapping(
+/*    @PostMapping(
             value = "add/with-image",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
@@ -155,6 +178,35 @@ public class ItemController
         try
         {
             return service.addItemWithImage(dto, image);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
+        }
+    }*/
+    @PostMapping(
+            value = "add/with-images",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<?> addItemWithImage(
+            @RequestPart("item") @Valid ItemDto dto,
+            @RequestPart("images") List<MultipartFile> images)
+    {
+        Set<ConstraintViolation<ItemDto>> violations = validator.validate(dto);
+        if (!violations.isEmpty()) {
+            Map<String, String> errors = violations.stream()
+                    .collect(Collectors.toMap(
+                            v -> v.getPropertyPath().toString(),
+                            ConstraintViolation::getMessage,
+                            (a,b)->a
+                    ));
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+
+        try
+        {
+            return service.addItemWithImages(dto, images);
         }
         catch(Exception e)
         {

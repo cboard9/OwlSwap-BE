@@ -1,5 +1,6 @@
 package com.cboard.marketplace.marketplace_backend.model.Dto;
 
+import com.cboard.marketplace.marketplace_backend.model.ItemImage;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,6 +9,7 @@ import jakarta.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ProductDto extends ItemDto
@@ -20,9 +22,16 @@ public class ProductDto extends ItemDto
     public ProductDto() {
     }
 
-    public ProductDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, String image_name, String image_type, byte[] image_date, Integer quantity, String brand)
+/*    public ProductDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, String image_name, String image_type, byte[] image_date, Integer quantity, String brand)
     {
         super(itemId, name, description, price, userId, category, releaseDate, available, location, locationId, itemType, image_name, image_type, image_date);
+        this.quantity = quantity;
+        this.brand = brand;
+    }*/
+
+    public ProductDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, List<ItemImageDto> images, Integer quantity, String brand)
+    {
+        super(itemId, name, description, price, userId, category, releaseDate, available, location, locationId, itemType, images);
         this.quantity = quantity;
         this.brand = brand;
     }

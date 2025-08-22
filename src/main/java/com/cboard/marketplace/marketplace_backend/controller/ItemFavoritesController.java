@@ -31,6 +31,12 @@ public class ItemFavoritesController
         return service.getItemFavoritesByUser(userId, pageable);
     }
 
+    @GetMapping("is-favorite/user{userId}/item{itemId}")
+    public ResponseEntity<Boolean> getIsFavorite(@PathVariable("userId") int userId, @PathVariable("itemId") int itemId)
+    {
+        return service.getIsFavorite(userId, itemId);
+    }
+
     @PostMapping("add/user{userId}/item{itemId}")
     public ResponseEntity<String> addFavorite(@PathVariable("userId") int userId, @PathVariable("itemId") int itemId)
     {

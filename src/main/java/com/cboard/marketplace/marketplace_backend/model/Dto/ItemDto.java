@@ -1,5 +1,6 @@
 package com.cboard.marketplace.marketplace_backend.model.Dto;
 
+import com.cboard.marketplace.marketplace_backend.model.ItemImage;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeId;
@@ -8,7 +9,9 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @JsonTypeInfo(
@@ -49,9 +52,10 @@ public abstract class ItemDto
     private Integer locationId;
     @NotBlank(message = "Item type is required")
     private String itemType;
-    private String image_name;
+    private List<ItemImageDto> images = new ArrayList<>();
+    /*private String image_name;
     private String image_type;
-    private byte[] image_date;
+    private byte[] image_date;*/
     private Map<@NotBlank String, @NotNull(message="Value cannot be blank") Object> specificFields;
 
 
@@ -77,7 +81,7 @@ public abstract class ItemDto
     }
 */
 
-    public ItemDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, String image_name, String image_type, byte[] image_date) {
+/*    public ItemDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, String image_name, String image_type, byte[] image_date) {
         this.itemId = itemId;
         this.name = name;
         this.description = description;
@@ -92,6 +96,21 @@ public abstract class ItemDto
         this.image_name = image_name;
         this.image_type = image_type;
         this.image_date = image_date;
+    }*/
+
+    public ItemDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, List<ItemImageDto> images) {
+        this.itemId = itemId;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.userId = userId;
+        this.category = category;
+        this.releaseDate = releaseDate;
+        this.available = available;
+        this.location = location;
+        this.locationId = locationId;
+        this.itemType = itemType;
+        this.images = images;
     }
 
     public Map<String, Serializable> getSpecificFields() {
@@ -199,7 +218,7 @@ public abstract class ItemDto
         this.itemType = itemType;
     }
 
-    public String getImage_name() {
+/*    public String getImage_name() {
         return image_name;
     }
 
@@ -221,5 +240,13 @@ public abstract class ItemDto
 
     public void setImage_date(byte[] image_date) {
         this.image_date = image_date;
+    }*/
+
+    public List<ItemImageDto> getImages() {
+        return images;
+    }
+
+    public void setImages(List<ItemImageDto> images) {
+        this.images = images;
     }
 }

@@ -2,6 +2,10 @@ package com.cboard.marketplace.marketplace_backend.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import org.springframework.core.annotation.Order;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 //entity maps this saying this is a table
@@ -32,15 +36,24 @@ public abstract class Item
     @JoinColumn(name = "location_id")
     private Location location;
     private String itemType;
-    private String image_name;
+    @OneToMany(
+            mappedBy = "item",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
+    )
+    @OrderBy("imageId ASC")
+    private List<ItemImage> images = new ArrayList<>();
+
+/*    private String image_name;
     private String image_type;
-    private byte[] image_date;
+    private byte[] image_date;*/
 
 
     public Item() {
     }
 
-    public Item(int itemId, String name, String description, Double price, User user, Category category, String releaseDate, boolean available, Location location, String itemType, String image_name, String image_type, byte[] image_date) {
+/*    public Item(int itemId, String name, String description, Double price, User user, Category category, String releaseDate, boolean available, Location location, String itemType, String image_name, String image_type, byte[] image_date) {
         this.itemId = itemId;
         this.name = name;
         this.description = description;
@@ -54,6 +67,20 @@ public abstract class Item
         this.image_name = image_name;
         this.image_type = image_type;
         this.image_date = image_date;
+    }*/
+
+    public Item(int itemId, String name, String description, Double price, User user, Category category, String releaseDate, boolean available, Location location, String itemType, List<ItemImage> images) {
+        this.itemId = itemId;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.user = user;
+        this.category = category;
+        this.releaseDate = releaseDate;
+        this.available = available;
+        this.location = location;
+        this.itemType = itemType;
+        this.images = images;
     }
 
     public void setPrice(Double price) {
@@ -96,10 +123,6 @@ public abstract class Item
         return price;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
     public Category getCategory() {
         return category;
     }
@@ -140,7 +163,7 @@ public abstract class Item
         this.itemType = itemType;
     }
 
-    public String getImage_name() {
+/*    public String getImage_name() {
         return image_name;
     }
 
@@ -162,6 +185,27 @@ public abstract class Item
 
     public void setImage_date(byte[] image_date) {
         this.image_date = image_date;
+    }*/
+
+    public List<ItemImage> getImages() {
+        return images;
     }
 
+    public void setImages(List<ItemImage> images) {
+        this.images = images;
+    }
+
+    public void addImage(ItemImage image)
+    {
+        if(image == null) return;
+        images.add(image);
+        image.setItem(this);
+    }
+
+    public void removeImage(ItemImage image)
+    {
+        if(image == null) return;
+        images.remove(image);
+        image.setItem(null);
+    }
 }

@@ -1,12 +1,16 @@
 package com.cboard.marketplace.marketplace_backend.model.DtoMapping.fromDto;
 
 import com.cboard.marketplace.marketplace_backend.model.*;
+import com.cboard.marketplace.marketplace_backend.model.Dto.ItemImageDto;
 import com.cboard.marketplace.marketplace_backend.model.Dto.RequestDto;
 import com.cboard.marketplace.marketplace_backend.service.CategoryService;
 import com.cboard.marketplace.marketplace_backend.service.LocationService;
 import com.cboard.marketplace.marketplace_backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class RequestDtoToItemMapper implements DtoToItemMapper<RequestDto>
@@ -17,6 +21,8 @@ public class RequestDtoToItemMapper implements DtoToItemMapper<RequestDto>
     LocationService locService;
     @Autowired
     UserService userService;
+    @Autowired
+    DtoToImageMapper imageMapper;
 
     @Override
     public Item fromDto(RequestDto dto)
@@ -32,11 +38,17 @@ public class RequestDtoToItemMapper implements DtoToItemMapper<RequestDto>
                 dto.isAvailable(),
                 locService.findById(dto.getLocationId()),
                 dto.getItemType(),
-                dto.getImage_name(),
+                new ArrayList<>(),
+                /*dto.getImage_name(),
                 dto.getImage_type(),
-                dto.getImage_date(),
+                dto.getImage_date(),*/
                 dto.getDeadline()
         );
+        List<ItemImage> images = new ArrayList<>();
+        for(ItemImageDto img : dto.getImages())
+            images.add(imageMapper.fromDto(img));
+        r.setImages(images);
+
         return r;
     }
 

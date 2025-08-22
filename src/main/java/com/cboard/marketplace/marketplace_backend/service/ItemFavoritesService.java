@@ -103,4 +103,13 @@ public class ItemFavoritesService
 
         return new ResponseEntity<>("Favorited item removed", HttpStatus.OK);
     }
+
+    public ResponseEntity<Boolean> getIsFavorite(int userId, int itemId) {
+        ItemFavoriteId itemFavoriteId = new ItemFavoriteId(itemId, userId);
+        ItemFavorite itemFavorite = dao.findItemFavoriteByItemFavoriteId(itemFavoriteId);
+        if(itemFavorite == null)
+            return new ResponseEntity<>(false, HttpStatus.OK);
+
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
 }
