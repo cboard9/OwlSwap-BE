@@ -1,15 +1,22 @@
 package com.cboard.marketplace.marketplace_backend.model.Dto;
 
+import com.cboard.marketplace.marketplace_backend.model.ItemImage;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeId;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.*;
+
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
+        include = JsonTypeInfo.As.EXISTING_PROPERTY,
         property = "itemType",
         visible = true)
 @JsonSubTypes({
@@ -23,25 +30,41 @@ public abstract class ItemDto
 {
     private int itemId;
     @NotNull(message = "Name is required...")
+    @NotBlank(message = "Name must not be blank")
     private String name;
     private String description;
     @NotNull(message = "Price is required...")
+    @DecimalMin(value = "0.0", inclusive = true, message = "Price must be ≥ 0")
     private Double price;
     private int userId;
+    @NotBlank(message = "Category is required")
     private String category;
+    @NotBlank(message = "Release date is required")
+    @Pattern(
+            regexp = "\\d{4}-\\d{2}-\\d{2}",
+            message = "Release date must be YYYY-MM-DD"
+    )
     private String releaseDate;
     private boolean available;
+
     private String location;
+    @NotNull(message = "Location is required")
     private Integer locationId;
+    @NotBlank(message = "Item type is required")
     private String itemType;
-    private String image_name;
+    private List<ItemImageDto> images = new ArrayList<>();
+    /*private String image_name;
     private String image_type;
-    private byte[] image_date;
+    private byte[] image_date;*/
+    private Map<@NotBlank String, @NotNull(message="Value cannot be blank") Object> specificFields;
+
+
 
     public ItemDto() {
     }
 
-    public ItemDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, String itemType, String image_name, String image_type, byte[] image_date) {
+/*
+    public ItemDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String itemType, String image_name, String image_type, byte[] image_date) {
         this.itemId = itemId;
         this.name = name;
         this.description = description;
@@ -50,14 +73,15 @@ public abstract class ItemDto
         this.category = category;
         this.releaseDate = releaseDate;
         this.available = available;
-        this.location = location;
+        //this.location = location;
         this.itemType = itemType;
         this.image_name = image_name;
         this.image_type = image_type;
         this.image_date = image_date;
     }
+*/
 
-    public ItemDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, String image_name, String image_type, byte[] image_date) {
+/*    public ItemDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, String image_name, String image_type, byte[] image_date) {
         this.itemId = itemId;
         this.name = name;
         this.description = description;
@@ -72,9 +96,24 @@ public abstract class ItemDto
         this.image_name = image_name;
         this.image_type = image_type;
         this.image_date = image_date;
+    }*/
+
+    public ItemDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, List<ItemImageDto> images) {
+        this.itemId = itemId;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.userId = userId;
+        this.category = category;
+        this.releaseDate = releaseDate;
+        this.available = available;
+        this.location = location;
+        this.locationId = locationId;
+        this.itemType = itemType;
+        this.images = images;
     }
 
-    public Map<String, String> getSpecificFields() {
+    public Map<String, Serializable> getSpecificFields() {
         return Collections.emptyMap(); // base class default
     }
 
@@ -82,6 +121,12 @@ public abstract class ItemDto
     {
         throw new UnsupportedOperationException("setSpecificFields not implemented for base ItemDto");
 
+    }
+
+    @JsonIgnore
+    public String getSimpleName()
+    {
+        return "";
     }
 
     public int getUserId() {
@@ -164,7 +209,7 @@ public abstract class ItemDto
         this.locationId = locationId;
     }
 
-    @JsonTypeId //prevents duplication when fetching from database ?
+    //@JsonTypeId //prevents duplication when fetching from database ?
     public String getItemType() {
         return itemType;
     }
@@ -173,7 +218,7 @@ public abstract class ItemDto
         this.itemType = itemType;
     }
 
-    public String getImage_name() {
+/*    public String getImage_name() {
         return image_name;
     }
 
@@ -195,5 +240,13 @@ public abstract class ItemDto
 
     public void setImage_date(byte[] image_date) {
         this.image_date = image_date;
+    }*/
+
+    public List<ItemImageDto> getImages() {
+        return images;
+    }
+
+    public void setImages(List<ItemImageDto> images) {
+        this.images = images;
     }
 }

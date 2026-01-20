@@ -2,11 +2,11 @@ package com.cboard.marketplace.marketplace_backend.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "item_subscriptions")
-public class ItemSubscriptions
+@Table(name = "item_favorites")
+public class ItemFavorite
 {
     @EmbeddedId
-    private ItemSubscriptionsId itemSubscriptionsId;
+    private ItemFavoriteId itemFavoriteId;
 
     @ManyToOne
     @MapsId("itemId")
@@ -18,21 +18,21 @@ public class ItemSubscriptions
     @JoinColumn(name = "user_id")
     private User user;
 
-    public ItemSubscriptions() {
+    public ItemFavorite() {
     }
 
-    public ItemSubscriptions(ItemSubscriptionsId itemSubscriptionsId, Item item, User user) {
-        this.itemSubscriptionsId = itemSubscriptionsId;
+    public ItemFavorite(ItemFavoriteId itemFavoriteId, Item item, User user) {
+        this.itemFavoriteId = itemFavoriteId;
         this.item = item;
         this.user = user;
     }
 
-    public ItemSubscriptionsId getItemSubscriptionsId() {
-        return itemSubscriptionsId;
+    public ItemFavoriteId getItemSubscriptionsId() {
+        return itemFavoriteId;
     }
 
-    public void setItemSubscriptionsId(ItemSubscriptionsId itemSubscriptionsId) {
-        this.itemSubscriptionsId = itemSubscriptionsId;
+    public void setItemSubscriptionsId(ItemFavoriteId itemFavoriteId) {
+        this.itemFavoriteId = itemFavoriteId;
     }
 
     public Item getItem() {

@@ -34,26 +34,7 @@ public class UserController
 
     @GetMapping("/api/profile")
     public ResponseEntity<UserDto> getProfile() {
-        //retrieve authenticated username directly
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        String username = auth.getName();
-        User user = userDao.findByUsername(username).orElseThrow();
-
-        Double avgRating = ratingService.calculateAverageRating(user.getUserId());
-        user.setAverageRating(avgRating);
-
-        // convert user to userDto
-        UserDto userDto = new UserDto(
-                user.getUserId(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getUsername(),
-                user.getAverageRating()
-        );
-
-        return ResponseEntity.ok(userDto);
+        return service.getProfile();
     }
 
     @GetMapping("/{id}")
@@ -78,8 +59,8 @@ public class UserController
     }
 
     @PostMapping("/api/rate/{userId}")
-    public ResponseEntity<String> rateUser(@PathVariable int userId, @RequestParam double score) {
-        return ratingService.addRating(userId, score);
+    public ResponseEntity<String> rateUser(@PathVariable int userId, @RequestBody double rating) {
+        return ratingService.addRating(userId, rating);
     }
 
     @DeleteMapping("{id}/delete")

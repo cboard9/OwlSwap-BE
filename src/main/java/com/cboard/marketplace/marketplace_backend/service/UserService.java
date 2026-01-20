@@ -1,11 +1,14 @@
 package com.cboard.marketplace.marketplace_backend.service;
 
 import com.cboard.marketplace.marketplace_backend.dao.UserDao;
+import com.cboard.marketplace.marketplace_backend.model.Dto.UserDto;
 import com.cboard.marketplace.marketplace_backend.model.User;
 import com.cboard.marketplace.marketplace_backend.model.UserArchive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,6 +19,8 @@ public class UserService
 {
     @Autowired
     UserDao dao;
+    @Autowired
+    RatingService ratingService;
 
 
 
@@ -54,6 +59,26 @@ public class UserService
     }
 
 
+    public ResponseEntity<UserDto> getProfile() {
+        //retrieve authenticated username directly
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
+        String username = auth.getName();
+        User user = dao.findByUsername(username).orElseThrow();
 
+        Double avgRating = ratingService.calculateAverageRating(user.getUserId());
+        user.setAverageRating(avgRating);
+
+        // convert user to userDto
+        UserDto userDto = new UserDto(
+                user.getUserId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getUsername(),
+                user.getAverageRating()
+        );
+
+        return ResponseEntity.ok(userDto);
+    }
 }

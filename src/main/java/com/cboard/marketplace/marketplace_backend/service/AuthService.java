@@ -27,12 +27,22 @@ public class AuthService {
     private JwtUtil jwtUtil;
 
     public ResponseEntity<?> registerUser(SignupRequest request) {
-        if (!request.getEmail().toLowerCase().endsWith("@westfield.ma.edu")) {
-            return ResponseEntity.badRequest().body("Email must be a Westfield student address.");
-        }
+
+        if(request.getUsername() == null || request.getUsername().isBlank() || request.getPassword() == null || request.getPassword().isBlank())
+            return ResponseEntity.badRequest().body("Username and password can not be blank.");
+
+        if(request.getFirstName() == null || request.getFirstName().isBlank() || request.getLastName() == null || request.getLastName().isBlank())
+            return ResponseEntity.badRequest().body("Must enter first and last name.");
 
         if (userDao.findByUsername(request.getUsername()).isPresent()) {
-            return ResponseEntity.status(409).body("Username already exists.");
+            return ResponseEntity.badRequest().body("Username already exists.");
+        }
+
+        if(request.getEmail() == null || request.getEmail().isBlank())
+            return ResponseEntity.badRequest().body("Must enter an email.");
+
+        if (!request.getEmail().toLowerCase().endsWith("@westfield.ma.edu")) {
+            return ResponseEntity.badRequest().body("Email must be a Westfield student address.");
         }
 
         User user = new User();
@@ -48,12 +58,16 @@ public class AuthService {
 
     public ResponseEntity<?> loginUser(LoginRequest request) {
         try {
+
+            if(request.getUsername() == null || request.getUsername().isBlank() || request.getPassword() == null || request.getPassword().isBlank())
+                return ResponseEntity.badRequest().body("Username and password can not be blank.");
+
             Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
             Optional<User> user = userDao.findByUsername(request.getUsername());
             if (user.isEmpty())
-                return ResponseEntity.status(401).body("Invalid credentials");
+                return ResponseEntity.status(400).body("Username not found.");
 
             String token = jwtUtil.generateToken(user.get());
             return ResponseEntity.ok(new AuthResponse(token));

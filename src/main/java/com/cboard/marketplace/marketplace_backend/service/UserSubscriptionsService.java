@@ -1,7 +1,5 @@
 package com.cboard.marketplace.marketplace_backend.service;
-import com.cboard.marketplace.marketplace_backend.dao.ItemSubscriptionsDao;
 import com.cboard.marketplace.marketplace_backend.dao.UserSubscriptionsDao;
-import com.cboard.marketplace.marketplace_backend.model.ItemSubscriptions;
 import com.cboard.marketplace.marketplace_backend.model.UserSubscriptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
