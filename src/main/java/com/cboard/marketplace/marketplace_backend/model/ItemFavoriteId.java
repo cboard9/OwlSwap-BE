@@ -3,17 +3,17 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Embeddable
-public class ItemSubscriptionsId implements Serializable
+public class ItemFavoriteId implements Serializable
 {
     @Column(name = "item_id")
     private int itemId;
     @Column(name = "user_id")
     private int userId;
 
-    public ItemSubscriptionsId() {
+    public ItemFavoriteId() {
     }
 
-    public ItemSubscriptionsId(int itemId, int userId) {
+    public ItemFavoriteId(int itemId, int userId) {
         this.itemId = itemId;
         this.userId = userId;
     }

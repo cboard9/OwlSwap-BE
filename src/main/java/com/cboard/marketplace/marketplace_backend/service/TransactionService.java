@@ -10,6 +10,8 @@ import com.cboard.marketplace.marketplace_backend.model.Dto.TransactionDto;
 import com.cboard.marketplace.marketplace_backend.model.DtoMapping.TransactionMapper;
 import com.cboard.marketplace.marketplace_backend.model.DtoMapping.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -52,41 +54,37 @@ public class TransactionService
         }
     }
 
-    public ResponseEntity<List<TransactionDto>> getAllTransactionsByBuyer(int buyerId)
+    public ResponseEntity<Page<TransactionDto>> getAllTransactionsByBuyer(int buyerId, Pageable pageable)
     {
-        List<Transaction> transactions = transactionDao.findByBuyer_UserId(buyerId);
-        List<TransactionDto> dtos = new ArrayList<>();
-        try
-        {
-            for(Transaction transaction : transactions)
-                dtos.add(transactionMapper.transactionToDto(transaction));
-
-            return new ResponseEntity<>(dtos, HttpStatus.OK);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            return new ResponseEntity<>(dtos, HttpStatus.BAD_REQUEST);
-        }
+        Page<Transaction> transactions = transactionDao.findByBuyer_UserId(buyerId, pageable);
+        Page<TransactionDto> dtos = transactions
+                .map(transaction -> {
+                            try {
+                                return transactionMapper.transactionToDto(transaction);
+                            } catch (IllegalAccessException e) {
+                                e.printStackTrace();
+                                throw new RuntimeException("Error converting transaction to DTO: " + transaction, e);
+                            }
+                        }
+                );
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
 
     }
 
-    public ResponseEntity<List<TransactionDto>> getAllTransactionsBySeller(int sellerId)
+    public ResponseEntity<Page<TransactionDto>> getAllTransactionsBySeller(int sellerId, Pageable pageable)
     {
-        List<Transaction> transactions = transactionDao.findBySeller_UserId(sellerId);
-        List<TransactionDto> dtos = new ArrayList<>();
-        try
-        {
-            for(Transaction transaction : transactions)
-                dtos.add(transactionMapper.transactionToDto(transaction));
-
-            return new ResponseEntity<>(dtos, HttpStatus.OK);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            return new ResponseEntity<>(dtos, HttpStatus.BAD_REQUEST);
-        }
+        Page<Transaction> transactions = transactionDao.findBySeller_UserId(sellerId, pageable);
+        Page<TransactionDto> dtos = transactions
+                .map(transaction -> {
+                            try {
+                                return transactionMapper.transactionToDto(transaction);
+                            } catch (IllegalAccessException e) {
+                                e.printStackTrace();
+                                throw new RuntimeException("Error converting transaction to DTO: " + transaction, e);
+                            }
+                        }
+                );
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     public ResponseEntity<String> purchaseItem(int itemId, int buyerId)

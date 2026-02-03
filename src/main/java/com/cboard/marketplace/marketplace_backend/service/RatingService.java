@@ -7,6 +7,7 @@ import com.cboard.marketplace.marketplace_backend.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class RatingService {
     @Autowired
     private UserDao userDao;
 
+    @Transactional
     public ResponseEntity<String> addRating(int userId, double score) {
         if (score < 0.0 || score > 5.0) {
             return ResponseEntity.badRequest().body("Rating must be between 0.0 and 5.0");
@@ -39,6 +41,9 @@ public class RatingService {
 
         Rating rating = new Rating(user, score);
         ratingDao.save(rating);
+        Double newAvg = calculateAverageRating(user.getUserId());
+        user.setAverageRating(newAvg);
+        userDao.save(user);
         return ResponseEntity.ok("Rating submitted successfully");
     }
 

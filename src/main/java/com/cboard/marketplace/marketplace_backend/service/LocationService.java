@@ -14,4 +14,5 @@ public class LocationService
     {
         return dao.findByName(name);
     }
+    public Location findById(Integer locationId) { return dao.findByLocationId(locationId);}
 }
