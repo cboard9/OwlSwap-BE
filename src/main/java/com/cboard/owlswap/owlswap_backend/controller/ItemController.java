@@ -7,6 +7,7 @@ import com.cboard.owlswap.owlswap_backend.model.Dto.ItemMetadata.ItemTypeSchema;
 import com.cboard.owlswap.owlswap_backend.service.CategoryService;
 import com.cboard.owlswap.owlswap_backend.service.ItemService;
 import jakarta.validation.*;
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,19 +53,8 @@ public class ItemController
             @RequestParam(required = false) String category,
             @PageableDefault(size=6) Pageable pageable)
     {
-        return service.searchItems(keyword, category, pageable);
+        return ResponseEntity.ok(service.searchItems(keyword, category, pageable));
     }
-
-/*    @GetMapping("search")
-    public ResponseEntity<Page<ItemDto>> searchItems(@RequestParam String keyword, @PageableDefault(size=6) Pageable pageable)
-    {
-        return service.searchItems(keyword, pageable);
-    }
-    @GetMapping("category")
-    public ResponseEntity<Page<ItemDto>> itemsByCat(@RequestParam String category, @PageableDefault(size=6) Pageable pageable)
-    {
-        return service.itemsByCat(category, pageable);
-    }*/
 
     @GetMapping("{id}")
     public ResponseEntity<ItemDto> getItem(@PathVariable("id") int itemId)
@@ -71,17 +63,21 @@ public class ItemController
     }
 
     @PostMapping("add")
-    public ResponseEntity<String> addItem(@Valid @RequestBody ItemDto itemDto)
+    public ResponseEntity<ItemDto> addItem(@Valid @RequestBody ItemDto itemDto)
     {
-        //could potentially throw a runtime exception if cant map an item, consider handling this later?
-        return service.addItem(itemDto);
+        ItemDto saved = service.addItem(itemDto);
+
+        URI location = URI.create("/item/" + saved.getItemId());
+
+        return ResponseEntity.created(location).body(saved);
 
     }
 
     @PutMapping("update")
-    public ResponseEntity<?> updateItem(@Valid @RequestBody ItemDto dto)
+    public ResponseEntity<ItemDto> updateItem(@Valid @RequestBody ItemDto dto)
     {
-        return service.updateItem(dto);
+        ItemDto updated = service.updateItem(dto);
+        return ResponseEntity.ok(updated);
     }
 
 
@@ -109,23 +105,16 @@ public class ItemController
             value = "update/with-images",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
-    public ResponseEntity<String> updateItemWithImage(
+    public ResponseEntity<ItemDto> updateItemWithImages(
             @Valid @RequestPart("item") ItemDto dto,
             @RequestPart(value = "image", required = false) List<MultipartFile> images)
+    throws IOException
     {
-        System.out.println(
-                dto.getSpecificFields()
-        );
+        //System.out.println(dto.getSpecificFields());
 
-        try
-        {
-            return service.updateItemWithImages(dto, images);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
-        }
+        ItemDto updated = service.updateItemWithImages(dto, images);
+        return ResponseEntity.ok(updated);
+
     }
 
     @GetMapping("{id}/owner")
@@ -184,11 +173,11 @@ public class ItemController
             value = "add/with-images",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
-    public ResponseEntity<?> addItemWithImage(
+    public ResponseEntity<ItemDto> addItemWithImages(
             @RequestPart("item") @Valid ItemDto dto,
-            @RequestPart("images") List<MultipartFile> images)
+            @RequestPart("images") List<MultipartFile> images) throws IOException
     {
-        Set<ConstraintViolation<ItemDto>> violations = validator.validate(dto);
+/*        Set<ConstraintViolation<ItemDto>> violations = validator.validate(dto);
         if (!violations.isEmpty()) {
             Map<String, String> errors = violations.stream()
                     .collect(Collectors.toMap(
@@ -197,29 +186,26 @@ public class ItemController
                             (a,b)->a
                     ));
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-        }
+        }*/
 
-        try
-        {
-            return service.addItemWithImages(dto, images);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
-        }
+        ItemDto saved = service.addItemWithImages(dto, images);
+
+        URI location = URI.create("/item/" + saved.getItemId());
+
+        return ResponseEntity.created(location).body(saved);
     }
 
     @GetMapping("schema")
-    public ResponseEntity<List<ItemTypeSchema>> getItemScehmas(){
-        return service.getAllschemas();
+    public ResponseEntity<List<ItemTypeSchema>> getItemSchemas(){
+        return ResponseEntity.ok(service.getAllSchemas());
     }
 
-    //soft deletes an item -- instead of actually deleting an item, turns its available attribute to false
     @DeleteMapping("{id}/delete")
     public ResponseEntity<String> deleteItem(@PathVariable("id") int itemId)
     {
-        return service.deleteItem(itemId);
+        service.deleteItem(itemId);
+        return ResponseEntity.ok("Item deleted");
+
     }
 
     @GetMapping("types")

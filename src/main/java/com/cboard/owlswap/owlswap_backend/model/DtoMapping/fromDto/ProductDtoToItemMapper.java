@@ -2,6 +2,7 @@ package com.cboard.owlswap.owlswap_backend.model.DtoMapping.fromDto;
 
 import com.cboard.owlswap.owlswap_backend.model.*;
 import com.cboard.owlswap.owlswap_backend.model.Dto.ItemImageDto;
+import com.cboard.owlswap.owlswap_backend.security.CurrentUser;
 import com.cboard.owlswap.owlswap_backend.service.CategoryService;
 import com.cboard.owlswap.owlswap_backend.service.LocationService;
 import com.cboard.owlswap.owlswap_backend.service.UserService;

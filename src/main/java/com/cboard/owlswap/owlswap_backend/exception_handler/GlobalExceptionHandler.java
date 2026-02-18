@@ -2,6 +2,7 @@ package com.cboard.owlswap.owlswap_backend.exception_handler;
 
 import com.cboard.owlswap.owlswap_backend.exception.BadRequestException;
 import com.cboard.owlswap.owlswap_backend.exception.DtoMappingException;
+import com.cboard.owlswap.owlswap_backend.exception.NotAvailableException;
 import com.cboard.owlswap.owlswap_backend.exception.NotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -143,6 +144,22 @@ public class GlobalExceptionHandler
         );
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
+
+    @ExceptionHandler(NotAvailableException.class)
+    public ResponseEntity<ApiError> handleNotAvailable(NotAvailableException ex, HttpServletRequest req)
+    {
+        ApiError body = new ApiError(
+                "ITEM_NOT_AVAILABLE",
+                ex.getMessage(),
+                HttpStatus.CONFLICT.value(),
+                req.getRequestURI(),
+                Instant.now(),
+                null
+        );
+
+        //state conflicts with requested action (already sold)
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
 
     @ExceptionHandler(BadRequestException.class)

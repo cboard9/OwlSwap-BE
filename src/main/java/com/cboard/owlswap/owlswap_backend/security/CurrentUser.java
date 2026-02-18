@@ -50,4 +50,15 @@ public class CurrentUser {
     public String username() {
         return principal().getUsername();
     }
+
+    public User user() {
+        Integer id = userId();
+        return userDao.findById(id)
+                .orElseThrow(() ->
+                        new org.springframework.security.core.userdetails.UsernameNotFoundException(
+                                "Authenticated user not found in database. id=" + id
+                        )
+                );
+    }
+
 }
