@@ -18,15 +18,10 @@ public class UserItemsController
     @Autowired
     UserItemsService service;
 
-/*    @GetMapping("{id}/items")
-    public ResponseEntity<List<UserItems>> getAllUserItems(@PathVariable("id") int userId)
-    {
-        return service.getAllUserItems(userId);
-    }*/
-
     @GetMapping("{id}/items")
     public ResponseEntity<List<ItemDto>> getAllUserItems(@PathVariable("id") int userId)
     {
-        return service.getAllUserItems(userId);
+        List<ItemDto> items = service.getAllUserItems(userId);
+        return ResponseEntity.ok(items);
     }
 }
