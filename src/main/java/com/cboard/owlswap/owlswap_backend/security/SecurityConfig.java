@@ -35,7 +35,7 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(request -> {
                     var cfg = new CorsConfiguration();
-                    cfg.setAllowedOrigins(List.of("http://localhost:5173"));   // React dev URL
+                    cfg.setAllowedOrigins(List.of("http://localhost:3000"));   // React dev URL
                     cfg.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
                     cfg.setAllowedHeaders(List.of("*"));                       // or specific ones
                     cfg.setAllowCredentials(true);                             // if you send cookies / Authorization
