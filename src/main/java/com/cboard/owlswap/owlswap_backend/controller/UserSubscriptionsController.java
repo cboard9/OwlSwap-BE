@@ -17,10 +17,17 @@ public class UserSubscriptionsController
     @Autowired
     UserSubscriptionsService service;
 
-    @GetMapping("{id}/subscriptions")
+    /*@GetMapping("{id}/subscriptions")
     public ResponseEntity<List<UserSubscriptions>> getAllUserSubscriptions(@PathVariable("id") int userId)
     {
         return service.getAllUserSubscriptions(userId);
+    }*/
+
+    @GetMapping("subscriptions")
+    public ResponseEntity<List<UserSubscriptions>> getAllUserSubscriptions()
+    {
+        List<UserSubscriptions> userSubscriptions = service.getAllUserSubscriptions();
+        return ResponseEntity.ok(userSubscriptions);
     }
 
 }
