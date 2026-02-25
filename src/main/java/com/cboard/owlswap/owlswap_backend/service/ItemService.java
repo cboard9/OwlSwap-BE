@@ -1,8 +1,7 @@
 package com.cboard.owlswap.owlswap_backend.service;
 
-import com.cboard.owlswap.owlswap_backend.dao.ItemDao;
+import com.cboard.owlswap.owlswap_backend.dao.*;
 
-import com.cboard.owlswap.owlswap_backend.dao.ItemImageDao;
 import com.cboard.owlswap.owlswap_backend.exception.DtoMappingException;
 import com.cboard.owlswap.owlswap_backend.exception.NotAvailableException;
 import com.cboard.owlswap.owlswap_backend.exception.NotFoundException;
@@ -15,7 +14,12 @@ import com.cboard.owlswap.owlswap_backend.model.Dto.ServiceDto;
 import com.cboard.owlswap.owlswap_backend.model.DtoMapping.fromDto.DtoToItemFactory;
 import com.cboard.owlswap.owlswap_backend.model.DtoMapping.toDto.ItemToDtoFactory;
 import com.cboard.owlswap.owlswap_backend.model.Item;
+import com.cboard.owlswap.owlswap_backend.model.User;
+import com.cboard.owlswap.owlswap_backend.model.Location;
+import com.cboard.owlswap.owlswap_backend.model.Category;
+
 import com.cboard.owlswap.owlswap_backend.model.ItemImage;
+import com.cboard.owlswap.owlswap_backend.model.context.ItemMappingContext;
 import com.cboard.owlswap.owlswap_backend.security.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -42,12 +47,29 @@ public class ItemService {
     CurrentUser currentUser;
     @Autowired
     ItemImageDao itemImageDao;
+    private final UserDao userDao;
+    private final LocationDao locationDao;
+    private final CategoryDao categoryDao;
     private final ItemToDtoFactory toDtoFactory;
     private final DtoToItemFactory fromDtoFactory;
 
     //this automatically adds all the different dto mappers through injection
-    public ItemService(ItemDao dao, ItemToDtoFactory toDtoFactory, DtoToItemFactory fromDtoFactory) {
+/*    public ItemService(ItemDao dao,
+
+                       ItemToDtoFactory toDtoFactory,
+                       DtoToItemFactory fromDtoFactory) {
         this.dao = dao;
+        this.toDtoFactory = toDtoFactory;
+        this.fromDtoFactory = fromDtoFactory;
+    }*/
+
+    public ItemService(UserDao userDao,
+                       LocationDao locationDao,
+                       CategoryDao categoryDao, ItemToDtoFactory toDtoFactory,
+                       DtoToItemFactory fromDtoFactory) {
+        this.userDao = userDao;
+        this.locationDao = locationDao;
+        this.categoryDao = categoryDao;
         this.toDtoFactory = toDtoFactory;
         this.fromDtoFactory = fromDtoFactory;
     }
@@ -113,19 +135,33 @@ public class ItemService {
 
     }
 
-    public ItemDto addItem(ItemDto itemDto) {
+    @Transactional
+    public ItemDto addItem(ItemDto itemDto)
+    {
+        User user = userDao.findById(currentUser.userId())
+                .orElseThrow(() -> new NotFoundException("User not found."));
+
+        Location location = locationDao.findById(itemDto.getLocationId())
+                .orElseThrow(() -> new NotFoundException("Location not found."));
+
+        Category category = categoryDao.findByName(itemDto.getCategory())
+                .orElseThrow(() -> new NotFoundException("Category not found. name=" + itemDto.getCategory()));
+
+        ItemMappingContext ctx = new ItemMappingContext(user, category, location);
+
         try {
-            Item item = fromDtoFactory.fromDto(itemDto);
+            Item item = fromDtoFactory.fromDto(itemDto, ctx);
 
             if (item.getReleaseDate() == null)
                 item.setReleaseDate(String.valueOf(LocalDate.now()));
 
-            item.setUser(currentUser.user()); //later remove the user mapping from the mappers since setting here
+            //item.setUser(currentUser.user()); //later remove the user mapping from the mappers since setting here
 
+            item.setItemId(0); //forcing this to be a true add
             Item saved = dao.save(item);
             return toDtoFactory.toDto(saved);
 
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             throw new DtoMappingException("Failed to map DTO to Item.", e);
         }
 
