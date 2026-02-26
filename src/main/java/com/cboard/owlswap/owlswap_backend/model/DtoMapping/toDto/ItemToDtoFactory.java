@@ -22,12 +22,12 @@ public class ItemToDtoFactory
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Item> ItemDto toDto(T item) throws IllegalAccessException
+    public <T extends Item> ItemDto toDto(T item) throws IllegalArgumentException
     {
         ItemToDtoMapper<T> mapper = (ItemToDtoMapper<T>) mapperMap.get(item.getClass());
 
         if(mapper == null)
-            throw new IllegalAccessException("No DTO mapper found for " + item.getClass());
+            throw new IllegalArgumentException("No DTO mapper found for " + item.getClass());
         else
             return mapper.mapToDto(item);
     }

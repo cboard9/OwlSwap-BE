@@ -21,7 +21,7 @@ public class DtoToItemFactory
     }
 
     @SuppressWarnings("unchecked")
-    public <D extends ItemDto> Item fromDto(D dto, ItemMappingContext ctx) throws IllegalAccessException
+    public <D extends ItemDto> Item fromDto(D dto, ItemMappingContext ctx) throws IllegalArgumentException
     {
         DtoToItemMapper<D> mapper = (DtoToItemMapper<D>) mappers.get(dto.getClass());
 

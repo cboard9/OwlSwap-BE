@@ -73,7 +73,7 @@ public class ItemFavoritesService
                 .map(item -> {
                             try {
                                 return toDtoFactory.toDto(item);
-                            } catch (IllegalAccessException e) {
+                            } catch (IllegalArgumentException e) {
                                 throw new DtoMappingException("Error converting item to DTO. itemId=" + item.getItemId(), e);
                             }
                         }

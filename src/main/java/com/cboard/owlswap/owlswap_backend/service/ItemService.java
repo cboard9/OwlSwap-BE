@@ -82,7 +82,7 @@ public class ItemService {
                 .map(item -> {
                             try {
                                 return toDtoFactory.toDto(item);
-                            } catch (IllegalAccessException e) {
+                            } catch (IllegalArgumentException e) {
                                 throw new DtoMappingException("Failed to map Item to DTO. itemId=" + item.getItemId(), e);
                             }
                         }
@@ -103,7 +103,7 @@ public class ItemService {
         {
             return toDtoFactory.toDto(item);
         }
-        catch (IllegalAccessException e)
+        catch (IllegalArgumentException e)
         {
             throw new DtoMappingException("Failed to map Item to DTO. itemId=" + item.getItemId(), e);
         }
@@ -120,9 +120,8 @@ public class ItemService {
                     items.map(item -> {
                                 try {
                                     return toDtoFactory.toDto(item);
-                                } catch (IllegalAccessException e) {
-                                    e.printStackTrace();
-                                    throw new RuntimeException("Error converting item to DTO: " + item, e);
+                                } catch (IllegalArgumentException e) {
+                                    throw new DtoMappingException("Error converting item to DTO: " + item, e);
                                 }
                             }
                     )
@@ -161,7 +160,7 @@ public class ItemService {
             Item saved = dao.save(item);
             return toDtoFactory.toDto(saved);
 
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             throw new DtoMappingException("Failed to map DTO to Item.", e);
         }
 
@@ -180,14 +179,31 @@ public class ItemService {
             // or throw your own ForbiddenException and handle -> 403 ApiError
         }
 
+
+
         try {
-            Item item = fromDtoFactory.fromDto(dto);
+            Location location = locationDao.findById(dto.getLocationId())
+                    .orElseThrow(() -> new NotFoundException("Location not found."));
+
+            Category category = categoryDao.findByName(dto.getCategory())
+                    .orElseThrow(() -> new NotFoundException("Category not found. name=" + dto.getCategory()));
+
+            ItemMappingContext ctx = new ItemMappingContext(existing.getUser(), category, location);
+
+            Item item = fromDtoFactory.fromDto(dto, ctx);
+
+            // prevent type switching
+            if (!existing.getClass().equals(item.getClass())) {
+                throw new IllegalArgumentException("Cannot change item type during update.");
+            }
+
             item.setItemId(dto.getItemId());
 
-            item.setUser(existing.getUser());
+            //item.setUser(existing.getUser());
             Item updated = dao.save(item);
             return toDtoFactory.toDto(updated);
-        } catch (IllegalAccessException e) {
+
+        } catch (Exception e) {
             throw new DtoMappingException("Failed to map DTO to Item.", e);
         }
 
@@ -222,93 +238,51 @@ public class ItemService {
         dao.delete(item);
     }
 
-/*    public ResponseEntity<String> uploadImage(int itemId, MultipartFile file) throws IOException {
-        Item item = dao.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Item not found"));
-
-        item.setImage_name(file.getOriginalFilename());
-        item.setImage_type(file.getContentType());
-        item.setImage_date(file.getBytes());
-
-        dao.save(item);
-        return ResponseEntity.ok("Image uploaded");
-    }*/
-
-/*    public ResponseEntity<String> addItemWithImage(ItemDto dto, MultipartFile image) throws IOException {
-        try {
-            Item item = fromDtoFactory.fromDto(dto);
-            if (item.getReleaseDate() == null)
-                item.setReleaseDate(String.valueOf(LocalDate.now()));
-
-            item.setImage_name(image.getOriginalFilename());
-            item.setImage_type(image.getContentType());
-            item.setImage_date(image.getBytes());
-            dao.save(item);
-
-            return new ResponseEntity<>("Item created with image!", HttpStatus.CREATED);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error converting DTO to item: " + dto, e);
-        }
-    }*/
+    @Transactional
     public ItemDto addItemWithImages(ItemDto dto, List<MultipartFile> images) throws IOException {
-        try {
-            Item item = fromDtoFactory.fromDto(dto);
 
-            if (item.getReleaseDate() == null)
+        User user = userDao.findById(currentUser.userId())
+                .orElseThrow(() -> new NotFoundException("User not found."));
+
+        Location location = locationDao.findById(dto.getLocationId())
+                .orElseThrow(() -> new NotFoundException("Location not found."));
+
+        Category category = categoryDao.findByName(dto.getCategory())
+                .orElseThrow(() -> new NotFoundException("Category not found. name=" + dto.getCategory()));
+
+        ItemMappingContext ctx = new ItemMappingContext(user, category, location);
+
+
+        try {
+            Item item = fromDtoFactory.fromDto(dto, ctx);
+
+            if (item.getReleaseDate() == null || item.getReleaseDate().isBlank())
                 item.setReleaseDate(String.valueOf(LocalDate.now()));
 
-            item.setUser(currentUser.user()); //later remove the user mapping from the mappers since setting here
 
-            for(MultipartFile file : images)
-            {
-                ItemImage image = new ItemImage();
-                image.setImage_name(file.getOriginalFilename());
-                image.setImage_type(file.getContentType());
-                image.setImage_date(file.getBytes());
-                //ItemImage savedImage = itemImageDao.save(image);
-                item.addImage(image);
+            if(images != null) {
+                for (MultipartFile file : images) {
+                    if (file == null || file.isEmpty()) continue;
+
+                    ItemImage image = new ItemImage();
+                    image.setImage_name(file.getOriginalFilename());
+                    image.setImage_type(file.getContentType());
+                    image.setImage_date(file.getBytes());
+                    //ItemImage savedImage = itemImageDao.save(image);
+                    item.addImage(image);
+                }
             }
 
+            item.setItemId(0); //enforce this being a new item
             Item saved = dao.save(item);
 
             return toDtoFactory.toDto(saved);
 
-        } catch (IllegalAccessException e) {
+        } catch (IllegalArgumentException e) {
             throw new DtoMappingException("Failed to map DTO to Item.", e);
         }
     }
 
-/*    public ResponseEntity<String> updateItemWithImage(ItemDto dto, MultipartFile image) throws IOException {
-        int itemId = dto.getItemId();
-        Item existingItem = dao.findByItemId(itemId);
-        if (existingItem == null)
-            return new ResponseEntity<>("Item not found", HttpStatus.NOT_FOUND);
-
-        try {
-
-            Item item = fromDtoFactory.fromDto(dto);
-            item.setItemId(dto.getItemId());
-
-            if(image != null && !image.isEmpty()) {
-                item.setImage_name(image.getOriginalFilename());
-                item.setImage_type(image.getContentType());
-                item.setImage_date(image.getBytes());
-            }
-            else
-            {
-                item.setImage_name(existingItem.getImage_name());
-                item.setImage_type(existingItem.getImage_type());
-                item.setImage_date(existingItem.getImage_date());
-            }
-
-            dao.save(item);
-            return new ResponseEntity<>("Item updated", HttpStatus.OK);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Illegal access error", HttpStatus.BAD_REQUEST);
-        }
-    }*/
 
     public ItemDto updateItemWithImages(ItemDto dto, List<MultipartFile> images) throws IOException {
         int itemId = dto.getItemId();
@@ -325,7 +299,15 @@ public class ItemService {
         }
 
         try {
-            Item mapped = fromDtoFactory.fromDto(dto);
+            Location location = locationDao.findById(dto.getLocationId())
+                    .orElseThrow(() -> new NotFoundException("Location not found."));
+
+            Category category = categoryDao.findByName(dto.getCategory())
+                    .orElseThrow(() -> new NotFoundException("Category not found. name=" + dto.getCategory()));
+
+            ItemMappingContext ctx = new ItemMappingContext(existing.getUser(), category, location);
+
+            Item mapped = fromDtoFactory.fromDto(dto, ctx);
 
             // Copy over fields you allow updating
             existing.setName(mapped.getName());
@@ -360,7 +342,7 @@ public class ItemService {
 
             return toDtoFactory.toDto(existing);
 
-        } catch (IllegalAccessException e) {
+        } catch (IllegalArgumentException e) {
             throw new DtoMappingException("Failed to map ItemDto to Item for update. id=" + dto.getItemId(), e);
         }
     }
@@ -387,52 +369,13 @@ public class ItemService {
                 .map(item -> {
                             try {
                                 return toDtoFactory.toDto(item);
-                            } catch (IllegalAccessException e) {
+                            } catch (IllegalArgumentException e) {
                                 throw new DtoMappingException("Failed to map Item to DTO. itemId=" + item.getItemId(), e);
                             }
                         }
                 );
     }
 
-/*    public List<ItemTypeSchema> getAllSchemas() {
-        List<ItemTypeSchema> schemas = new ArrayList<>();
-
-        // for each concrete class you want to support...
-        for (Class<? extends ItemDto> cls : List.of(ProductDto.class, ServiceDto.class, RequestDto.class)) {
-            //String typeName = cls.getSimpleName(); // “Product”, “ServiceItem”, etc.
-
-            try {
-                // instantiate a “blank” instance (you’ll need a no-arg ctor or use defaults)
-                ItemDto instance = cls.getDeclaredConstructor().newInstance();
-
-                String typeName = instance.getSimpleName();
-
-                // call its getSpecificFields() → Map<String,String>
-                Map<String, Serializable> spec = instance.getSpecificFields();
-
-                // turn that into a List<FieldSchema>
-                List<FieldSchema> fieldList = new ArrayList<>();
-                for (String key : spec.keySet()) {
-                    System.out.println(spec.get(key).getClass().getSimpleName());
-                    System.out.println("Key: " + key);
-                    System.out.println("Value: " + spec.get(key));
-                    fieldList.add(new FieldSchema(
-                            key,
-                            key,        // if you need a prettier label, store it in the class or use a naming strategy
-                            spec.get(key).getClass().getSimpleName() // you could guess “number” if the value is numeric, etc.
-
-                    ));
-                }
-
-                schemas.add(new ItemTypeSchema(typeName, fieldList));
-            } catch (Exception ex) {
-                System.out.println("Error finding itemSchemas");
-            }
-        }
-
-        System.out.println("Schemas: " + schemas);
-        return new ResponseEntity<>(schemas, HttpStatus.OK);
-    }*/
 
     public List<ItemTypeSchema> getAllSchemas() {
         List<ItemTypeSchema> schemas = new ArrayList<>();

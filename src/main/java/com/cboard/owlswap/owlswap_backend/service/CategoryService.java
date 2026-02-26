@@ -1,6 +1,7 @@
 package com.cboard.owlswap.owlswap_backend.service;
 
 import com.cboard.owlswap.owlswap_backend.dao.CategoryDao;
+import com.cboard.owlswap.owlswap_backend.exception.NotFoundException;
 import com.cboard.owlswap.owlswap_backend.model.Category;
 import com.cboard.owlswap.owlswap_backend.model.Dto.CategoryDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,8 @@ public class CategoryService
     CategoryDao dao;
     public Category findByName(String name)
     {
-        return dao.findByName(name);
+        return dao.findByName(name)
+                .orElseThrow(() -> new NotFoundException("Category not found by that name. name=" + name));
     }
 
     public List<CategoryDto> getAll() {
