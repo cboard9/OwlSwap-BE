@@ -124,51 +124,7 @@ public class ItemController
 
     }
 
-    //upload an image
-/*    @PostMapping("{id}/upload-image")
-    public ResponseEntity<String> uploadImage(@PathVariable("id") int itemId, @RequestParam("file")MultipartFile file)
-    {
-        try
-        {
-            return service.uploadImage(itemId, file);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
-        }
-    }*/
 
-    //upload image and item at same time
-/*    @PostMapping(
-            value = "add/with-image",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-    )
-    public ResponseEntity<?> addItemWithImage(
-            @RequestPart("item") @Valid ItemDto dto,
-            @RequestPart("image") MultipartFile image)
-    {
-        Set<ConstraintViolation<ItemDto>> violations = validator.validate(dto);
-        if (!violations.isEmpty()) {
-            Map<String, String> errors = violations.stream()
-                    .collect(Collectors.toMap(
-                            v -> v.getPropertyPath().toString(),
-                            ConstraintViolation::getMessage,
-                            (a,b)->a
-                    ));
-            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-        }
-
-        try
-        {
-            return service.addItemWithImage(dto, image);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
-        }
-    }*/
     @PostMapping(
             value = "add/with-images",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
@@ -177,16 +133,6 @@ public class ItemController
             @RequestPart("item") @Valid ItemDto dto,
             @RequestPart("images") List<MultipartFile> images) throws IOException
     {
-/*        Set<ConstraintViolation<ItemDto>> violations = validator.validate(dto);
-        if (!violations.isEmpty()) {
-            Map<String, String> errors = violations.stream()
-                    .collect(Collectors.toMap(
-                            v -> v.getPropertyPath().toString(),
-                            ConstraintViolation::getMessage,
-                            (a,b)->a
-                    ));
-            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-        }*/
 
         ItemDto saved = service.addItemWithImages(dto, images);
 

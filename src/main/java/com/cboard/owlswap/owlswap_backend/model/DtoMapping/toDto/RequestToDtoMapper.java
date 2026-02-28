@@ -23,27 +23,25 @@ public class RequestToDtoMapper implements ItemToDtoMapper<Request>
                 r.getName(),
                 r.getDescription(),
                 r.getPrice(),
-                r.getUser() != null ? r.getUser().getUserId() : -1,
+                r.getUser().getUserId(),
                 r.getCategory() != null ? r.getCategory().getName() : null,
                 r.getReleaseDate(),
                 r.isAvailable(),
                 r.getLocation() != null ? r.getLocation().getName() : null,
                 r.getLocation() != null ? r.getLocation().getLocationId() : null,
                 r.getItemType(),
-                new ArrayList<>(),
-                /*r.getImage_name(),
-                r.getImage_type(),
-                r.getImage_date(),*/
+                null,
                 r.getDeadline()
         );
-        List<ItemImageDto> images = new ArrayList<>();
-        for(ItemImage img : r.getImages())
-            images.add(imageMapper.mapToDto(img));
-        dto.setImages(images);
-
-        if (r.getLocation() != null) {
-            dto.setLocationId(r.getLocation().getLocationId());
+        if (r.getImages() != null) {
+            dto.setImages(
+                    r.getImages().stream()
+                            .map(imageMapper::mapToDto)
+                            .toList()
+            );
         }
+
+
         return dto;
     }
 

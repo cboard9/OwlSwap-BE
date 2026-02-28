@@ -18,12 +18,6 @@ public class ProductDto extends ItemDto
     public ProductDto() {
     }
 
-/*    public ProductDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, String image_name, String image_type, byte[] image_date, Integer quantity, String brand)
-    {
-        super(itemId, name, description, price, userId, category, releaseDate, available, location, locationId, itemType, image_name, image_type, image_date);
-        this.quantity = quantity;
-        this.brand = brand;
-    }*/
 
     public ProductDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, List<ItemImageDto> images, Integer quantity, String brand)
     {
