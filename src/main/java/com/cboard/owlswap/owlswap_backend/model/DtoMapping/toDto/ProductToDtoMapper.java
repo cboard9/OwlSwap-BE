@@ -12,9 +12,9 @@ import java.util.List;
 @Component
 public class ProductToDtoMapper implements ItemToDtoMapper<Product>
 {
-    @Autowired
-    ImageToDtoMapper imageMapper;
-    public ProductToDtoMapper() {
+    private final ImageToDtoMapper imageMapper;
+    public ProductToDtoMapper(ImageToDtoMapper imageMapper) {
+        this.imageMapper = imageMapper;
     }
 
     @Override
@@ -24,7 +24,7 @@ public class ProductToDtoMapper implements ItemToDtoMapper<Product>
                 p.getName(),
                 p.getDescription(),
                 p.getPrice(),
-                (p.getUser() != null) ? p.getUser().getUserId() : -1,
+                p.getUser().getUserId(),
                 (p.getCategory() != null) ? p.getCategory().getName() : null,
                 p.getReleaseDate(),
                 p.isAvailable(),
@@ -36,14 +36,15 @@ public class ProductToDtoMapper implements ItemToDtoMapper<Product>
                 p.getBrand()
         );
 
-        List<ItemImageDto> images = new ArrayList<>();
-        for(ItemImage img : p.getImages())
-            images.add(imageMapper.mapToDto(img));
-        dto.setImages(images);
-
-        if (p.getLocation() != null) {
-            dto.setLocationId(p.getLocation().getLocationId());
+        if (p.getImages() != null) {
+            dto.setImages(
+                    p.getImages().stream()
+                            .map(imageMapper::mapToDto)
+                            .toList()
+            );
         }
+
+
         return dto;
     }
 

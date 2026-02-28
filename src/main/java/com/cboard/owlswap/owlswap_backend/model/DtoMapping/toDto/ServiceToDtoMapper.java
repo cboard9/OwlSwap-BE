@@ -22,28 +22,25 @@ public class ServiceToDtoMapper implements ItemToDtoMapper<Service>
                 s.getName(),
                 s.getDescription(),
                 s.getPrice(),
-                (s.getUser() != null) ? s.getUser().getUserId() : -1,
+                s.getUser().getUserId(),
                 (s.getCategory() != null) ? s.getCategory().getName() : null,
                 s.getReleaseDate(),
                 s.isAvailable(),
                 (s.getLocation() != null) ? s.getLocation().getName() : null,
                 (s.getLocation() != null) ? s.getLocation().getLocationId() : null,
                 s.getItemType(),
-                new ArrayList<>(),
-                /*s.getImage_name(),
-                s.getImage_type(),
-                s.getImage_date(),*/
+                null,
                 s.getDurationMinutes()
         );
 
-        List<ItemImageDto> images = new ArrayList<>();
-        for(ItemImage img : s.getImages())
-            images.add(imageMapper.mapToDto(img));
-        dto.setImages(images);
-
-        if (s.getLocation() != null) {
-            dto.setLocationId(s.getLocation().getLocationId());
+        if (s.getImages() != null) {
+            dto.setImages(
+                    s.getImages().stream()
+                            .map(imageMapper::mapToDto)
+                            .toList()
+            );
         }
+
         return dto;
     }
 
