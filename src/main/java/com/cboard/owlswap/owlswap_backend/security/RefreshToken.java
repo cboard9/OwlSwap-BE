@@ -10,9 +10,10 @@ public class RefreshToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long refreshTokenId;
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(nullable = false, length = 128)
@@ -32,11 +33,11 @@ public class RefreshToken {
     public boolean isExpired() { return Instant.now().isAfter(expiresAt); }
 
     public Long getId() {
-        return id;
+        return refreshTokenId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Long refreshTokenId) {
+        this.refreshTokenId = refreshTokenId;
     }
 
     public User getUser() {

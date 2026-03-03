@@ -234,3 +234,35 @@ BEGIN
 END $$
 DELIMITER ;
 
+
+--
+-- ------------------------------------------------------------------------------------------------------------------------------
+-- ADDITIONS
+
+CREATE TABLE refresh_tokens (
+  refresh_token_id BIGINT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+
+  user_id INT NOT NULL,
+
+  token_hash VARCHAR(128) NOT NULL,
+
+  expires_at DATETIME(6) NOT NULL,
+  revoked_at DATETIME(6) NULL,
+  last_used_at DATETIME(6) NULL,
+
+  user_agent VARCHAR(255) NULL,
+  ip VARCHAR(45) NULL,
+
+
+  -- Fast lookup when a refresh request comes in:
+  UNIQUE KEY uq_refresh_token_hash (token_hash),
+
+  -- Fast revoke / list by user if you add logout-all later:
+  KEY idx_refresh_user_id (user_id),
+  KEY idx_refresh_expires_at (expires_at),
+  KEY idx_refresh_revoked_at (revoked_at),
+
+  CONSTRAINT fk_refresh_tokens_user
+    FOREIGN KEY (user_id) REFERENCES user(user_id)
+    ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
