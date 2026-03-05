@@ -36,6 +36,9 @@ public class ProductToDtoMapper implements ItemToDtoMapper<Product>
                 p.getBrand()
         );
 
+        dto.setListingStatus(p.getListingStatus());
+        dto.setReservedUntil(p.getReservedUntil());
+
         if (p.getImages() != null) {
             dto.setImages(
                     p.getImages().stream()

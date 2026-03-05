@@ -33,6 +33,9 @@ public class ServiceToDtoMapper implements ItemToDtoMapper<Service>
                 s.getDurationMinutes()
         );
 
+        dto.setListingStatus(s.getListingStatus());
+        dto.setReservedUntil(s.getReservedUntil());
+
         if (s.getImages() != null) {
             dto.setImages(
                     s.getImages().stream()

@@ -33,6 +33,10 @@ public class RequestToDtoMapper implements ItemToDtoMapper<Request>
                 null,
                 r.getDeadline()
         );
+
+        dto.setListingStatus(r.getListingStatus());
+        dto.setReservedUntil(r.getReservedUntil());
+
         if (r.getImages() != null) {
             dto.setImages(
                     r.getImages().stream()

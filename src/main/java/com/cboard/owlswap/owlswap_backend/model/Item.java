@@ -1,8 +1,11 @@
 package com.cboard.owlswap.owlswap_backend.model;
 
+import com.cboard.owlswap.owlswap_backend.model.orders.ListingStatus;
+import com.cboard.owlswap.owlswap_backend.model.orders.Order;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,9 +47,21 @@ public abstract class Item
     @OrderBy("imageId ASC")
     private List<ItemImage> images = new ArrayList<>();
 
-/*    private String image_name;
-    private String image_type;
-    private byte[] image_date;*/
+    @Enumerated(EnumType.STRING)
+    @Column(name = "listing_status", nullable = false)
+    private ListingStatus listingStatus = ListingStatus.AVAILABLE;
+
+    @Column(name = "reserved_until")
+    private java.time.LocalDateTime reservedUntil;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reserved_by_order_id")
+    private Order reservedByOrder;
+
+    @Version
+    @Column(name = "version", nullable = false)
+    private Integer version;
+
 
 
     public Item() {
@@ -118,7 +133,7 @@ public abstract class Item
         this.name = name;
     }
 
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 
@@ -162,29 +177,6 @@ public abstract class Item
         this.itemType = itemType;
     }
 
-/*    public String getImage_name() {
-        return image_name;
-    }
-
-    public void setImage_name(String image_name) {
-        this.image_name = image_name;
-    }
-
-    public String getImage_type() {
-        return image_type;
-    }
-
-    public void setImage_type(String image_type) {
-        this.image_type = image_type;
-    }
-
-    public byte[] getImage_date() {
-        return image_date;
-    }
-
-    public void setImage_date(byte[] image_date) {
-        this.image_date = image_date;
-    }*/
 
     public List<ItemImage> getImages() {
         return images;
@@ -206,5 +198,37 @@ public abstract class Item
         if(image == null) return;
         images.remove(image);
         image.setItem(null);
+    }
+
+    public ListingStatus getListingStatus() {
+        return listingStatus;
+    }
+
+    public void setListingStatus(ListingStatus listingStatus) {
+        this.listingStatus = listingStatus;
+    }
+
+    public LocalDateTime getReservedUntil() {
+        return reservedUntil;
+    }
+
+    public void setReservedUntil(LocalDateTime reservedUntil) {
+        this.reservedUntil = reservedUntil;
+    }
+
+    public Order getReservedByOrder() {
+        return reservedByOrder;
+    }
+
+    public void setReservedByOrder(Order reservedByOrder) {
+        this.reservedByOrder = reservedByOrder;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 }

@@ -1,12 +1,17 @@
 package com.cboard.owlswap.owlswap_backend.model.Dto;
 
+import com.cboard.owlswap.owlswap_backend.model.orders.ListingStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,6 +61,9 @@ public abstract class ItemDto
     private byte[] image_date;*/
     private Map<@NotBlank String, @NotNull(message="Value cannot be blank") Object> specificFields;
 
+
+    private ListingStatus listingStatus;
+    private java.time.LocalDateTime reservedUntil;
 
 
     public ItemDto() {
@@ -216,29 +224,6 @@ public abstract class ItemDto
         this.itemType = itemType;
     }
 
-/*    public String getImage_name() {
-        return image_name;
-    }
-
-    public void setImage_name(String image_name) {
-        this.image_name = image_name;
-    }
-
-    public String getImage_type() {
-        return image_type;
-    }
-
-    public void setImage_type(String image_type) {
-        this.image_type = image_type;
-    }
-
-    public byte[] getImage_date() {
-        return image_date;
-    }
-
-    public void setImage_date(byte[] image_date) {
-        this.image_date = image_date;
-    }*/
 
     public List<ItemImageDto> getImages() {
         return images;
@@ -246,5 +231,21 @@ public abstract class ItemDto
 
     public void setImages(List<ItemImageDto> images) {
         this.images = images;
+    }
+
+    public ListingStatus getListingStatus() {
+        return listingStatus;
+    }
+
+    public void setListingStatus(ListingStatus listingStatus) {
+        this.listingStatus = listingStatus;
+    }
+
+    public LocalDateTime getReservedUntil() {
+        return reservedUntil;
+    }
+
+    public void setReservedUntil(LocalDateTime reservedUntil) {
+        this.reservedUntil = reservedUntil;
     }
 }

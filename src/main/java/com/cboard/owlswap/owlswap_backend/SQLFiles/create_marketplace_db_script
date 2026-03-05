@@ -270,3 +270,59 @@ CREATE TABLE refresh_tokens (
 
 ALTER TABLE user
 ADD COLUMN role VARCHAR(20)	NOT NULL DEFAULT 'USER';
+
+
+CREATE TABLE orders (
+  order_id INT PRIMARY KEY AUTO_INCREMENT,
+
+  buyer_id INT NOT NULL,
+  seller_id INT NOT NULL,
+  item_id INT NOT NULL,
+
+  amount DECIMAL(10,2) NOT NULL,
+  currency VARCHAR(10) NOT NULL DEFAULT 'USD',
+
+  status VARCHAR(30) NOT NULL DEFAULT 'PENDING',      -- PENDING/PAID/FULFILLED/CANCELLED/EXPIRED/REFUNDED
+  reserved_until TIMESTAMP NULL,
+
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  -- Stripe placeholders (leave null until integrated)
+  payment_provider VARCHAR(30) NULL,                  -- 'STRIPE'
+  payment_intent_id VARCHAR(100) NULL,
+  checkout_session_id VARCHAR(100) NULL,
+  latest_payment_status VARCHAR(50) NULL,
+
+  CONSTRAINT fk_orders_item FOREIGN KEY (item_id) REFERENCES item(item_id)
+    ON DELETE RESTRICT ON UPDATE CASCADE,
+
+  CONSTRAINT fk_orders_buyer FOREIGN KEY (buyer_id) REFERENCES user_archive(user_id)
+    ON DELETE RESTRICT ON UPDATE CASCADE,
+
+  CONSTRAINT fk_orders_seller FOREIGN KEY (seller_id) REFERENCES user_archive(user_id)
+    ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+CREATE INDEX idx_orders_buyer ON orders(buyer_id);
+CREATE INDEX idx_orders_seller ON orders(seller_id);
+CREATE INDEX idx_orders_item ON orders(item_id);
+CREATE INDEX idx_orders_status ON orders(status);
+CREATE INDEX idx_orders_reserved_until ON orders(reserved_until);
+
+
+
+ALTER TABLE item
+  ADD COLUMN listing_status VARCHAR(20) NOT NULL DEFAULT 'AVAILABLE',
+  ADD COLUMN reserved_until TIMESTAMP NULL,
+  ADD COLUMN reserved_by_order_id INT NULL,
+  ADD COLUMN version INT NOT NULL DEFAULT 0;
+
+ALTER TABLE item
+  ADD CONSTRAINT fk_item_reserved_by_order
+  FOREIGN KEY (reserved_by_order_id) REFERENCES orders(order_id)
+  ON DELETE SET NULL ON UPDATE CASCADE;
+
+CREATE INDEX idx_item_listing_status ON item(listing_status);
+CREATE INDEX idx_item_reserved_until ON item(reserved_until);
+
