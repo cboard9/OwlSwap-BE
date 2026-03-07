@@ -36,7 +36,7 @@ public class OrderService
     private final CurrentUser currentUser;
 
     // how long we reserve an item before it expires
-    private static final int RESERVATION_MINUTES = 10;
+    private static final int RESERVATION_MINUTES = 1;
 
     public OrderService(OrderDao orderDao,
                         ItemDao itemDao,
@@ -59,13 +59,13 @@ public class OrderService
                 .orElseThrow(() -> new NotFoundException("Item not found."));
 
         // Cannot buy your own item
-        if (item.getUser() != null && item.getUser().getUserId() == buyerId) {
+        if (item.getUser() != null && item.getUser().getUserId().equals(buyerId)) {
             throw new BadRequestException("You cannot purchase your own item.");
         }
 
         // If item is not available, block purchase
         if (item.getListingStatus() != ListingStatus.AVAILABLE) {
-            throw new BadRequestException("Item is not available.");
+            throw new NotAvailableException("Item is not available.");
         }
 
         // Seller (from Item.owner) - stored as snapshot on order
@@ -111,7 +111,7 @@ public class OrderService
                 .orElseThrow(() -> new NotFoundException("Order not found."));
 
         // Only buyer can cancel (admin could later)
-        if (order.getBuyer().getUserId() != userId) {
+        if (!order.getBuyer().getUserId().equals(userId)) {
             throw new AccessDeniedException("You cannot cancel this order.");
         }
 
@@ -151,7 +151,7 @@ public class OrderService
                 .orElseThrow(() -> new NotFoundException("Order not found."));
 
         // only buyer can mark paid (temporary)
-        if (order.getBuyer().getUserId() != userId) {
+        if (!order.getBuyer().getUserId().equals(userId)) {
             throw new AccessDeniedException("You cannot pay for this order.");
         }
 
@@ -190,7 +190,7 @@ public class OrderService
                 .orElseThrow(() -> new NotFoundException("Order not found."));
 
         // only seller can fulfill
-        if (order.getSeller().getUserId() != userId) {
+        if (!order.getSeller().getUserId().equals(userId)) {
             throw new AccessDeniedException("You cannot fulfill this order.");
         }
 

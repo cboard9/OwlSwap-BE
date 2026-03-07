@@ -13,7 +13,7 @@ public class User
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
+    private Integer userId;
     private String firstName;
     private String lastName;
     private String email;
@@ -36,7 +36,7 @@ public class User
     public User() {
     }
 
-    public User(int userId, String firstName, String lastName, String email, String username, String password, Double averageRating) {
+    public User(Integer userId, String firstName, String lastName, String email, String username, String password, Double averageRating) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -46,11 +46,11 @@ public class User
         this.averageRating = averageRating;
     }
 
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 

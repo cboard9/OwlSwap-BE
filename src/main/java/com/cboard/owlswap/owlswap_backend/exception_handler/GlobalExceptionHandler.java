@@ -7,6 +7,8 @@ import com.cboard.owlswap.owlswap_backend.exception.NotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,8 @@ import java.time.Instant;
 @RestControllerAdvice
 public class GlobalExceptionHandler
 {
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleMethodArgNotValid(MethodArgumentNotValidException ex, HttpServletRequest req)
@@ -152,9 +156,8 @@ public class GlobalExceptionHandler
     }
 
     @ExceptionHandler({AccessDeniedException.class, AuthorizationDeniedException.class})
-    public ResponseEntity<ApiError> handleAccessDenied(AccessDeniedException accessDeniedException,
-                                   AuthorizationDeniedException authorizationDeniedException,
-                                   HttpServletRequest req) {
+    public ResponseEntity<ApiError> handleAccessDenied(Exception ex,
+                                                       HttpServletRequest req) {
 
         ApiError body = new ApiError(
                 "FORBIDDEN",
@@ -173,6 +176,8 @@ public class GlobalExceptionHandler
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleUnexpected(Exception ex, HttpServletRequest req) {
+        log.error("Unhandled exception on path {}: ", req.getRequestURI(), ex);
+
         // In production you log ex with stacktrace; don’t leak internals to clients.
         ApiError body = new ApiError(
                 "INTERNAL_ERROR",

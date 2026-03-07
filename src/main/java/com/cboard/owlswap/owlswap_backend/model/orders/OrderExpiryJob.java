@@ -1,9 +1,8 @@
-package com.cboard.owlswap.owlswap_backend.service;
+package com.cboard.owlswap.owlswap_backend.model.orders;
 
 import com.cboard.owlswap.owlswap_backend.dao.ItemDao;
 import com.cboard.owlswap.owlswap_backend.dao.OrderDao;
 import com.cboard.owlswap.owlswap_backend.model.Item;
-import com.cboard.owlswap.owlswap_backend.model.orders.*;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

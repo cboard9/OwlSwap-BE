@@ -21,7 +21,7 @@ public class OrderController
         this.mapper = mapper;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<OrderDto> create(@RequestBody @Valid CreateOrderRequest req) {
         Order order = orderService.createOrderAndReserveItem(req.itemId());
         return ResponseEntity.ok(mapper.toDto(order));
