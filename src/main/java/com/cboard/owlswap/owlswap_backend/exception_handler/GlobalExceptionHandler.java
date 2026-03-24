@@ -1,9 +1,6 @@
 package com.cboard.owlswap.owlswap_backend.exception_handler;
 
-import com.cboard.owlswap.owlswap_backend.exception.BadRequestException;
-import com.cboard.owlswap.owlswap_backend.exception.DtoMappingException;
-import com.cboard.owlswap.owlswap_backend.exception.NotAvailableException;
-import com.cboard.owlswap.owlswap_backend.exception.NotFoundException;
+import com.cboard.owlswap.owlswap_backend.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
@@ -39,7 +36,7 @@ public class GlobalExceptionHandler
         );
 
         ApiError body = new ApiError(
-            "VALIDATION_FAILED",
+                "VALIDATION_FAILED",
                 "Request validation failed",
                 HttpStatus.BAD_REQUEST.value(),
                 req.getRequestURI(),
@@ -171,6 +168,21 @@ public class GlobalExceptionHandler
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
 
     }
+
+    @ExceptionHandler(EmailDeliveryException.class)
+    public ResponseEntity<?> handleEmailDeliveryException(EmailDeliveryException ex, HttpServletRequest req)
+    {
+        ApiError body = new ApiError(
+                "EMAIL_DELIVERY_ERROR",
+                "Server failed to deliver verification email.",
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                req.getRequestURI(),
+                Instant.now(),
+                null
+        );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+    }
+
 
 
 

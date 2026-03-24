@@ -55,6 +55,10 @@ public class AuthService {
     @Value("${app.refresh.exp-days}") private long refreshExpDays;
     @Value("${app.refresh.cookie-secure}") private boolean refreshCookieSecure;
 
+    @Value("${app.backend.base-url}")
+    private String backendBaseUrl;
+
+
     public ResponseEntity<?> registerUser(SignupRequest request) {
 
         if(request.getUsername() == null || request.getUsername().isBlank() || request.getPassword() == null || request.getPassword().isBlank())
@@ -105,7 +109,7 @@ public class AuthService {
         emailVerificationDao.save(evt);
 
         //For backend-direct verification, change later
-        String verifyUrl = "http://localhost:8080/api/auth/verify-email?token=" + rawVerificationToken;
+        String verifyUrl = backendBaseUrl + "/api/auth/verify-email?token=" + rawVerificationToken;
         emailService.sendVerificationEmail(user.getEmail(), verifyUrl);
 
 
@@ -311,7 +315,7 @@ public class AuthService {
 
         emailVerificationDao.save(evt);
 
-        String verifyUrl = "http://localhost:8080/api/auth/verify-email?token=" + rawVerificationToken;
+        String verifyUrl = backendBaseUrl + "/api/auth/verify-email?token=" + rawVerificationToken;
         emailService.sendVerificationEmail(user.getEmail(), verifyUrl);
 
         return ResponseEntity.ok("Verification email re-sent.");
