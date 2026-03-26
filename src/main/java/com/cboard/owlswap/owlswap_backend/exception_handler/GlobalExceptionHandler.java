@@ -1,6 +1,7 @@
 package com.cboard.owlswap.owlswap_backend.exception_handler;
 
 import com.cboard.owlswap.owlswap_backend.exception.*;
+import com.stripe.exception.StripeException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
@@ -181,6 +182,20 @@ public class GlobalExceptionHandler
                 null
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+    }
+
+    @ExceptionHandler(StripeException.class)
+    public ResponseEntity<ApiError> handleStripeException(StripeException ex, HttpServletRequest req) {
+        ApiError body = new ApiError(
+                "STRIPE_ERROR",
+                "Stripe request failed: " + ex.getMessage(),
+                HttpStatus.BAD_GATEWAY.value(),
+                req.getRequestURI(),
+                Instant.now(),
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(body);
     }
 
 

@@ -35,6 +35,17 @@ public class User
     private List<RefreshToken> refreshTokens = new ArrayList<>();
     @Column(name = "email_verified", nullable = false)
     private boolean emailVerified = false;
+    @Column(name = "stripe_account_id")
+    private String stripeAccountId;
+
+    @Column(name = "stripe_onboarding_complete")
+    private boolean stripeOnboardingComplete;
+
+    @Column(name = "stripe_charges_enabled")
+    private boolean stripeChargesEnabled;
+
+    @Column(name = "stripe_payouts_enabled")
+    private boolean stripePayoutsEnabled;
 
     public User() {
     }
@@ -47,6 +58,24 @@ public class User
         this.username = username;
         this.password = password;
         this.averageRating = averageRating;
+    }
+
+    public User(Integer userId, String firstName, String lastName, String email, String username, String password, Double averageRating,
+                String stripeAccountId,
+                boolean stripeOnboardingComplete,
+                boolean stripeChargesEnabled,
+                boolean stripePayoutsEnabled) {
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.averageRating = averageRating;
+        this.stripeAccountId = stripeAccountId;
+        this.stripeOnboardingComplete = stripeOnboardingComplete;
+        this.stripeChargesEnabled = stripeChargesEnabled;
+        this.stripePayoutsEnabled = stripePayoutsEnabled;
     }
 
     public Integer getUserId() {
@@ -127,5 +156,37 @@ public class User
 
     public void setEmailVerified(boolean emailVerified) {
         this.emailVerified = emailVerified;
+    }
+
+    public String getStripeAccountId() {
+        return stripeAccountId;
+    }
+
+    public void setStripeAccountId(String stripeAccountId) {
+        this.stripeAccountId = stripeAccountId;
+    }
+
+    public boolean isStripeOnboardingComplete() {
+        return stripeOnboardingComplete;
+    }
+
+    public void setStripeOnboardingComplete(boolean stripeOnboardingComplete) {
+        this.stripeOnboardingComplete = stripeOnboardingComplete;
+    }
+
+    public boolean isStripeChargesEnabled() {
+        return stripeChargesEnabled;
+    }
+
+    public void setStripeChargesEnabled(boolean stripeChargesEnabled) {
+        this.stripeChargesEnabled = stripeChargesEnabled;
+    }
+
+    public boolean isStripePayoutsEnabled() {
+        return stripePayoutsEnabled;
+    }
+
+    public void setStripePayoutsEnabled(boolean stripePayoutsEnabled) {
+        this.stripePayoutsEnabled = stripePayoutsEnabled;
     }
 }

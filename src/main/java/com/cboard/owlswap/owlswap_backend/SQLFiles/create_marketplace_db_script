@@ -349,3 +349,9 @@ CREATE TABLE email_verification_tokens (
 
 ALTER TABLE user
 ADD CONSTRAINT uq_user_email UNIQUE (email);
+
+ALTER TABLE user
+  ADD COLUMN stripe_account_id VARCHAR(100) NULL,
+  ADD COLUMN stripe_onboarding_complete BOOLEAN NOT NULL DEFAULT FALSE,
+  ADD COLUMN stripe_charges_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+  ADD COLUMN stripe_payouts_enabled BOOLEAN NOT NULL DEFAULT FALSE;
