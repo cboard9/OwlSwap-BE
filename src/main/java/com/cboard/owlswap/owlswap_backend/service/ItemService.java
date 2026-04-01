@@ -159,7 +159,7 @@ public class ItemService {
 
             //item.setUser(currentUser.user()); //later remove the user mapping from the mappers since setting here
 
-            item.setItemId(0); //forcing this to be a true add
+            //item.setItemId(0); //forcing this to be a true add
             Item saved = dao.save(item);
             return toDtoFactory.toDto(saved);
 

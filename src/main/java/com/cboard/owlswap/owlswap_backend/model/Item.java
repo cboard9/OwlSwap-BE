@@ -19,7 +19,7 @@ public abstract class Item
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int itemId;
+    private Integer itemId;
     @NotNull(message = "Name is required...")
     private String name;
     String description;
@@ -58,9 +58,9 @@ public abstract class Item
     @JoinColumn(name = "reserved_by_order_id")
     private Order reservedByOrder;
 
-    @Version
+/*    @Version
     @Column(name = "version", nullable = false)
-    private Integer version;
+    private Integer version;*/
 
 
 
@@ -83,7 +83,7 @@ public abstract class Item
         this.image_date = image_date;
     }*/
 
-    public Item(int itemId, String name, String description, Double price, User user, Category category, String releaseDate, boolean available, Location location, String itemType, List<ItemImage> images) {
+    public Item(Integer itemId, String name, String description, Double price, User user, Category category, String releaseDate, boolean available, Location location, String itemType, List<ItemImage> images) {
         this.itemId = itemId;
         this.name = name;
         this.description = description;
@@ -117,11 +117,11 @@ public abstract class Item
         this.description = description;
     }
 
-    public int getItemId() {
+    public Integer getItemId() {
         return itemId;
     }
 
-    public void setItemId(int itemId) {
+    public void setItemId(Integer itemId) {
         this.itemId = itemId;
     }
 
@@ -224,11 +224,11 @@ public abstract class Item
         this.reservedByOrder = reservedByOrder;
     }
 
-    public Integer getVersion() {
+/*    public Integer getVersion() {
         return version;
     }
 
     public void setVersion(Integer version) {
         this.version = version;
-    }
+    }*/
 }

@@ -319,6 +319,9 @@ ALTER TABLE item
   ADD COLUMN version INT NOT NULL DEFAULT 0;
 
 ALTER TABLE item
+	DROP COLUMN version;
+
+ALTER TABLE item
   ADD CONSTRAINT fk_item_reserved_by_order
   FOREIGN KEY (reserved_by_order_id) REFERENCES orders(order_id)
   ON DELETE SET NULL ON UPDATE CASCADE;

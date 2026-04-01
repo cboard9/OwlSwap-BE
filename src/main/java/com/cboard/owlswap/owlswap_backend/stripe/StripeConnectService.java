@@ -4,6 +4,7 @@ import com.cboard.owlswap.owlswap_backend.exception.NotFoundException;
 import com.cboard.owlswap.owlswap_backend.model.User;
 import com.cboard.owlswap.owlswap_backend.security.CurrentUser;
 import com.cboard.owlswap.owlswap_backend.dao.UserDao;
+import com.cboard.owlswap.owlswap_backend.stripe.seller.StripeSellerStatusDto;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
 import com.stripe.model.AccountLink;

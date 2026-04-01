@@ -24,7 +24,7 @@ public class Request extends Item
         this.deadline = deadline;
     }*/
 
-    public Request(int itemId, String name, String description, Double price, User user, Category category, String releaseDate, boolean available, Location location, String itemType, List<ItemImage> images, String deadline)
+    public Request(Integer itemId, String name, String description, Double price, User user, Category category, String releaseDate, boolean available, Location location, String itemType, List<ItemImage> images, String deadline)
     {
         super(itemId, name, description, price, user, category, releaseDate, available, location, itemType, images);
         this.deadline = deadline;

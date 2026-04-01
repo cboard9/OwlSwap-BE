@@ -25,7 +25,7 @@ public class Service extends Item
         this.durationMinutes = durationMinutes;
     }*/
 
-    public Service(int itemId, String name, String description, Double price, User user, Category category, String releaseDate, boolean available, Location location, String itemType, List<ItemImage> images, Integer durationMinutes)
+    public Service(Integer itemId, String name, String description, Double price, User user, Category category, String releaseDate, boolean available, Location location, String itemType, List<ItemImage> images, Integer durationMinutes)
     {
         super(itemId, name, description, price, user, category, releaseDate, available, location, itemType, images);
         this.durationMinutes = durationMinutes;

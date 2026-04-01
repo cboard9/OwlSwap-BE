@@ -1,8 +1,7 @@
 package com.cboard.owlswap.owlswap_backend.stripe;
 
-import com.cboard.owlswap.owlswap_backend.stripe.StripeOnboardingLinkDto;
-import com.cboard.owlswap.owlswap_backend.stripe.StripeConnectService;
-import com.cboard.owlswap.owlswap_backend.stripe.StripeSellerStatusDto;
+import com.cboard.owlswap.owlswap_backend.stripe.seller.StripeOnboardingLinkDto;
+import com.cboard.owlswap.owlswap_backend.stripe.seller.StripeSellerStatusDto;
 import com.stripe.exception.StripeException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -28,7 +28,7 @@ public class RequestDto extends ItemDto
         this.deadline = deadline;
     }*/
 
-    public RequestDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, List<ItemImageDto> images, String deadline)
+    public RequestDto(Integer itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, List<ItemImageDto> images, String deadline)
     {
         super(itemId, name, description, price, userId, category, releaseDate, available, location, locationId, itemType, images);
         this.deadline = deadline;

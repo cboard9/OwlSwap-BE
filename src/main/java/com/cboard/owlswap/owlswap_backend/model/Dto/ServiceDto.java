@@ -23,7 +23,7 @@ public class ServiceDto extends ItemDto
         this.durationMinutes = durationMinutes;
     }*/
 
-    public ServiceDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, List<ItemImageDto> images, Integer durationMinutes)
+    public ServiceDto(Integer itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, List<ItemImageDto> images, Integer durationMinutes)
     {
         super(itemId, name, description, price, userId, category, releaseDate, available, location, locationId, itemType, images);
         this.durationMinutes = durationMinutes;

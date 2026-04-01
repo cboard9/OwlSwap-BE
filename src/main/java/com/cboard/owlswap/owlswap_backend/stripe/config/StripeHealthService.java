@@ -1,6 +1,6 @@
-package com.cboard.owlswap.owlswap_backend.stripe;
+package com.cboard.owlswap.owlswap_backend.stripe.config;
 
-import com.cboard.owlswap.owlswap_backend.stripe.StripeProperties;
+import com.cboard.owlswap.owlswap_backend.stripe.config.StripeProperties;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

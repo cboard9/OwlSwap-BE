@@ -31,7 +31,7 @@ import java.util.Map;
 
 public abstract class ItemDto
 {
-    private int itemId;
+    private Integer itemId;
     @NotNull(message = "Name is required...")
     @NotBlank(message = "Name must not be blank")
     private String name;
@@ -104,7 +104,7 @@ public abstract class ItemDto
         this.image_date = image_date;
     }*/
 
-    public ItemDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, List<ItemImageDto> images) {
+    public ItemDto(Integer itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, List<ItemImageDto> images) {
         this.itemId = itemId;
         this.name = name;
         this.description = description;
@@ -151,11 +151,11 @@ public abstract class ItemDto
         this.description = description;
     }
 
-    public int getItemId() {
+    public Integer getItemId() {
         return itemId;
     }
 
-    public void setItemId(int itemId) {
+    public void setItemId(Integer itemId) {
         this.itemId = itemId;
     }
 

@@ -1,4 +1,4 @@
-package com.cboard.owlswap.owlswap_backend.stripe;
+package com.cboard.owlswap.owlswap_backend.stripe.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

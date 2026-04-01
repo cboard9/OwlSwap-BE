@@ -21,7 +21,7 @@ public class Product extends Item
     }
 
 
-    public Product(int itemId, String name, String description, Double price, User user, Category category, String releaseDate, boolean available, Location location, String itemType, List<ItemImage> images, Integer quantity, String brand)
+    public Product(Integer itemId, String name, String description, Double price, User user, Category category, String releaseDate, boolean available, Location location, String itemType, List<ItemImage> images, Integer quantity, String brand)
     {
         super(itemId, name, description, price, user, category, releaseDate, available, location, itemType, images);
         this.quantity = quantity;

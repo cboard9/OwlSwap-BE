@@ -19,7 +19,7 @@ public class ProductDto extends ItemDto
     }
 
 
-    public ProductDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, List<ItemImageDto> images, Integer quantity, String brand)
+    public ProductDto(Integer itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, List<ItemImageDto> images, Integer quantity, String brand)
     {
         super(itemId, name, description, price, userId, category, releaseDate, available, location, locationId, itemType, images);
         this.quantity = quantity;
