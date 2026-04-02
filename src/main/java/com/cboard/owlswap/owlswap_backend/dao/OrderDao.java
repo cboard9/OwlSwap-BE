@@ -14,5 +14,6 @@ public interface OrderDao extends JpaRepository<Order, Integer> {
     List<Order> findByStatusAndReservedUntilBefore(OrderStatus status, LocalDateTime time);
 
     Optional<Order> findByCheckoutSessionId(String checkoutSessionId);
+    Optional<Order> findByOrderId(Integer orderId);
 
 }

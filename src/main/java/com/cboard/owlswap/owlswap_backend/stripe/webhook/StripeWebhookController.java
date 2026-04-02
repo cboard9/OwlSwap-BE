@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/stripe-webhook")
+@RequestMapping("/stripe")
 public class StripeWebhookController {
 
     private final StripeProperties stripeProperties;

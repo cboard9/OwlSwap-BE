@@ -1,6 +1,7 @@
 package com.cboard.owlswap.owlswap_backend.exception_handler;
 
 import com.cboard.owlswap.owlswap_backend.exception.*;
+import com.stripe.exception.EventDataObjectDeserializationException;
 import com.stripe.exception.StripeException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -205,6 +206,20 @@ public class GlobalExceptionHandler
         ApiError body = new ApiError(
                 "INVALID_STRIPE_SIGNATURE",
                 "Stripe webhook signature verification failed.",
+                HttpStatus.BAD_REQUEST.value(),
+                req.getRequestURI(),
+                Instant.now(),
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    @ExceptionHandler(EventDataObjectDeserializationException.class)
+    public ResponseEntity<ApiError> handleStripeDeserialization(EventDataObjectDeserializationException ex, HttpServletRequest req) {
+        ApiError body = new ApiError(
+                "STRIPE_DESERIALIZATION_FAILED",
+                "Stripe deserialization failed.",
                 HttpStatus.BAD_REQUEST.value(),
                 req.getRequestURI(),
                 Instant.now(),

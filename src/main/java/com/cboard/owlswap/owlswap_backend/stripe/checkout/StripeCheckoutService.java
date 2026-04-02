@@ -57,6 +57,10 @@ public class StripeCheckoutService {
             throw new BadRequestException("Only pending orders can be checked out.");
         }
 
+        if (order.getCheckoutSessionId() != null && !order.getCheckoutSessionId().isBlank()) {
+            throw new BadRequestException("A checkout session already exists for this order.");
+        }
+
         // Reservation must not be expired
         if (order.getReservedUntil() != null && order.getReservedUntil().isBefore(LocalDateTime.now())) {
             throw new NotAvailableException("This reservation has expired.");
