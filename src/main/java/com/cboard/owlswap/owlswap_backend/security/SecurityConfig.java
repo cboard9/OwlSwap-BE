@@ -56,6 +56,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/stripe-webhook/webhook").permitAll()
                         .anyRequest().authenticated());
                                   //.anyRequest().permitAll()); // delete this and uncomment above to turn auth back on
 

@@ -16,6 +16,7 @@ import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import com.stripe.exception.SignatureVerificationException;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -198,6 +199,20 @@ public class GlobalExceptionHandler
         return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(body);
     }
 
+
+    @ExceptionHandler(SignatureVerificationException.class)
+    public ResponseEntity<ApiError> handleStripeSignature(SignatureVerificationException ex, HttpServletRequest req) {
+        ApiError body = new ApiError(
+                "INVALID_STRIPE_SIGNATURE",
+                "Stripe webhook signature verification failed.",
+                HttpStatus.BAD_REQUEST.value(),
+                req.getRequestURI(),
+                Instant.now(),
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
 
 
 
