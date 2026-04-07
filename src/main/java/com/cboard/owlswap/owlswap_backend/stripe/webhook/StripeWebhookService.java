@@ -32,6 +32,7 @@ public class StripeWebhookService {
 
         switch (eventType) {
             case "checkout.session.completed" -> handleCheckoutSessionCompleted(event);
+            case "checkout.session.expired" -> handleCheckoutSessionExpired(event);
             default -> {
                 // Ignore unsupported events for now
             }
@@ -112,5 +113,70 @@ public class StripeWebhookService {
         item.setAvailable(false); // legacy sync for now
 
         itemDao.save(item);
+    }
+
+    @Transactional
+    public void handleCheckoutSessionExpired(Event event) {
+        var deserializer = event.getDataObjectDeserializer();
+
+        Session session;
+        if (deserializer.getObject().isPresent()) {
+            session = (Session) deserializer.getObject().get();
+        } else {
+            try {
+                session = (Session) deserializer.deserializeUnsafe();
+            }
+            catch(EventDataObjectDeserializationException ex)
+            {
+                throw new BadRequestException("STRIPE DESERIALIZATION FAILED");
+            }
+        }
+
+        Order order = orderDao.findByCheckoutSessionId(session.getId())
+                .orElseGet(() -> {
+                    String clientRef = session.getClientReferenceId();
+                    if (clientRef == null || clientRef.isBlank()) {
+                        throw new NotFoundException("Order not found for expired checkout session: " + session.getId());
+                    }
+
+                    Integer orderId = Integer.valueOf(clientRef);
+                    return orderDao.findById(orderId)
+                            .orElseThrow(() -> new NotFoundException(
+                                    "Order not found for client_reference_id: " + clientRef
+                            ));
+                });
+
+        // Idempotency / already resolved
+        if (order.getStatus() == OrderStatus.PAID || order.getStatus() == OrderStatus.FULFILLED) {
+            return;
+        }
+
+        // Only pending orders should be expired this way
+        if (order.getStatus() != OrderStatus.PENDING) {
+            return;
+        }
+
+        order.setLatestPaymentStatus(session.getPaymentStatus());
+        order.setStatus(OrderStatus.EXPIRED);
+
+        // Clear old checkout session linkage so a future retry can generate a fresh session
+        order.setCheckoutSessionId(null);
+        order.setStatus(OrderStatus.CANCELLED);
+
+        orderDao.save(order);
+
+        Item item = itemDao.findByIdForUpdate(order.getItem().getItemId())
+                .orElseThrow(() -> new NotFoundException("Item not found."));
+
+        // Only release inventory if this order is still the reserver
+        if (item.getReservedByOrder() != null
+                && item.getReservedByOrder().getOrderId().equals(order.getOrderId())) {
+
+            item.setListingStatus(ListingStatus.AVAILABLE);
+            item.setReservedByOrder(null);
+            item.setReservedUntil(null);
+            item.setAvailable(true); // legacy sync
+            itemDao.save(item);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.cboard.owlswap.owlswap_backend.stripe.checkout;
 
+import com.cboard.owlswap.owlswap_backend.model.Dto.OrderDto;
 import com.cboard.owlswap.owlswap_backend.stripe.checkout.StripeCheckoutSessionDto;
 import com.cboard.owlswap.owlswap_backend.stripe.checkout.StripeCheckoutService;
 import com.stripe.exception.StripeException;
@@ -27,4 +28,14 @@ public class StripeCheckoutController {
                 new StripeCheckoutSessionDto(session.getId(), session.getUrl())
         );
     }
+
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<OrderDto> cancelOrder(@PathVariable("id") Integer orderId)
+            throws StripeException {
+
+        OrderDto order = stripeCheckoutService.expireCheckoutSessionIfOpen(orderId);
+
+        return ResponseEntity.ok(order);
+    }
+
 }

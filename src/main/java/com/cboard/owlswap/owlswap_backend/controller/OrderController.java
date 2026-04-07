@@ -31,10 +31,10 @@ public class OrderController
         return ResponseEntity.ok(mapper.toDto(order));
     }
 
-    @PostMapping("/{orderId}/cancel")
+ /*   @PostMapping("/{orderId}/cancel")
     public ResponseEntity<OrderDto> cancel(@PathVariable Integer orderId) {
         return ResponseEntity.ok(mapper.toDto(orderService.cancelOrder(orderId)));
-    }
+    }*/
 
 /*    // TEMP for now (simulate payment)
     @PostMapping("/{orderId}/pay")

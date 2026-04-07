@@ -39,7 +39,7 @@ public class OrderService
     private final OrderToDtoMapper orderToDtoMapper;
 
     // how long we reserve an item before it expires
-    private static final int RESERVATION_MINUTES = 5;
+    private static final int RESERVATION_MINUTES = 30;
 
     public OrderService(OrderDao orderDao,
                         ItemDao itemDao,
@@ -140,7 +140,8 @@ public class OrderService
                 .orElseThrow(() -> new NotFoundException("Item not found."));
 
         if (item.getReservedByOrder() != null
-                && item.getReservedByOrder().getOrderId().equals(order.getOrderId())) {
+                && item.getReservedByOrder().getOrderId().equals(order.getOrderId()))
+        {
 
             item.setListingStatus(ListingStatus.AVAILABLE);
             item.setReservedByOrder(null);

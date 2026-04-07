@@ -4,6 +4,7 @@ import com.cboard.owlswap.owlswap_backend.dao.ItemDao;
 import com.cboard.owlswap.owlswap_backend.dao.OrderDao;
 import com.cboard.owlswap.owlswap_backend.model.Item;
 
+import com.cboard.owlswap.owlswap_backend.stripe.checkout.StripeCheckoutService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +17,12 @@ public class OrderExpiryJob {
 
     private final OrderDao orderDao;
     private final ItemDao itemDao;
+    private final StripeCheckoutService stripeCheckoutService;
 
-    public OrderExpiryJob(OrderDao orderDao, ItemDao itemDao) {
+    public OrderExpiryJob(OrderDao orderDao, ItemDao itemDao, StripeCheckoutService stripeCheckoutService) {
         this.orderDao = orderDao;
         this.itemDao = itemDao;
+        this.stripeCheckoutService = stripeCheckoutService;
     }
 
     @Scheduled(fixedRate = 60_000) // every minute
@@ -29,7 +32,7 @@ public class OrderExpiryJob {
         List<Order> expired = orderDao.findByStatusAndReservedUntilBefore(OrderStatus.PENDING, now);
 
         for (Order order : expired) {
-            order.setStatus(OrderStatus.EXPIRED);
+            /*order.setStatus(OrderStatus.EXPIRED);
             orderDao.save(order);
 
             Item item = itemDao.findByIdForUpdate(order.getItem().getItemId()).orElse(null);
@@ -42,7 +45,8 @@ public class OrderExpiryJob {
                 item.setReservedUntil(null);
                 item.setAvailable(true); // legacy
                 itemDao.save(item);
-            }
+            }*/
+            stripeCheckoutService.expireCheckoutSessionIfOpen(order.getOrderId());
         }
     }
 }
