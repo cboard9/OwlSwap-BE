@@ -215,7 +215,7 @@ public class StripeCheckoutService {
         }
         catch (Exception e)
         {
-            throw new BadRequestException("Session retrieval failed.");
+            throw new BadRequestException("Failed to expire Stripe checkout session.");
         }
 
         try

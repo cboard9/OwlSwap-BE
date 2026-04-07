@@ -29,13 +29,13 @@ public class StripeCheckoutController {
         );
     }
 
-    @PostMapping("/{id}/cancel")
+/*    @PostMapping("/{id}/cancel")
     public ResponseEntity<OrderDto> cancelOrder(@PathVariable("id") Integer orderId)
             throws StripeException {
 
         OrderDto order = stripeCheckoutService.expireCheckoutSessionIfOpen(orderId);
 
         return ResponseEntity.ok(order);
-    }
+    }*/
 
 }

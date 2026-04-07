@@ -15,6 +15,8 @@ import com.cboard.owlswap.owlswap_backend.model.orders.ListingStatus;
 import com.cboard.owlswap.owlswap_backend.model.orders.Order;
 import com.cboard.owlswap.owlswap_backend.model.orders.OrderStatus;
 import com.cboard.owlswap.owlswap_backend.security.CurrentUser;
+import com.cboard.owlswap.owlswap_backend.stripe.webhook.StripeWebhookService;
+import com.stripe.exception.StripeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +39,7 @@ public class OrderService
     private final UserArchiveDao userArchiveDao;
     private final CurrentUser currentUser;
     private final OrderToDtoMapper orderToDtoMapper;
+    private final StripeWebhookService stripeWebhookService;
 
     // how long we reserve an item before it expires
     private static final int RESERVATION_MINUTES = 30;
@@ -45,12 +48,14 @@ public class OrderService
                         ItemDao itemDao,
                         UserArchiveDao userArchiveDao,
                         CurrentUser currentUser,
-                        OrderToDtoMapper orderToDtoMapper) {
+                        OrderToDtoMapper orderToDtoMapper,
+                        StripeWebhookService stripeWebhookService) {
         this.orderDao = orderDao;
         this.itemDao = itemDao;
         this.userArchiveDao = userArchiveDao;
         this.currentUser = currentUser;
         this.orderToDtoMapper = orderToDtoMapper;
+        this.stripeWebhookService = stripeWebhookService;
     }
 
     @Transactional
@@ -135,6 +140,18 @@ public class OrderService
             throw new BadRequestException("Only pending orders can be cancelled.");
         }
 
+        // Expire live Stripe checkout session first, if one exists
+        try {
+            stripeWebhookService.expireCheckoutSessionIfOpenInternal(order);
+        } catch (StripeException e) {
+            throw new BadRequestException("Failed to expire Stripe checkout session.");
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+        order.setCheckoutSessionId(null);
+        order.setLatestPaymentStatus(null);
+        orderDao.save(order);
+
         // Release item if this order is the reserver
         Item item = itemDao.findByIdForUpdate(order.getItem().getItemId())
                 .orElseThrow(() -> new NotFoundException("Item not found."));
@@ -149,9 +166,6 @@ public class OrderService
             item.setAvailable(true); // legacy
             itemDao.save(item);
         }
-
-        order.setStatus(OrderStatus.CANCELLED);
-        orderDao.save(order);
 
         return order;
     }

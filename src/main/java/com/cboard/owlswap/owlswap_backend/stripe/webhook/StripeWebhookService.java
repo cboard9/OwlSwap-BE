@@ -9,6 +9,7 @@ import com.cboard.owlswap.owlswap_backend.model.orders.ListingStatus;
 import com.cboard.owlswap.owlswap_backend.model.orders.Order;
 import com.cboard.owlswap.owlswap_backend.model.orders.OrderStatus;
 import com.stripe.exception.EventDataObjectDeserializationException;
+import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
 import com.stripe.model.checkout.Session;
 import org.springframework.stereotype.Service;
@@ -147,7 +148,7 @@ public class StripeWebhookService {
                 });
 
         // Idempotency / already resolved
-        if (order.getStatus() == OrderStatus.PAID || order.getStatus() == OrderStatus.FULFILLED) {
+        if (order.getStatus() == OrderStatus.PAID || order.getStatus() == OrderStatus.FULFILLED || order.getStatus() == OrderStatus.CANCELLED) {
             return;
         }
 
@@ -161,7 +162,6 @@ public class StripeWebhookService {
 
         // Clear old checkout session linkage so a future retry can generate a fresh session
         order.setCheckoutSessionId(null);
-        order.setStatus(OrderStatus.CANCELLED);
 
         orderDao.save(order);
 
@@ -177,6 +177,21 @@ public class StripeWebhookService {
             item.setReservedUntil(null);
             item.setAvailable(true); // legacy sync
             itemDao.save(item);
+        }
+    }
+
+    @Transactional
+    public void expireCheckoutSessionIfOpenInternal(Order order) throws StripeException {
+        if (order.getCheckoutSessionId() == null || order.getCheckoutSessionId().isBlank()) {
+            return;
+        }
+
+        Session session = Session.retrieve(order.getCheckoutSessionId());
+
+        if ("open".equalsIgnoreCase(session.getStatus())) {
+            Session expired = session.expire();
+            order.setLatestPaymentStatus(expired.getPaymentStatus());
+            orderDao.save(order);
         }
     }
 }
