@@ -8,6 +8,7 @@ import com.cboard.owlswap.owlswap_backend.service.OrderService;
 import jakarta.validation.Valid;
 import org.apache.catalina.connector.Response;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,29 +36,51 @@ public class OrderController
         return ResponseEntity.ok(mapper.toDto(orderService.cancelOrder(orderId)));
     }
 
-    // TEMP for now (simulate payment)
+/*    // TEMP for now (simulate payment)
     @PostMapping("/{orderId}/pay")
     public ResponseEntity<OrderDto> pay(@PathVariable Integer orderId) {
         return ResponseEntity.ok(mapper.toDto(orderService.markPaid(orderId)));
-    }
+    }*/
 
     @PostMapping("/{orderId}/fulfill")
     public ResponseEntity<OrderDto> fulfill(@PathVariable Integer orderId) {
         return ResponseEntity.ok(mapper.toDto(orderService.fulfill(orderId)));
     }
 
+    @GetMapping("/my-purchases")
+    public ResponseEntity<List<OrderDto>> getMyPurchases()
+    {
+        return ResponseEntity.ok(orderService.getMyPurchases());
+    }
+
+    @GetMapping("/my-sales")
+    public ResponseEntity<List<OrderDto>> getMySales()
+    {
+        return ResponseEntity.ok(orderService.getMySales());
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/buyer/{buyerId}")
     public ResponseEntity<List<OrderDto>> getAllOrdersByBuyer(@PathVariable("buyerId") int buyerId)
     {
         return ResponseEntity.ok(orderService.getAllOrdersByBuyer(buyerId));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/seller/{sellerId}")
     public ResponseEntity<List<OrderDto>> getAllOrdersBySeller(@PathVariable("sellerId") int sellerId)
     {
         return ResponseEntity.ok(orderService.getAllOrdersBySeller(sellerId));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderDto> getOrderById(@PathVariable("orderId") int orderId)
+    {
+        return ResponseEntity.ok(orderService.getOrderById(orderId));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<List<OrderDto>> getAllOrders()
     {

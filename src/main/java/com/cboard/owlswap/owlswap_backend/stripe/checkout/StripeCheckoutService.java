@@ -86,9 +86,9 @@ public class StripeCheckoutService {
         long amountInCents = toSmallestCurrencyUnit(order.getAmount());
         long applicationFeeAmount = calculateApplicationFee(amountInCents, platformFeePercent);
 
-        String successUrl = frontendBaseUrl + "/checkout/success?orderId=" + order.getOrderId();
-        String cancelUrl = frontendBaseUrl + "/checkout/cancel?orderId=" + order.getOrderId()
+        String successUrl = frontendBaseUrl + "/checkout/success?orderId=" + order.getOrderId()
                 + "&session_id={CHECKOUT_SESSION_ID}";
+        String cancelUrl = frontendBaseUrl + "/checkout/cancel?orderId=" + order.getOrderId();
 
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)

@@ -53,11 +53,6 @@ public class StripeWebhookService {
         if (deserializer.getObject().isPresent()) {
             session = (Session) deserializer.getObject().get();
         } else {
-            /*// Fallback: manually deserialize raw JSON
-            session = (Session) com.stripe.model.EventDataObjectDeserializer.deserializeUnsafe(
-                    event.getData().getObject().toJson(),
-                    Session.class
-            );*/
             try {
                 session = (Session) deserializer.deserializeUnsafe();
             }
@@ -66,13 +61,6 @@ public class StripeWebhookService {
                 throw new BadRequestException("STRIPE DESERIALIZATION FAILED");
             }
         }
-
-        //String checkoutSessionId = session.getId();
-
-        /*Order order = orderDao.findByCheckoutSessionId(checkoutSessionId)
-                .orElseThrow(() -> new NotFoundException(
-                        "Order not found for checkout session: " + checkoutSessionId
-                ));*/
 
         Order order = orderDao.findByCheckoutSessionId(session.getId())
                 .orElseGet(() -> {
@@ -101,6 +89,10 @@ public class StripeWebhookService {
 
         // Store Stripe info from the session
         order.setLatestPaymentStatus(session.getPaymentStatus());
+
+        if (!"paid".equalsIgnoreCase(session.getPaymentStatus())) {
+            throw new IllegalStateException("Checkout session completed but payment status is not paid.");
+        }
 
         if (session.getPaymentIntent() != null) {
             order.setPaymentIntentId(session.getPaymentIntent());

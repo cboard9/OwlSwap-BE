@@ -281,4 +281,70 @@ public class OrderService
                 })
                 .toList();
     }
+
+    public OrderDto getOrderById(int orderId)
+    {
+        Order order = orderDao.findByOrderId(orderId)
+                .orElseThrow(() -> new NotFoundException("No order found by order id=" + orderId));
+
+        try
+        {
+            return orderToDtoMapper.toDto(order);
+        }
+        catch (Exception e)
+        {
+            throw new DtoMappingException("Failed to map Order to DTO. orderId=" + orderId, e);
+        }
+
+
+    }
+
+    public List<OrderDto> getMyPurchases()
+    {
+        if (!currentUser.isEmailVerified()) {
+            throw new AccessDeniedException("Email verification required.");
+        }
+
+        Integer userId = currentUser.userId();
+
+        List<Order> orders = orderDao.findByBuyer_UserIdOrderByCreatedAtDesc(userId);
+
+        return orders.stream()
+                .map(o -> {
+                    try
+                    {
+                        return orderToDtoMapper.toDto(o);
+                    }
+                    catch(Exception e)
+                    {
+                        throw new DtoMappingException("Failed to map Order to DTO. orderId=" + o.getOrderId(), e);
+                    }
+                })
+                .toList();
+
+    }
+
+    public List<OrderDto> getMySales()
+    {
+        if (!currentUser.isEmailVerified()) {
+            throw new AccessDeniedException("Email verification required.");
+        }
+
+        Integer userId = currentUser.userId();
+
+        List<Order> orders = orderDao.findBySeller_UserIdOrderByCreatedAtDesc(userId);
+
+        return orders.stream()
+                .map(o -> {
+                    try
+                    {
+                        return orderToDtoMapper.toDto(o);
+                    }
+                    catch(Exception e)
+                    {
+                        throw new DtoMappingException("Failed to map Order to DTO. orderId=" + o.getOrderId(), e);
+                    }
+                })
+                .toList();
+    }
 }
