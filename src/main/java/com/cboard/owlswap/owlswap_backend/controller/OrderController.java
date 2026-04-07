@@ -1,3 +1,4 @@
+/*
 package com.cboard.owlswap.owlswap_backend.controller;
 
 import com.cboard.owlswap.owlswap_backend.model.Dto.OrderDto;
@@ -36,11 +37,13 @@ public class OrderController
         return ResponseEntity.ok(mapper.toDto(orderService.cancelOrder(orderId)));
     }
 
+*/
 /*    // TEMP for now (simulate payment)
     @PostMapping("/{orderId}/pay")
     public ResponseEntity<OrderDto> pay(@PathVariable Integer orderId) {
         return ResponseEntity.ok(mapper.toDto(orderService.markPaid(orderId)));
-    }*/
+    }*//*
+
 
     @PostMapping("/{orderId}/fulfill")
     public ResponseEntity<OrderDto> fulfill(@PathVariable Integer orderId) {
@@ -89,3 +92,4 @@ public class OrderController
 
 
 }
+*/
