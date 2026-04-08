@@ -231,6 +231,8 @@ public class GlobalExceptionHandler
 
 
 
+
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleUnexpected(Exception ex, HttpServletRequest req) {
         log.error("Unhandled exception on path {}: ", req.getRequestURI(), ex);

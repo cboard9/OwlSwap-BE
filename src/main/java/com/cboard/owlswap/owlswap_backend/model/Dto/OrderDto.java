@@ -16,6 +16,9 @@ public class OrderDto {
     private LocalDateTime reservedUntil;
 
     private LocalDateTime createdAt;
+    private String refundId;
+    private String refundReason;
+    private LocalDateTime refundedAt;
 
 
     public Integer getOrderId() {
@@ -88,6 +91,30 @@ public class OrderDto {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getRefundId() {
+        return refundId;
+    }
+
+    public void setRefundId(String refundId) {
+        this.refundId = refundId;
+    }
+
+    public String getRefundReason() {
+        return refundReason;
+    }
+
+    public void setRefundReason(String refundReason) {
+        this.refundReason = refundReason;
+    }
+
+    public LocalDateTime getRefundedAt() {
+        return refundedAt;
+    }
+
+    public void setRefundedAt(LocalDateTime refundedAt) {
+        this.refundedAt = refundedAt;
     }
 }
 

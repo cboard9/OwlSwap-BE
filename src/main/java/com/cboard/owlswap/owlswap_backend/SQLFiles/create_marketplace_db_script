@@ -358,3 +358,8 @@ ALTER TABLE user
   ADD COLUMN stripe_onboarding_complete BOOLEAN NOT NULL DEFAULT FALSE,
   ADD COLUMN stripe_charges_enabled BOOLEAN NOT NULL DEFAULT FALSE,
   ADD COLUMN stripe_payouts_enabled BOOLEAN NOT NULL DEFAULT FALSE;
+
+  ALTER TABLE orders
+    ADD COLUMN refund_id VARCHAR(100) NULL,
+    ADD COLUMN refund_reason VARCHAR(50) NULL,
+    ADD COLUMN refunded_at TIMESTAMP NULL;

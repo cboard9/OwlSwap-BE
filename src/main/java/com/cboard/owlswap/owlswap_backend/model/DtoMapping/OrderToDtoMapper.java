@@ -18,6 +18,9 @@ public class OrderToDtoMapper
         dto.setStatus(o.getStatus().name());
         dto.setReservedUntil(o.getReservedUntil());
         dto.setCreatedAt(o.getCreatedAt());
+        dto.setRefundId(o.getRefundId());
+        dto.setRefundReason(o.getRefundReason());
+        dto.setRefundedAt(o.getRefundedAt());
         return dto;
     }
 

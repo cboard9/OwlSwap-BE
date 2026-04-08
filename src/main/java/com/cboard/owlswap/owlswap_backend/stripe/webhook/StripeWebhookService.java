@@ -80,7 +80,7 @@ public class StripeWebhookService {
 
         // Idempotency guard:
         // if webhook is retried, don't re-process an already-paid order
-        if (order.getStatus() == OrderStatus.PAID || order.getStatus() == OrderStatus.FULFILLED) {
+        if (order.getStatus() == OrderStatus.PAID || order.getStatus() == OrderStatus.FULFILLED || order.getStatus() == OrderStatus.REFUNDED) {
             return;
         }
 
@@ -148,7 +148,8 @@ public class StripeWebhookService {
                 });
 
         // Idempotency / already resolved
-        if (order.getStatus() == OrderStatus.PAID || order.getStatus() == OrderStatus.FULFILLED || order.getStatus() == OrderStatus.CANCELLED) {
+        if (order.getStatus() == OrderStatus.PAID || order.getStatus() == OrderStatus.FULFILLED
+                || order.getStatus() == OrderStatus.CANCELLED || order.getStatus() == OrderStatus.REFUNDED) {
             return;
         }
 

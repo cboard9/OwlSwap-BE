@@ -1,6 +1,7 @@
 package com.cboard.owlswap.owlswap_backend.stripe.checkout;
 
 import com.cboard.owlswap.owlswap_backend.model.Dto.OrderDto;
+import com.cboard.owlswap.owlswap_backend.model.Dto.RefundOrderRequestDto;
 import com.cboard.owlswap.owlswap_backend.model.DtoMapping.OrderToDtoMapper;
 import com.cboard.owlswap.owlswap_backend.model.orders.CreateOrderRequest;
 import com.cboard.owlswap.owlswap_backend.model.orders.Order;
@@ -21,13 +22,16 @@ import java.util.List;
 public class StripeCheckoutController {
 
     private final StripeCheckoutService stripeCheckoutService;
+    private StripeRefundService stripeRefundService;
     private final OrderService orderService;
     private final OrderToDtoMapper orderToDtoMapper;
 
     public StripeCheckoutController(StripeCheckoutService stripeCheckoutService,
+                                    StripeRefundService stripeRefundService,
                                     OrderService orderService,
                                     OrderToDtoMapper orderToDtoMapper) {
         this.stripeCheckoutService = stripeCheckoutService;
+        this.stripeRefundService = stripeRefundService;
         this.orderService = orderService;
         this.orderToDtoMapper = orderToDtoMapper;
     }
@@ -58,6 +62,15 @@ public class StripeCheckoutController {
     @PostMapping("/{orderId}/fulfill")
     public ResponseEntity<OrderDto> fulfill(@PathVariable Integer orderId) {
         return ResponseEntity.ok(orderToDtoMapper.toDto(orderService.fulfill(orderId)));
+    }
+
+    @PostMapping("/{id}/refund")
+    public ResponseEntity<OrderDto> refundOrder(@PathVariable("id") Integer orderId,
+                                                @Valid @RequestBody RefundOrderRequestDto request)
+            throws StripeException {
+
+        Order refunded = stripeRefundService.refundOrder(orderId, request.getReason());
+        return ResponseEntity.ok(orderToDtoMapper.toDto(refunded));
     }
 
 
