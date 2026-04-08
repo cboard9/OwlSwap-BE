@@ -1,4 +1,4 @@
-package com.cboard.owlswap.owlswap_backend.model.orders;
+package com.cboard.owlswap.owlswap_backend.stripe.orders;
 
 import jakarta.validation.constraints.NotNull;
 

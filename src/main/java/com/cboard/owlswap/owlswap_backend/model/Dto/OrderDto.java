@@ -19,6 +19,10 @@ public class OrderDto {
     private String refundId;
     private String refundReason;
     private LocalDateTime refundedAt;
+    private String fulfillmentMethod;
+    private LocalDateTime pickupCodeGeneratedAt;
+    private LocalDateTime readyForPickupAt;
+    private LocalDateTime fulfilledAt;
 
 
     public Integer getOrderId() {
@@ -115,6 +119,38 @@ public class OrderDto {
 
     public void setRefundedAt(LocalDateTime refundedAt) {
         this.refundedAt = refundedAt;
+    }
+
+    public String getFulfillmentMethod() {
+        return fulfillmentMethod;
+    }
+
+    public void setFulfillmentMethod(String fulfillmentMethod) {
+        this.fulfillmentMethod = fulfillmentMethod;
+    }
+
+    public LocalDateTime getPickupCodeGeneratedAt() {
+        return pickupCodeGeneratedAt;
+    }
+
+    public void setPickupCodeGeneratedAt(LocalDateTime pickupCodeGeneratedAt) {
+        this.pickupCodeGeneratedAt = pickupCodeGeneratedAt;
+    }
+
+    public LocalDateTime getReadyForPickupAt() {
+        return readyForPickupAt;
+    }
+
+    public void setReadyForPickupAt(LocalDateTime readyForPickupAt) {
+        this.readyForPickupAt = readyForPickupAt;
+    }
+
+    public LocalDateTime getFulfilledAt() {
+        return fulfilledAt;
+    }
+
+    public void setFulfilledAt(LocalDateTime fulfilledAt) {
+        this.fulfilledAt = fulfilledAt;
     }
 }
 

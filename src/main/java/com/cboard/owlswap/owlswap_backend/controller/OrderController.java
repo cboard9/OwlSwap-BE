@@ -3,8 +3,8 @@ package com.cboard.owlswap.owlswap_backend.controller;
 
 import com.cboard.owlswap.owlswap_backend.model.Dto.OrderDto;
 import com.cboard.owlswap.owlswap_backend.model.DtoMapping.OrderToDtoMapper;
-import com.cboard.owlswap.owlswap_backend.model.orders.CreateOrderRequest;
-import com.cboard.owlswap.owlswap_backend.model.orders.Order;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.CreateOrderRequest;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.Order;
 import com.cboard.owlswap.owlswap_backend.service.OrderService;
 import jakarta.validation.Valid;
 import org.apache.catalina.connector.Response;

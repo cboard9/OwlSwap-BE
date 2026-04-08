@@ -5,9 +5,9 @@ import com.cboard.owlswap.owlswap_backend.dao.OrderDao;
 import com.cboard.owlswap.owlswap_backend.exception.BadRequestException;
 import com.cboard.owlswap.owlswap_backend.exception.NotFoundException;
 import com.cboard.owlswap.owlswap_backend.model.Item;
-import com.cboard.owlswap.owlswap_backend.model.orders.ListingStatus;
-import com.cboard.owlswap.owlswap_backend.model.orders.Order;
-import com.cboard.owlswap.owlswap_backend.model.orders.OrderStatus;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.ListingStatus;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.Order;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.OrderStatus;
 import com.cboard.owlswap.owlswap_backend.security.CurrentUser;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Refund;
@@ -50,8 +50,8 @@ public class StripeRefundService {
             throw new AccessDeniedException("You do not have permission to refund this order.");
         }
 
-        if (order.getStatus() != OrderStatus.PAID) {
-            throw new BadRequestException("Only paid orders can be refunded.");
+        if (order.getStatus() != OrderStatus.PAID && order.getStatus() != OrderStatus.READY_FOR_PICKUP) {
+            throw new BadRequestException("Only paid or ready for pickup orders can be refunded.");
         }
 
         if (order.getPaymentIntentId() == null || order.getPaymentIntentId().isBlank()) {

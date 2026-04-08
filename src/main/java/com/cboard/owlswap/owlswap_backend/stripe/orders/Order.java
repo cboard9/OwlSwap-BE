@@ -1,4 +1,4 @@
-package com.cboard.owlswap.owlswap_backend.model.orders;
+package com.cboard.owlswap.owlswap_backend.stripe.orders;
 
 import com.cboard.owlswap.owlswap_backend.model.Item;
 import com.cboard.owlswap.owlswap_backend.model.UserArchive;
@@ -67,6 +67,21 @@ public class Order {
 
     @Column(name = "refunded_at")
     private LocalDateTime refundedAt;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "fulfillment_method", nullable = false)
+    private FulfillmentMethod fulfillmentMethod = FulfillmentMethod.PICKUP;
+
+    @Column(name = "pickup_code_hash")
+    private String pickupCodeHash;
+
+    @Column(name = "pickup_code_generated_at")
+    private LocalDateTime pickupCodeGeneratedAt;
+
+    @Column(name = "ready_for_pickup_at")
+    private LocalDateTime readyForPickupAt;
+
+    @Column(name = "fulfilled_at")
+    private LocalDateTime fulfilledAt;
 
     public Order() {}
 
@@ -204,5 +219,45 @@ public class Order {
 
     public void setRefundedAt(LocalDateTime refundedAt) {
         this.refundedAt = refundedAt;
+    }
+
+    public FulfillmentMethod getFulfillmentMethod() {
+        return fulfillmentMethod;
+    }
+
+    public void setFulfillmentMethod(FulfillmentMethod fulfillmentMethod) {
+        this.fulfillmentMethod = fulfillmentMethod;
+    }
+
+    public String getPickupCodeHash() {
+        return pickupCodeHash;
+    }
+
+    public void setPickupCodeHash(String pickupCodeHash) {
+        this.pickupCodeHash = pickupCodeHash;
+    }
+
+    public LocalDateTime getPickupCodeGeneratedAt() {
+        return pickupCodeGeneratedAt;
+    }
+
+    public void setPickupCodeGeneratedAt(LocalDateTime pickupCodeGeneratedAt) {
+        this.pickupCodeGeneratedAt = pickupCodeGeneratedAt;
+    }
+
+    public LocalDateTime getReadyForPickupAt() {
+        return readyForPickupAt;
+    }
+
+    public void setReadyForPickupAt(LocalDateTime readyForPickupAt) {
+        this.readyForPickupAt = readyForPickupAt;
+    }
+
+    public LocalDateTime getFulfilledAt() {
+        return fulfilledAt;
+    }
+
+    public void setFulfilledAt(LocalDateTime fulfilledAt) {
+        this.fulfilledAt = fulfilledAt;
     }
 }

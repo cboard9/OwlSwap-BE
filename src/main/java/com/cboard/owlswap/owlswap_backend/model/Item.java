@@ -1,7 +1,7 @@
 package com.cboard.owlswap.owlswap_backend.model;
 
-import com.cboard.owlswap.owlswap_backend.model.orders.ListingStatus;
-import com.cboard.owlswap.owlswap_backend.model.orders.Order;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.ListingStatus;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.Order;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 

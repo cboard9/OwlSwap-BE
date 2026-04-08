@@ -1,7 +1,7 @@
 package com.cboard.owlswap.owlswap_backend.dao;
 
-import com.cboard.owlswap.owlswap_backend.model.orders.Order;
-import com.cboard.owlswap.owlswap_backend.model.orders.OrderStatus;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.Order;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;

@@ -8,27 +8,22 @@ import com.cboard.owlswap.owlswap_backend.exception.NotAvailableException;
 import com.cboard.owlswap.owlswap_backend.exception.NotFoundException;
 import com.cboard.owlswap.owlswap_backend.model.*;
 import com.cboard.owlswap.owlswap_backend.model.Dto.OrderDto;
-import com.cboard.owlswap.owlswap_backend.model.Dto.TransactionDto;
 import com.cboard.owlswap.owlswap_backend.model.DtoMapping.OrderToDtoMapper;
-import com.cboard.owlswap.owlswap_backend.model.DtoMapping.TransactionMapper;
-import com.cboard.owlswap.owlswap_backend.model.orders.ListingStatus;
-import com.cboard.owlswap.owlswap_backend.model.orders.Order;
-import com.cboard.owlswap.owlswap_backend.model.orders.OrderStatus;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.FulfillmentMethod;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.ListingStatus;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.Order;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.OrderStatus;
 import com.cboard.owlswap.owlswap_backend.security.CurrentUser;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.pickup.PickupCodeResponseDto;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.pickup.PickupCodeUtil;
 import com.cboard.owlswap.owlswap_backend.stripe.webhook.StripeWebhookService;
 import com.stripe.exception.StripeException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -40,6 +35,7 @@ public class OrderService
     private final CurrentUser currentUser;
     private final OrderToDtoMapper orderToDtoMapper;
     private final StripeWebhookService stripeWebhookService;
+    private final PickupCodeUtil pickupCodeUtil;
 
     // how long we reserve an item before it expires
     private static final int RESERVATION_MINUTES = 30;
@@ -49,13 +45,15 @@ public class OrderService
                         UserArchiveDao userArchiveDao,
                         CurrentUser currentUser,
                         OrderToDtoMapper orderToDtoMapper,
-                        StripeWebhookService stripeWebhookService) {
+                        StripeWebhookService stripeWebhookService,
+                        PickupCodeUtil pickupCodeUtil) {
         this.orderDao = orderDao;
         this.itemDao = itemDao;
         this.userArchiveDao = userArchiveDao;
         this.currentUser = currentUser;
         this.orderToDtoMapper = orderToDtoMapper;
         this.stripeWebhookService = stripeWebhookService;
+        this.pickupCodeUtil = pickupCodeUtil;
     }
 
     @Transactional
@@ -116,6 +114,11 @@ public class OrderService
 
         return saved;
     }
+
+
+
+
+    //BELOW IS NOT USED ANYMORE?
 
 
     @Transactional

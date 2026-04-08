@@ -3,11 +3,12 @@ package com.cboard.owlswap.owlswap_backend.stripe.checkout;
 import com.cboard.owlswap.owlswap_backend.model.Dto.OrderDto;
 import com.cboard.owlswap.owlswap_backend.model.Dto.RefundOrderRequestDto;
 import com.cboard.owlswap.owlswap_backend.model.DtoMapping.OrderToDtoMapper;
-import com.cboard.owlswap.owlswap_backend.model.orders.CreateOrderRequest;
-import com.cboard.owlswap.owlswap_backend.model.orders.Order;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.CreateOrderRequest;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.Order;
 import com.cboard.owlswap.owlswap_backend.service.OrderService;
-import com.cboard.owlswap.owlswap_backend.stripe.checkout.StripeCheckoutSessionDto;
-import com.cboard.owlswap.owlswap_backend.stripe.checkout.StripeCheckoutService;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.pickup.ConfirmPickupRequest;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.pickup.PickupCodeResponseDto;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.pickup.PickupService;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import jakarta.validation.Valid;
@@ -23,15 +24,18 @@ public class StripeCheckoutController {
 
     private final StripeCheckoutService stripeCheckoutService;
     private StripeRefundService stripeRefundService;
+    private final PickupService pickupService;
     private final OrderService orderService;
     private final OrderToDtoMapper orderToDtoMapper;
 
     public StripeCheckoutController(StripeCheckoutService stripeCheckoutService,
                                     StripeRefundService stripeRefundService,
+                                    PickupService pickupService,
                                     OrderService orderService,
                                     OrderToDtoMapper orderToDtoMapper) {
         this.stripeCheckoutService = stripeCheckoutService;
         this.stripeRefundService = stripeRefundService;
+        this.pickupService = pickupService;
         this.orderService = orderService;
         this.orderToDtoMapper = orderToDtoMapper;
     }
@@ -59,10 +63,10 @@ public class StripeCheckoutController {
     }
 
 
-    @PostMapping("/{orderId}/fulfill")
+/*    @PostMapping("/{orderId}/fulfill")
     public ResponseEntity<OrderDto> fulfill(@PathVariable Integer orderId) {
         return ResponseEntity.ok(orderToDtoMapper.toDto(orderService.fulfill(orderId)));
-    }
+    }*/
 
     @PostMapping("/{id}/refund")
     public ResponseEntity<OrderDto> refundOrder(@PathVariable("id") Integer orderId,
@@ -72,6 +76,25 @@ public class StripeCheckoutController {
         Order refunded = stripeRefundService.refundOrder(orderId, request.getReason());
         return ResponseEntity.ok(orderToDtoMapper.toDto(refunded));
     }
+
+    @PostMapping("/{id}/pickup-code")
+    public ResponseEntity<PickupCodeResponseDto> generatePickupCode(@PathVariable("id") Integer orderId) {
+        return ResponseEntity.ok(pickupService.generatePickupCode(orderId));
+    }
+
+    @PostMapping("/{id}/ready-for-pickup")
+    public ResponseEntity<OrderDto> markReadyForPickup(@PathVariable("id") Integer orderId) {
+        Order order = pickupService.markReadyForPickup(orderId);
+        return ResponseEntity.ok(orderToDtoMapper.toDto(order));
+    }
+
+    @PostMapping("/{id}/confirm-pickup")
+    public ResponseEntity<OrderDto> confirmPickup(@PathVariable("id") Integer orderId,
+                                                  @Valid @RequestBody ConfirmPickupRequest request) {
+        Order order = pickupService.confirmPickup(orderId, request.getPickupCode());
+        return ResponseEntity.ok(orderToDtoMapper.toDto(order));
+    }
+
 
 
     @GetMapping("/my-purchases")

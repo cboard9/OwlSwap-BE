@@ -1,7 +1,7 @@
 package com.cboard.owlswap.owlswap_backend.model.DtoMapping;
 
 import com.cboard.owlswap.owlswap_backend.model.Dto.OrderDto;
-import com.cboard.owlswap.owlswap_backend.model.orders.Order;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.Order;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,6 +21,10 @@ public class OrderToDtoMapper
         dto.setRefundId(o.getRefundId());
         dto.setRefundReason(o.getRefundReason());
         dto.setRefundedAt(o.getRefundedAt());
+        dto.setFulfillmentMethod(o.getFulfillmentMethod().name());
+        dto.setPickupCodeGeneratedAt(o.getPickupCodeGeneratedAt());
+        dto.setReadyForPickupAt(o.getReadyForPickupAt());
+        dto.setFulfilledAt(o.getFulfilledAt());
         return dto;
     }
 

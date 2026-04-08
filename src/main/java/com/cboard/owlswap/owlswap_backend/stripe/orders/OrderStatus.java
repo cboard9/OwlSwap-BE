@@ -1,8 +1,9 @@
-package com.cboard.owlswap.owlswap_backend.model.orders;
+package com.cboard.owlswap.owlswap_backend.stripe.orders;
 
 public enum OrderStatus {
     PENDING,     // reserved, not paid
-    PAID,        // Stripe webhook sets this later
+    PAID,
+    READY_FOR_PICKUP,
     FULFILLED,
     CANCELLED,
     EXPIRED,

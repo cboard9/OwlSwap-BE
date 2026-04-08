@@ -1,12 +1,9 @@
 package com.cboard.owlswap.owlswap_backend.model.Dto;
 
-import com.cboard.owlswap.owlswap_backend.model.orders.ListingStatus;
+import com.cboard.owlswap.owlswap_backend.stripe.orders.ListingStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.*;
 
