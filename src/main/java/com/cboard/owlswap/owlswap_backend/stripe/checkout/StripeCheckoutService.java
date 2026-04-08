@@ -1,18 +1,17 @@
 package com.cboard.owlswap.owlswap_backend.stripe.checkout;
 
+import com.cboard.owlswap.owlswap_backend.dao.ItemDao;
 import com.cboard.owlswap.owlswap_backend.dao.OrderDao;
 import com.cboard.owlswap.owlswap_backend.exception.BadRequestException;
-import com.cboard.owlswap.owlswap_backend.exception.DtoMappingException;
 import com.cboard.owlswap.owlswap_backend.exception.NotAvailableException;
 import com.cboard.owlswap.owlswap_backend.exception.NotFoundException;
-import com.cboard.owlswap.owlswap_backend.model.Dto.OrderDto;
-import com.cboard.owlswap.owlswap_backend.model.DtoMapping.OrderToDtoMapper;
+import com.cboard.owlswap.owlswap_backend.model.Item;
 import com.cboard.owlswap.owlswap_backend.model.User;
+import com.cboard.owlswap.owlswap_backend.model.orders.ListingStatus;
 import com.cboard.owlswap.owlswap_backend.model.orders.Order;
 import com.cboard.owlswap.owlswap_backend.model.orders.OrderStatus;
 import com.cboard.owlswap.owlswap_backend.model.orders.PaymentProvider;
 import com.cboard.owlswap.owlswap_backend.security.CurrentUser;
-import com.stripe.exception.EventDataObjectDeserializationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
@@ -30,7 +29,8 @@ public class StripeCheckoutService {
 
     private final OrderDao orderDao;
     private final CurrentUser currentUser;
-    private final OrderToDtoMapper orderToDtoMapper;
+    private final ItemDao itemDao;
+
 
     @Value("${app.frontend.base-url}")
     private String frontendBaseUrl;
@@ -40,10 +40,10 @@ public class StripeCheckoutService {
 
     public StripeCheckoutService(OrderDao orderDao,
                                  CurrentUser currentUser,
-                                 OrderToDtoMapper orderToDtoMapper) {
+                                 ItemDao itemDao) {
         this.orderDao = orderDao;
         this.currentUser = currentUser;
-        this.orderToDtoMapper = orderToDtoMapper;
+        this.itemDao = itemDao;
     }
 
     @Transactional
@@ -177,54 +177,50 @@ public class StripeCheckoutService {
     }
 
     @Transactional
-    public OrderDto expireCheckoutSessionIfOpen(int orderId) {
-        Integer userId = currentUser.userId();
+    public void expireCheckoutSessionIfOpen(int orderId) {
 
         Order order = orderDao.findById(orderId)
                 .orElseThrow(() -> new NotFoundException("Order not found."));
 
-        // Only the buyer can initiate checkout for this order
-        if (!order.getBuyer().getUserId().equals(userId)) {
-            //throw new ForbiddenException("You cannot pay for this order.");
-            throw new AccessDeniedException("You cannot cancel this order.");
-        }
-
         // Must still be pending
         if (order.getStatus() != OrderStatus.PENDING) {
-            throw new BadRequestException("Only pending orders can be cancelled.");
-        }
-
-        if (order.getStatus() == OrderStatus.EXPIRED) {
-            throw new BadRequestException("This order is already expired.");
-        }
-
-        // Reservation must not be expired
-        if (order.getReservedUntil() != null && order.getReservedUntil().isBefore(LocalDateTime.now())) {
-            throw new NotAvailableException("This reservation has already expired.");
+            return;
         }
 
         try {
-            Session session = Session.retrieve(order.getCheckoutSessionId());
+            String checkoutSessionId = order.getCheckoutSessionId();
 
-            if ("open".equalsIgnoreCase(session.getStatus())) {
-                Session expired = session.expire();
+            if (checkoutSessionId != null && !checkoutSessionId.isBlank()) {
+                Session session = Session.retrieve(checkoutSessionId);
 
-                order.setLatestPaymentStatus(expired.getPaymentStatus());
-                orderDao.save(order);
+                if ("open".equalsIgnoreCase(session.getStatus())) {
+                    Session expired = session.expire();
+                    order.setLatestPaymentStatus(expired.getPaymentStatus());
+                }
             }
-        }
-        catch (Exception e)
-        {
-            throw new BadRequestException("Failed to expire Stripe checkout session.");
-        }
 
-        try
-        {
-            return orderToDtoMapper.toDto(order);
-        }
-        catch (Exception e)
-        {
-            throw new DtoMappingException("Failed to map Order to DTO. orderId=" + orderId, e);
+            order.setStatus(OrderStatus.EXPIRED);
+            order.setCheckoutSessionId(null);
+
+            // optional, depending on your design
+            order.setReservedUntil(null);
+
+            Item item = itemDao.findByIdForUpdate(order.getItem().getItemId()).orElse(null);
+            if (item != null
+                    && item.getReservedByOrder() != null
+                    && item.getReservedByOrder().getOrderId().equals(order.getOrderId())) {
+
+                item.setListingStatus(ListingStatus.AVAILABLE);
+                item.setReservedByOrder(null);
+                item.setReservedUntil(null);
+                item.setAvailable(true); // legacy
+                itemDao.save(item);
+            }
+
+            orderDao.save(order);
+
+        } catch (StripeException e) {
+            throw new BadRequestException("Failed to expire pending order.");
         }
     }
 
