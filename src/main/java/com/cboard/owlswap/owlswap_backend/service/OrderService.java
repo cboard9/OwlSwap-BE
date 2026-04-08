@@ -42,7 +42,7 @@ public class OrderService
     private final StripeWebhookService stripeWebhookService;
 
     // how long we reserve an item before it expires
-    private static final int RESERVATION_MINUTES = 1;
+    private static final int RESERVATION_MINUTES = 30;
 
     public OrderService(OrderDao orderDao,
                         ItemDao itemDao,
