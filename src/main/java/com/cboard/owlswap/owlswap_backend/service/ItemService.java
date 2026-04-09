@@ -55,6 +55,7 @@ public class ItemService {
     private final CategoryDao categoryDao;
     private final ItemToDtoFactory toDtoFactory;
     private final DtoToItemFactory fromDtoFactory;
+    private final LocationValidationService locationValidationService;
 
     //this automatically adds all the different dto mappers through injection
 /*    public ItemService(ItemDao dao,
@@ -69,12 +70,14 @@ public class ItemService {
     public ItemService(UserDao userDao,
                        LocationDao locationDao,
                        CategoryDao categoryDao, ItemToDtoFactory toDtoFactory,
-                       DtoToItemFactory fromDtoFactory) {
+                       DtoToItemFactory fromDtoFactory,
+                       LocationValidationService locationValidationService) {
         this.userDao = userDao;
         this.locationDao = locationDao;
         this.categoryDao = categoryDao;
         this.toDtoFactory = toDtoFactory;
         this.fromDtoFactory = fromDtoFactory;
+        this.locationValidationService = locationValidationService;
     }
 
     public Page<ItemDto> getAllItems(Pageable pageable) {
@@ -146,6 +149,8 @@ public class ItemService {
         Location location = locationDao.findById(itemDto.getLocationId())
                 .orElseThrow(() -> new NotFoundException("Location not found."));
 
+        locationValidationService.validateForUse(location);
+
         Category category = categoryDao.findByName(itemDto.getCategory())
                 .orElseThrow(() -> new NotFoundException("Category not found. name=" + itemDto.getCategory()));
 
@@ -179,6 +184,8 @@ public class ItemService {
         try {
             Location location = locationDao.findById(dto.getLocationId())
                     .orElseThrow(() -> new NotFoundException("Location not found."));
+
+            locationValidationService.validateForUse(location);
 
             Category category = categoryDao.findByName(dto.getCategory())
                     .orElseThrow(() -> new NotFoundException("Category not found. name=" + dto.getCategory()));
@@ -236,6 +243,8 @@ public class ItemService {
         Location location = locationDao.findById(dto.getLocationId())
                 .orElseThrow(() -> new NotFoundException("Location not found."));
 
+        locationValidationService.validateForUse(location);
+
         Category category = categoryDao.findByName(dto.getCategory())
                 .orElseThrow(() -> new NotFoundException("Category not found. name=" + dto.getCategory()));
 
@@ -284,6 +293,8 @@ public class ItemService {
         try {
             Location location = locationDao.findById(dto.getLocationId())
                     .orElseThrow(() -> new NotFoundException("Location not found."));
+
+            locationValidationService.validateForUse(location);
 
             Category category = categoryDao.findByName(dto.getCategory())
                     .orElseThrow(() -> new NotFoundException("Category not found. name=" + dto.getCategory()));
