@@ -1,8 +1,6 @@
 package com.cboard.owlswap.owlswap_backend.controller;
 
-import com.cboard.owlswap.owlswap_backend.model.Dto.LocationDto;
-import com.cboard.owlswap.owlswap_backend.model.Location;
-import com.cboard.owlswap.owlswap_backend.dao.LocationDao;
+import com.cboard.owlswap.owlswap_backend.model.Dto.LocationDtoOLD;
 import com.cboard.owlswap.owlswap_backend.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,16 +17,16 @@ public class LocationController {
     private LocationService service;
 
     @GetMapping("all")
-    public ResponseEntity<List<LocationDto>> getAllLocations()
+    public ResponseEntity<List<LocationDtoOLD>> getAllLocations()
     {
-        List<LocationDto> locations = service.getAllLocations();
+        List<LocationDtoOLD> locations = service.getAllLocations();
         return ResponseEntity.ok(locations);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<LocationDto> getLocationById(@PathVariable int id)
+    public ResponseEntity<LocationDtoOLD> getLocationById(@PathVariable int id)
     {
-        LocationDto loc = service.getLocationById(id);
+        LocationDtoOLD loc = service.getLocationById(id);
         return ResponseEntity.ok(loc);
     }
 }

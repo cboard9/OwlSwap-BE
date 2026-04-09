@@ -4,6 +4,7 @@ import com.cboard.owlswap.owlswap_backend.model.*;
 import com.cboard.owlswap.owlswap_backend.model.Dto.ItemDto;
 import com.cboard.owlswap.owlswap_backend.model.Dto.ItemImageDto;
 import com.cboard.owlswap.owlswap_backend.model.Dto.RequestDto;
+import com.cboard.owlswap.owlswap_backend.model.DtoMapping.LocationToDtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,8 +15,14 @@ import java.util.List;
 @Component
 public class RequestToDtoMapper implements ItemToDtoMapper<Request>
 {
-    @Autowired
-    ImageToDtoMapper imageMapper;
+    private final ImageToDtoMapper imageMapper;
+    private final LocationToDtoMapper locationToDtoMapper;
+
+    public RequestToDtoMapper(ImageToDtoMapper imageMapper,
+                              LocationToDtoMapper locationToDtoMapper) {
+        this.imageMapper = imageMapper;
+        this.locationToDtoMapper = locationToDtoMapper;
+    }
     @Override
     public ItemDto mapToDto(Request r) {
         RequestDto dto = new RequestDto(
@@ -36,6 +43,10 @@ public class RequestToDtoMapper implements ItemToDtoMapper<Request>
 
         dto.setListingStatus(r.getListingStatus());
         dto.setReservedUntil(r.getReservedUntil());
+
+        if (r.getLocation() != null) {
+            dto.setLocationDto(locationToDtoMapper.toDto(r.getLocation()));
+        }
 
         if (r.getImages() != null) {
             dto.setImages(

@@ -50,6 +50,10 @@ public abstract class ItemDto
     private String location;
     @NotNull(message = "Location is required")
     private Integer locationId;
+
+    // Output-only structured location data for frontend display.
+    // For create/update operations, locationId should be used as the authoritative input.
+    private LocationDto locationDto;
     @NotBlank(message = "Item type is required")
     private String itemType;
     private List<ItemImageDto> images = new ArrayList<>();
@@ -244,5 +248,13 @@ public abstract class ItemDto
 
     public void setReservedUntil(LocalDateTime reservedUntil) {
         this.reservedUntil = reservedUntil;
+    }
+
+    public LocationDto getLocationDto() {
+        return locationDto;
+    }
+
+    public void setLocationDto(LocationDto locationDto) {
+        this.locationDto = locationDto;
     }
 }
