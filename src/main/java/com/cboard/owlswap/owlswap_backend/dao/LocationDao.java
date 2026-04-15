@@ -1,5 +1,6 @@
 package com.cboard.owlswap.owlswap_backend.dao;
 
+import com.cboard.owlswap.owlswap_backend.model.Dto.LocationType;
 import com.cboard.owlswap.owlswap_backend.model.Location;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -15,4 +16,7 @@ public interface LocationDao extends JpaRepository<Location, Integer>
     List<Location> findByUser_UserIdAndActiveTrue(Integer userId);
 
     Optional<Location> findByLocationIdAndUser_UserId(Integer locationId, Integer userId);
+    List<Location> findByLocationTypeAndActiveTrue(LocationType locationType);
+
+    List<Location> findByUser_UserIdAndLocationTypeAndActiveTrue(Integer userId, LocationType locationType);
 }
