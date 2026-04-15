@@ -4,15 +4,21 @@ import com.cboard.owlswap.owlswap_backend.dao.ServiceAreaZipDao;
 import com.cboard.owlswap.owlswap_backend.exception.BadRequestException;
 import com.cboard.owlswap.owlswap_backend.model.Location;
 import com.cboard.owlswap.owlswap_backend.model.Dto.LocationType;
+import com.cboard.owlswap.owlswap_backend.model.User;
+import com.cboard.owlswap.owlswap_backend.security.CurrentUser;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
 public class LocationValidationService {
 
     private final ServiceAreaZipDao serviceAreaZipDao;
+    private final CurrentUser currentUser;
 
-    public LocationValidationService(ServiceAreaZipDao serviceAreaZipDao) {
+    public LocationValidationService(ServiceAreaZipDao serviceAreaZipDao,
+                                     CurrentUser currentUser) {
         this.serviceAreaZipDao = serviceAreaZipDao;
+        this.currentUser = currentUser;
     }
 
     public void validateForUse(Location location) {
@@ -82,6 +88,32 @@ public class LocationValidationService {
         // Later, geocoding/address validation can make this stricter.
         location.setPostalCode(normalizedZip);
         location.setVerified(true);
+    }
+
+    public void validateOwnershipForUse(Location location, User currentUser)
+    {
+        if (location == null) {
+            throw new BadRequestException("Location is required.");
+        }
+
+        if (location.getLocationType() == LocationType.PRESET_MEETUP) {
+            return;
+        }
+
+        if (location.getLocationType() == LocationType.SELLER_ADDRESS) {
+            if (location.getUser() == null) {
+                throw new BadRequestException("Seller address location is missing an owner.");
+            }
+
+            if (currentUser == null || !location.getUser().getUserId().equals(currentUser.getUserId())) {
+                throw new AccessDeniedException("You do not have permission to use this seller address location.");
+            }
+
+            return;
+        }
+
+        throw new BadRequestException("Unsupported location type.");
+
     }
 
     public String normalizePostalCode(String postalCode) {

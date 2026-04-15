@@ -1,6 +1,7 @@
 package com.cboard.owlswap.owlswap_backend.service;
 
 import com.cboard.owlswap.owlswap_backend.dao.LocationDao;
+import com.cboard.owlswap.owlswap_backend.dao.UserDao;
 import com.cboard.owlswap.owlswap_backend.exception.DtoMappingException;
 import com.cboard.owlswap.owlswap_backend.exception.NotFoundException;
 import com.cboard.owlswap.owlswap_backend.model.Dto.CreateSellerLocationRequest;
@@ -10,6 +11,8 @@ import com.cboard.owlswap.owlswap_backend.model.Dto.LocationType;
 import com.cboard.owlswap.owlswap_backend.model.DtoMapping.LocationMapperOLD;
 import com.cboard.owlswap.owlswap_backend.model.DtoMapping.LocationToDtoMapper;
 import com.cboard.owlswap.owlswap_backend.model.Location;
+import com.cboard.owlswap.owlswap_backend.model.User;
+import com.cboard.owlswap.owlswap_backend.security.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +30,10 @@ public class LocationService
     LocationValidationService locationValidationService;
     @Autowired
     LocationToDtoMapper locationToDtoMapper;
+    @Autowired
+    UserDao userDao;
+    @Autowired
+    CurrentUser currentUser;
 
 
     public List<LocationDtoOLD> getAllLocations()
@@ -56,6 +63,11 @@ public class LocationService
 
     @Transactional
     public LocationDto createSellerAddressLocation(CreateSellerLocationRequest request) {
+        Integer userId = currentUser.userId();
+
+        User user = userDao.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found."));
+
         Location location = new Location();
         location.setName(request.getName());
         location.setAddressLine1(request.getAddressLine1());

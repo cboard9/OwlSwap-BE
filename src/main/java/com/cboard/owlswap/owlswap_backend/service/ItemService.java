@@ -150,6 +150,7 @@ public class ItemService {
                 .orElseThrow(() -> new NotFoundException("Location not found."));
 
         locationValidationService.validateForUse(location);
+        locationValidationService.validateOwnershipForUse(location, currentUser.user());
 
         Category category = categoryDao.findByName(itemDto.getCategory())
                 .orElseThrow(() -> new NotFoundException("Category not found. name=" + itemDto.getCategory()));
@@ -186,6 +187,7 @@ public class ItemService {
                     .orElseThrow(() -> new NotFoundException("Location not found."));
 
             locationValidationService.validateForUse(location);
+            locationValidationService.validateOwnershipForUse(location, currentUser.user());
 
             Category category = categoryDao.findByName(dto.getCategory())
                     .orElseThrow(() -> new NotFoundException("Category not found. name=" + dto.getCategory()));
@@ -244,6 +246,7 @@ public class ItemService {
                 .orElseThrow(() -> new NotFoundException("Location not found."));
 
         locationValidationService.validateForUse(location);
+        locationValidationService.validateOwnershipForUse(location, currentUser.user());
 
         Category category = categoryDao.findByName(dto.getCategory())
                 .orElseThrow(() -> new NotFoundException("Category not found. name=" + dto.getCategory()));
@@ -295,6 +298,7 @@ public class ItemService {
                     .orElseThrow(() -> new NotFoundException("Location not found."));
 
             locationValidationService.validateForUse(location);
+            locationValidationService.validateOwnershipForUse(location, currentUser.user());
 
             Category category = categoryDao.findByName(dto.getCategory())
                     .orElseThrow(() -> new NotFoundException("Category not found. name=" + dto.getCategory()));
