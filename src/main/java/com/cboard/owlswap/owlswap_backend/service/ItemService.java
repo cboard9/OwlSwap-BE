@@ -27,6 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -146,6 +147,9 @@ public class ItemService {
         User user = userDao.findById(currentUser.userId())
                 .orElseThrow(() -> new NotFoundException("User not found."));
 
+        if(!currentUser.isEmailVerified())
+            throw new AccessDeniedException("User's email is not verified");
+
         Location location = locationDao.findById(itemDto.getLocationId())
                 .orElseThrow(() -> new NotFoundException("Location not found."));
 
@@ -177,6 +181,9 @@ public class ItemService {
 
 
     public ItemDto updateItem(ItemDto dto) {
+        if(!currentUser.isEmailVerified())
+            throw new AccessDeniedException("User's email is not verified");
+
         Item existing = dao.findById(dto.getItemId())
                 .orElseThrow( () -> new NotFoundException("Item not found, can not update."));
 
@@ -222,6 +229,9 @@ public class ItemService {
     }
 
     public void deleteItem(int itemId) {
+        if(!currentUser.isEmailVerified())
+            throw new AccessDeniedException("User's email is not verified");
+
         Item item = dao.findByItemId(itemId);
         if (item == null) {
             throw new NotFoundException("Item not found: " + itemId);
@@ -238,6 +248,9 @@ public class ItemService {
 
     @Transactional
     public ItemDto addItemWithImages(ItemDto dto, List<MultipartFile> images) throws IOException {
+
+        if(!currentUser.isEmailVerified())
+            throw new AccessDeniedException("User's email is not verified");
 
         User user = userDao.findById(currentUser.userId())
                 .orElseThrow(() -> new NotFoundException("User not found."));
@@ -286,6 +299,9 @@ public class ItemService {
 
 
     public ItemDto updateItemWithImages(ItemDto dto, List<MultipartFile> images) throws IOException {
+        if(!currentUser.isEmailVerified())
+            throw new AccessDeniedException("User's email is not verified");
+
         int itemId = dto.getItemId();
         Item existing = dao.findByItemId(itemId);
         if (existing == null)
