@@ -38,9 +38,13 @@ public class GlobalExceptionHandler
                 fieldErrors.put(err.getField(), err.getDefaultMessage())
         );
 
+        String message = (ex.getMessage() != null && !ex.getMessage().isBlank())
+                ? ex.getMessage()
+                : "Request validation failed";
+
         ApiError body = new ApiError(
                 "VALIDATION_FAILED",
-                "Request validation failed",
+                message,
                 HttpStatus.BAD_REQUEST.value(),
                 req.getRequestURI(),
                 Instant.now(),
@@ -58,9 +62,13 @@ public class GlobalExceptionHandler
                 fieldErrors.put(v.getPropertyPath().toString(), v.getMessage())
         );
 
+        String message = (ex.getMessage() != null && !ex.getMessage().isBlank())
+                ? ex.getMessage()
+                : "Request validation failed";
+
         ApiError body = new ApiError(
                 "VALIDATION_FAILED",
-                "Request validation failed",
+                message,
                 HttpStatus.BAD_REQUEST.value(),
                 req.getRequestURI(),
                 Instant.now(),
@@ -96,8 +104,12 @@ public class GlobalExceptionHandler
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ApiError> handleNotFound(NotFoundException ex, HttpServletRequest req)
     {
+        String message = (ex.getMessage() != null && !ex.getMessage().isBlank())
+                ? ex.getMessage()
+                : "RESOURCE_NOT_FOUND";
+
         ApiError body = new ApiError(
-                "RESOURCE_NOT_FOUND",
+                message,
                 ex.getMessage(),
                 HttpStatus.NOT_FOUND.value(),
                 req.getRequestURI(),
@@ -111,8 +123,12 @@ public class GlobalExceptionHandler
     @ExceptionHandler(NotAvailableException.class)
     public ResponseEntity<ApiError> handleNotAvailable(NotAvailableException ex, HttpServletRequest req)
     {
+        String message = (ex.getMessage() != null && !ex.getMessage().isBlank())
+                ? ex.getMessage()
+                : "ITEM_NOT_AVAILABLE";
+
         ApiError body = new ApiError(
-                "ITEM_NOT_AVAILABLE",
+                message,
                 ex.getMessage(),
                 HttpStatus.CONFLICT.value(),
                 req.getRequestURI(),
@@ -127,8 +143,12 @@ public class GlobalExceptionHandler
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ApiError> handleBadRequest(BadRequestException ex, HttpServletRequest req)
     {
+        String message = (ex.getMessage() != null && !ex.getMessage().isBlank())
+                ? ex.getMessage()
+                : "BAD_REQUEST";
+
         ApiError body = new ApiError(
-                "BAD_REQUEST",
+                message,
                 ex.getMessage(),
                 HttpStatus.BAD_REQUEST.value(),
                 req.getRequestURI(),
@@ -142,10 +162,14 @@ public class GlobalExceptionHandler
     @ExceptionHandler(DtoMappingException.class)
     public ResponseEntity<ApiError> handleDtoMapping(DtoMappingException ex, HttpServletRequest req)
     {
+        String message = (ex.getMessage() != null && !ex.getMessage().isBlank())
+                ? ex.getMessage()
+                : "Server failed to serialize item data.";
+
         ApiError body = new ApiError(
                 "DTO_MAPPING_ERROR",
                 //ex.getMessage(), // not logging here?
-                "Server failed to serialize item data.",
+                message,
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 req.getRequestURI(),
                 Instant.now(),
@@ -159,9 +183,13 @@ public class GlobalExceptionHandler
     public ResponseEntity<ApiError> handleAccessDenied(Exception ex,
                                                        HttpServletRequest req) {
 
+        String message = (ex.getMessage() != null && !ex.getMessage().isBlank())
+                ? ex.getMessage()
+                : "You do not have permission to perform this action.";
+
         ApiError body = new ApiError(
                 "FORBIDDEN",
-                "You do not have permission to perform this action.",
+                message,
                 HttpStatus.FORBIDDEN.value(),
                 req.getRequestURI(),
                 Instant.now(),
@@ -175,9 +203,14 @@ public class GlobalExceptionHandler
     @ExceptionHandler(EmailDeliveryException.class)
     public ResponseEntity<?> handleEmailDeliveryException(EmailDeliveryException ex, HttpServletRequest req)
     {
+
+        String message = (ex.getMessage() != null && !ex.getMessage().isBlank())
+                ? ex.getMessage()
+                : "Server failed to deliver verification email.";
+
         ApiError body = new ApiError(
                 "EMAIL_DELIVERY_ERROR",
-                "Server failed to deliver verification email.",
+                message,
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 req.getRequestURI(),
                 Instant.now(),
@@ -205,7 +238,7 @@ public class GlobalExceptionHandler
     public ResponseEntity<ApiError> handleStripeSignature(SignatureVerificationException ex, HttpServletRequest req) {
         ApiError body = new ApiError(
                 "INVALID_STRIPE_SIGNATURE",
-                "Stripe webhook signature verification failed.",
+                "Stripe webhook signature verification failed." + ex.getMessage(),
                 HttpStatus.BAD_REQUEST.value(),
                 req.getRequestURI(),
                 Instant.now(),
@@ -219,7 +252,7 @@ public class GlobalExceptionHandler
     public ResponseEntity<ApiError> handleStripeDeserialization(EventDataObjectDeserializationException ex, HttpServletRequest req) {
         ApiError body = new ApiError(
                 "STRIPE_DESERIALIZATION_FAILED",
-                "Stripe deserialization failed.",
+                "Stripe deserialization failed." + ex.getMessage(),
                 HttpStatus.BAD_REQUEST.value(),
                 req.getRequestURI(),
                 Instant.now(),
