@@ -23,6 +23,11 @@ public class OrderDto {
     private LocalDateTime pickupCodeGeneratedAt;
     private LocalDateTime readyForPickupAt;
     private LocalDateTime fulfilledAt;
+    private LocalDateTime refundRequestedAt;
+    private String refundRequestReason;
+    private LocalDateTime refundDecisionAt;
+    private String refundDecisionReason;
+    private String statusBeforeRefundRequest;
 
 
     public Integer getOrderId() {
@@ -151,6 +156,46 @@ public class OrderDto {
 
     public void setFulfilledAt(LocalDateTime fulfilledAt) {
         this.fulfilledAt = fulfilledAt;
+    }
+
+    public LocalDateTime getRefundRequestedAt() {
+        return refundRequestedAt;
+    }
+
+    public void setRefundRequestedAt(LocalDateTime refundRequestedAt) {
+        this.refundRequestedAt = refundRequestedAt;
+    }
+
+    public String getRefundRequestReason() {
+        return refundRequestReason;
+    }
+
+    public void setRefundRequestReason(String refundRequestReason) {
+        this.refundRequestReason = refundRequestReason;
+    }
+
+    public LocalDateTime getRefundDecisionAt() {
+        return refundDecisionAt;
+    }
+
+    public void setRefundDecisionAt(LocalDateTime refundDecisionAt) {
+        this.refundDecisionAt = refundDecisionAt;
+    }
+
+    public String getRefundDecisionReason() {
+        return refundDecisionReason;
+    }
+
+    public void setRefundDecisionReason(String refundDecisionReason) {
+        this.refundDecisionReason = refundDecisionReason;
+    }
+
+    public String getStatusBeforeRefundRequest() {
+        return statusBeforeRefundRequest;
+    }
+
+    public void setStatusBeforeRefundRequest(String statusBeforeRefundRequest) {
+        this.statusBeforeRefundRequest = statusBeforeRefundRequest;
     }
 }
 

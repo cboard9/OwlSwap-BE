@@ -25,6 +25,14 @@ public class OrderToDtoMapper
         dto.setPickupCodeGeneratedAt(o.getPickupCodeGeneratedAt());
         dto.setReadyForPickupAt(o.getReadyForPickupAt());
         dto.setFulfilledAt(o.getFulfilledAt());
+        dto.setRefundRequestedAt(o.getRefundRequestedAt());
+        dto.setRefundRequestReason(o.getRefundRequestReason());
+        dto.setRefundDecisionAt(o.getRefundDecisionAt());
+        dto.setRefundDecisionReason(o.getRefundDecisionReason());
+        dto.setStatusBeforeRefundRequest(
+                o.getStatusBeforeRefundRequest() != null
+                        ? o.getStatusBeforeRefundRequest().name()
+                        : null);
         return dto;
     }
 

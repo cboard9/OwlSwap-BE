@@ -398,3 +398,10 @@ ALTER TABLE location
     FOREIGN KEY (user_id) REFERENCES user(user_id)
     ON DELETE SET NULL
     ON UPDATE CASCADE;
+
+ALTER TABLE orders
+  ADD COLUMN refund_requested_at TIMESTAMP NULL,
+  ADD COLUMN refund_request_reason VARCHAR(255) NULL,
+  ADD COLUMN refund_decision_at TIMESTAMP NULL,
+  ADD COLUMN refund_decision_reason VARCHAR(255) NULL,
+  ADD COLUMN status_before_refund_request VARCHAR(30) NULL;

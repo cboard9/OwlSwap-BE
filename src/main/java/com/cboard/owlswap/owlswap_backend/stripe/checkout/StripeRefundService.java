@@ -46,12 +46,14 @@ public class StripeRefundService {
 
         // For now: seller can refund paid orders.
         // Later may also allow admin.
-        if (!order.getSeller().getUserId().equals(userId)) {
+        if (!order.getSeller().getUserId().equals(userId) && !currentUser.isAdmin()) {
             throw new AccessDeniedException("You do not have permission to refund this order.");
         }
 
-        if (order.getStatus() != OrderStatus.PAID && order.getStatus() != OrderStatus.READY_FOR_PICKUP) {
-            throw new BadRequestException("Only paid or ready for pickup orders can be refunded.");
+        if (order.getStatus() != OrderStatus.PAID
+                && order.getStatus() != OrderStatus.READY_FOR_PICKUP
+                && order.getStatus() != OrderStatus.REFUND_REQUESTED) {
+            throw new BadRequestException("Only paid, ready for pickup, or refund requested orders can be refunded.");
         }
 
         if (order.getPaymentIntentId() == null || order.getPaymentIntentId().isBlank()) {

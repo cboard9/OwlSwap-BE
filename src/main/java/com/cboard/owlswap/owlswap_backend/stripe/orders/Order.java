@@ -83,6 +83,23 @@ public class Order {
     @Column(name = "fulfilled_at")
     private LocalDateTime fulfilledAt;
 
+    //refund fields
+    @Column(name = "refund_requested_at")
+    private LocalDateTime refundRequestedAt;
+
+    @Column(name = "refund_request_reason")
+    private String refundRequestReason;
+
+    @Column(name = "refund_decision_at")
+    private LocalDateTime refundDecisionAt;
+
+    @Column(name = "refund_decision_reason")
+    private String refundDecisionReason;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status_before_refund_request")
+    private OrderStatus statusBeforeRefundRequest;
+
     public Order() {}
 
     public Integer getOrderId() {
@@ -259,5 +276,45 @@ public class Order {
 
     public void setFulfilledAt(LocalDateTime fulfilledAt) {
         this.fulfilledAt = fulfilledAt;
+    }
+
+    public LocalDateTime getRefundRequestedAt() {
+        return refundRequestedAt;
+    }
+
+    public void setRefundRequestedAt(LocalDateTime refundRequestedAt) {
+        this.refundRequestedAt = refundRequestedAt;
+    }
+
+    public String getRefundRequestReason() {
+        return refundRequestReason;
+    }
+
+    public void setRefundRequestReason(String refundRequestReason) {
+        this.refundRequestReason = refundRequestReason;
+    }
+
+    public LocalDateTime getRefundDecisionAt() {
+        return refundDecisionAt;
+    }
+
+    public void setRefundDecisionAt(LocalDateTime refundDecisionAt) {
+        this.refundDecisionAt = refundDecisionAt;
+    }
+
+    public String getRefundDecisionReason() {
+        return refundDecisionReason;
+    }
+
+    public void setRefundDecisionReason(String refundDecisionReason) {
+        this.refundDecisionReason = refundDecisionReason;
+    }
+
+    public OrderStatus getStatusBeforeRefundRequest() {
+        return statusBeforeRefundRequest;
+    }
+
+    public void setStatusBeforeRefundRequest(OrderStatus statusBeforeRefundRequest) {
+        this.statusBeforeRefundRequest = statusBeforeRefundRequest;
     }
 }

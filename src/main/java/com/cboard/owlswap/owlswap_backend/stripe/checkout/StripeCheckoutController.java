@@ -1,7 +1,9 @@
 package com.cboard.owlswap.owlswap_backend.stripe.checkout;
 
+import com.cboard.owlswap.owlswap_backend.model.Dto.DecideRefundRequestDto;
 import com.cboard.owlswap.owlswap_backend.model.Dto.OrderDto;
 import com.cboard.owlswap.owlswap_backend.model.Dto.RefundOrderRequestDto;
+import com.cboard.owlswap.owlswap_backend.model.Dto.RequestRefundRequestDto;
 import com.cboard.owlswap.owlswap_backend.model.DtoMapping.OrderToDtoMapper;
 import com.cboard.owlswap.owlswap_backend.stripe.orders.CreateOrderRequest;
 import com.cboard.owlswap.owlswap_backend.stripe.orders.Order;
@@ -27,17 +29,18 @@ public class StripeCheckoutController {
     private final PickupService pickupService;
     private final OrderService orderService;
     private final OrderToDtoMapper orderToDtoMapper;
-
+    private final RefundWorkflowService refundWorkflowService;
     public StripeCheckoutController(StripeCheckoutService stripeCheckoutService,
                                     StripeRefundService stripeRefundService,
                                     PickupService pickupService,
                                     OrderService orderService,
-                                    OrderToDtoMapper orderToDtoMapper) {
+                                    OrderToDtoMapper orderToDtoMapper, RefundWorkflowService refundWorkflowService) {
         this.stripeCheckoutService = stripeCheckoutService;
         this.stripeRefundService = stripeRefundService;
         this.pickupService = pickupService;
         this.orderService = orderService;
         this.orderToDtoMapper = orderToDtoMapper;
+        this.refundWorkflowService = refundWorkflowService;
     }
 
     @PostMapping("/{id}/checkout-session")
@@ -63,11 +66,6 @@ public class StripeCheckoutController {
     }
 
 
-/*    @PostMapping("/{orderId}/fulfill")
-    public ResponseEntity<OrderDto> fulfill(@PathVariable Integer orderId) {
-        return ResponseEntity.ok(orderToDtoMapper.toDto(orderService.fulfill(orderId)));
-    }*/
-
     @PostMapping("/{id}/refund")
     public ResponseEntity<OrderDto> refundOrder(@PathVariable("id") Integer orderId,
                                                 @Valid @RequestBody RefundOrderRequestDto request)
@@ -76,6 +74,29 @@ public class StripeCheckoutController {
         Order refunded = stripeRefundService.refundOrder(orderId, request.getReason());
         return ResponseEntity.ok(orderToDtoMapper.toDto(refunded));
     }
+
+    @PostMapping("/{id}/refund-request")
+    public ResponseEntity<OrderDto> requestRefund(@PathVariable("id") Integer orderId,
+                                                  @Valid @RequestBody RequestRefundRequestDto request) {
+        Order order = refundWorkflowService.requestRefund(orderId, request.getReason());
+        return ResponseEntity.ok(orderToDtoMapper.toDto(order));
+    }
+
+    @PostMapping("/{id}/refund-request/approve")
+    public ResponseEntity<OrderDto> approveRefund(@PathVariable("id") Integer orderId,
+                                                  @Valid @RequestBody DecideRefundRequestDto request)
+            throws StripeException {
+        Order order = refundWorkflowService.approveRefund(orderId, request.getDecisionReason());
+        return ResponseEntity.ok(orderToDtoMapper.toDto(order));
+    }
+
+    @PostMapping("/{id}/refund-request/deny")
+    public ResponseEntity<OrderDto> denyRefund(@PathVariable("id") Integer orderId,
+                                               @Valid @RequestBody DecideRefundRequestDto request) {
+        Order order = refundWorkflowService.denyRefund(orderId, request.getDecisionReason());
+        return ResponseEntity.ok(orderToDtoMapper.toDto(order));
+    }
+
 
     @PostMapping("/{id}/pickup-code")
     public ResponseEntity<PickupCodeResponseDto> generatePickupCode(@PathVariable("id") Integer orderId) {

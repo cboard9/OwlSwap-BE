@@ -7,5 +7,7 @@ public enum OrderStatus {
     FULFILLED,
     CANCELLED,
     EXPIRED,
-    REFUNDED
+    REFUNDED,
+    REFUND_REQUESTED,
+    REFUND_DENIED
 }

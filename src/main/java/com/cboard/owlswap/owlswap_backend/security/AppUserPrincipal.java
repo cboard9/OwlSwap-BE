@@ -17,6 +17,7 @@ public class AppUserPrincipal implements UserDetails{
         this.authorities = authorities;
     }
 
+
     public Integer getUserId() {
         return userId;
     }

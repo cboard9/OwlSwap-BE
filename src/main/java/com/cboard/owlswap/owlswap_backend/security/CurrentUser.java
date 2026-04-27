@@ -5,6 +5,7 @@ import com.cboard.owlswap.owlswap_backend.model.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.security.core.GrantedAuthority;
 
 @Component
 public class CurrentUser {
@@ -54,6 +55,27 @@ public class CurrentUser {
     public boolean isEmailVerified()
     {
         return user().isEmailVerified();
+    }
+
+    public boolean hasRole(String role) {
+        Authentication auth = getAuth();
+
+        if (auth == null) {
+            return false;
+        }
+
+        return auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(r -> r.equals(role));
+    }
+
+
+    public boolean isAdmin() {
+        return hasRole("ROLE_ADMIN");
+    }
+
+    private Authentication getAuth() {
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 
     public User user() {
