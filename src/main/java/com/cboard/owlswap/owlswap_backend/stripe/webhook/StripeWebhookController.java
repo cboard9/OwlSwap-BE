@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.stream.Collectors;
+//import java.util.stream.Collectors;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/stripe")
@@ -32,10 +33,12 @@ public class StripeWebhookController {
                                                 @RequestHeader("Stripe-Signature") String signature)
             throws IOException {
 
-        String payload;
+        /*String payload;
         try (BufferedReader reader = request.getReader()) {
             payload = reader.lines().collect(Collectors.joining(System.lineSeparator()));
-        }
+        }*/
+
+        String payload = new String(request.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 
         Event event;
         try {
