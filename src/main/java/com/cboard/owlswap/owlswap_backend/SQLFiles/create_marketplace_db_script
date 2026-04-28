@@ -364,6 +364,13 @@ ALTER TABLE orders
     ADD COLUMN refund_reason VARCHAR(50) NULL,
     ADD COLUMN refunded_at TIMESTAMP NULL;
 
+ALTER TABLE orders
+  ADD COLUMN fulfillment_method VARCHAR(20) NOT NULL DEFAULT 'PICKUP',
+  ADD COLUMN pickup_code_hash VARCHAR(255) NULL,
+  ADD COLUMN pickup_code_generated_at TIMESTAMP NULL,
+  ADD COLUMN ready_for_pickup_at TIMESTAMP NULL,
+  ADD COLUMN fulfilled_at TIMESTAMP NULL;
+
 ALTER TABLE location
     ADD COLUMN address_line_1 VARCHAR(120) NULL,
     ADD COLUMN address_line_2 VARCHAR(120) NULL,
