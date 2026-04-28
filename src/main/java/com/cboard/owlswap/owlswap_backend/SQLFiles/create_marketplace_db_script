@@ -141,7 +141,7 @@ CREATE table transaction
 
 )auto_increment = 1;
 
-CREATE table item_subscriptions
+CREATE table item_favorites
 (
 	item_id int,
     user_id int,
