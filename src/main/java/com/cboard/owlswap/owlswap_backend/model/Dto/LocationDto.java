@@ -23,6 +23,23 @@ public class LocationDto {
     public LocationDto() {
     }
 
+    public LocationDto(Integer locationId, String name, String addressLine1, String addressLine2, String city, String state, String postalCode, String country, Double latitude, Double longitude, String locationType, Boolean verified, Boolean preset, Boolean active) {
+        this.locationId = locationId;
+        this.name = name;
+        this.addressLine1 = addressLine1;
+        this.addressLine2 = addressLine2;
+        this.city = city;
+        this.state = state;
+        this.postalCode = postalCode;
+        this.country = country;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.locationType = locationType;
+        this.verified = verified;
+        this.preset = preset;
+        this.active = active;
+    }
+
     public Integer getLocationId() {
         return locationId;
     }

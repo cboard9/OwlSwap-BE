@@ -77,15 +77,9 @@ public class RefundWorkflowService {
         order.setRefundDecisionAt(LocalDateTime.now());
         order.setRefundDecisionReason(decisionReason);
 
-        /*
-         * This calls your existing Stripe refund logic:
-         * - validates paymentIntentId
-         * - creates Stripe refund
-         * - uses reverse_transfer=true
-         * - uses refund_application_fee=true
-         * - updates status to REFUNDED
-         * - makes item AVAILABLE
-         */
+
+        //This calls existing Stripe refund logic:
+
         return stripeRefundService.refundOrder(
                 orderId,
                 decisionReason != null && !decisionReason.isBlank()

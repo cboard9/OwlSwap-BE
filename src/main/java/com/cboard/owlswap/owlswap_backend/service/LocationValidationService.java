@@ -2,6 +2,8 @@ package com.cboard.owlswap.owlswap_backend.service;
 
 import com.cboard.owlswap.owlswap_backend.dao.ServiceAreaZipDao;
 import com.cboard.owlswap.owlswap_backend.exception.BadRequestException;
+import com.cboard.owlswap.owlswap_backend.google_maps.AddressVerificationService;
+import com.cboard.owlswap.owlswap_backend.model.Dto.VerifiedAddressResultDto;
 import com.cboard.owlswap.owlswap_backend.model.Location;
 import com.cboard.owlswap.owlswap_backend.model.Dto.LocationType;
 import com.cboard.owlswap.owlswap_backend.model.User;
@@ -14,11 +16,14 @@ public class LocationValidationService {
 
     private final ServiceAreaZipDao serviceAreaZipDao;
     private final CurrentUser currentUser;
+    private final AddressVerificationService addressVerificationService;
 
     public LocationValidationService(ServiceAreaZipDao serviceAreaZipDao,
-                                     CurrentUser currentUser) {
+                                     CurrentUser currentUser,
+                                     AddressVerificationService addressVerificationService) {
         this.serviceAreaZipDao = serviceAreaZipDao;
         this.currentUser = currentUser;
+        this.addressVerificationService = addressVerificationService;
     }
 
     public void validateForUse(Location location) {
@@ -80,13 +85,28 @@ public class LocationValidationService {
             throw new BadRequestException("This address is outside the supported local service area.");
         }
 
-        /*if (!location.isVerified()) {
-            throw new BadRequestException("Seller address location must be verified before use.");
-        }*/
-
-        // For now, ZIP whitelist is enough to mark seller addresses as locally verified.
-        // Later, geocoding/address validation can make this stricter.
         location.setPostalCode(normalizedZip);
+
+        VerifiedAddressResultDto verifiedAddress = addressVerificationService.verify(location);
+
+        String verifiedZip = normalizePostalCode(verifiedAddress.getPostalCode());
+
+        if (!serviceAreaZipDao.existsByPostalCodeAndActiveTrue(verifiedZip)) {
+            throw new BadRequestException("Verified address is outside the supported local service area.");
+        }
+
+        location.setAddressLine1(verifiedAddress.getAddressLine1());
+        location.setAddressLine2(
+                verifiedAddress.getAddressLine2() != null
+                        ? verifiedAddress.getAddressLine2()
+                        : location.getAddressLine2()
+        );
+        location.setCity(verifiedAddress.getCity());
+        location.setState(verifiedAddress.getState());
+        location.setPostalCode(verifiedZip);
+        location.setCountry(verifiedAddress.getCountry());
+        location.setLatitude(verifiedAddress.getLatitude());
+        location.setLongitude(verifiedAddress.getLongitude());
         location.setVerified(true);
     }
 
