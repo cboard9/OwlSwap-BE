@@ -41,6 +41,8 @@ public class LocationValidationService {
         }
 
         if (location.getLocationType() == LocationType.SELLER_ADDRESS) {
+            if(location.isVerified())
+                return;
             validateSellerAddress(location);
             return;
         }
