@@ -168,7 +168,6 @@ public class GlobalExceptionHandler
 
         ApiError body = new ApiError(
                 "DTO_MAPPING_ERROR",
-                //ex.getMessage(), // not logging here?
                 message,
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 req.getRequestURI(),
@@ -270,7 +269,6 @@ public class GlobalExceptionHandler
     public ResponseEntity<ApiError> handleUnexpected(Exception ex, HttpServletRequest req) {
         log.error("Unhandled exception on path {}: ", req.getRequestURI(), ex);
 
-        // In production you log ex with stacktrace; don’t leak internals to clients.
         ApiError body = new ApiError(
                 "INTERNAL_ERROR",
                 "An unexpected error occurred.",

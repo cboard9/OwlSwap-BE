@@ -12,7 +12,7 @@ public class OrderDto {
     private BigDecimal amount;
     private String currency;
 
-    private String status;              // OrderStatus name
+    private String status;
     private LocalDateTime reservedUntil;
 
     private LocalDateTime createdAt;

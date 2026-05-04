@@ -24,7 +24,6 @@ public interface ItemDao extends JpaRepository<Item, Integer>
     Page<Item> findByUserUserIdAndAvailableTrue(Integer userId, Pageable pageable);
     Page<Item> findByAvailableTrueAndUserUserIdNot(Integer userId, Pageable pageable);
 
-   // Page<Item> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(Integer userId, String nameKeyword, String descriptionKeyword, Pageable pageable);
     Page<Item> findByUserUserIdNotAndNameContainingIgnoreCaseAndAvailableTrueOrUserUserIdNotAndDescriptionContainingIgnoreCaseAndAvailableTrue(Integer userId, String nameKeyword, Integer userId_, String descriptionKeyword, Pageable pageable);
 
     Page<Item> findByCategoryNameAndAvailableTrueAndUserUserIdNot(String category, Integer userId, Pageable pageable);
@@ -32,7 +31,6 @@ public interface ItemDao extends JpaRepository<Item, Integer>
     Page<Item> findByUserUserIdNotAndAvailableTrueAndNameContainingIgnoreCaseOrUserUserIdNotAndAvailableTrueAndDescriptionContainingIgnoreCaseOrUserUserIdNotAndAvailableTrueAndCategoryName
             (Integer userId, String nKey, Integer userId_, String dKey, Integer userId__, String cat, Pageable pageable);
 
-    //search a keyword WITHIN a category
     Page<Item> findByUserUserIdNotAndAvailableTrueAndNameContainingIgnoreCaseAndCategoryNameOrUserUserIdNotAndAvailableTrueAndDescriptionContainingIgnoreCaseAndCategoryName
             (Integer userId, String nKey, String cat, Integer userId_, String dKey, String cat_, Pageable pageable);
 

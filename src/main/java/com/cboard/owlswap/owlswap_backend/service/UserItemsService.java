@@ -25,7 +25,6 @@ public class UserItemsService
     public List<ItemDto> getAllUserItems(int userId)
     {
 
-            //only return the items, no user info?
         List<UserItems> userItems = dao.findByUserUserId(userId);
         return userItems.stream()
                 .map(UserItems::getItem)

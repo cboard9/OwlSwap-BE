@@ -58,15 +58,6 @@ public class ItemService {
     private final DtoToItemFactory fromDtoFactory;
     private final LocationValidationService locationValidationService;
 
-    //this automatically adds all the different dto mappers through injection
-/*    public ItemService(ItemDao dao,
-
-                       ItemToDtoFactory toDtoFactory,
-                       DtoToItemFactory fromDtoFactory) {
-        this.dao = dao;
-        this.toDtoFactory = toDtoFactory;
-        this.fromDtoFactory = fromDtoFactory;
-    }*/
 
     public ItemService(UserDao userDao,
                        LocationDao locationDao,
@@ -123,7 +114,6 @@ public class ItemService {
         try {
             Page<Item> items = dao.findByUserUserIdAndAvailableTrue(userId, pageable);
             dtos =
-            //List<ItemDto> items = dao.findAllByUser_UserId(userId).stream().filter(Item::isAvailable)
                     items.map(item -> {
                                 try {
                                     return toDtoFactory.toDto(item);
@@ -167,9 +157,6 @@ public class ItemService {
             if (item.getReleaseDate() == null)
                 item.setReleaseDate(String.valueOf(LocalDate.now()));
 
-            //item.setUser(currentUser.user()); //later remove the user mapping from the mappers since setting here
-
-            //item.setItemId(0); //forcing this to be a true add
             Item saved = dao.save(item);
             return toDtoFactory.toDto(saved);
 
@@ -210,7 +197,6 @@ public class ItemService {
 
             item.setItemId(dto.getItemId());
 
-            //item.setUser(existing.getUser());
             Item updated = dao.save(item);
             return toDtoFactory.toDto(updated);
 
@@ -239,9 +225,6 @@ public class ItemService {
 
         itemAuthorizer.requireOwner(item);
 
-        //originally soft deleted but availability being used for sold or not, consider changing this later
-        //item.setAvailable(false);
-        //dao.save(item);
 
         dao.delete(item);
     }
@@ -282,7 +265,6 @@ public class ItemService {
                     image.setImage_name(file.getOriginalFilename());
                     image.setImage_type(file.getContentType());
                     image.setImage_date(file.getBytes());
-                    //ItemImage savedImage = itemImageDao.save(image);
                     item.addImage(image);
                 }
             }
@@ -323,7 +305,7 @@ public class ItemService {
 
             Item mapped = fromDtoFactory.fromDto(dto, ctx);
 
-            // Copy over fields you allow updating
+            // fields allowed for updating
             existing.setName(mapped.getName());
             existing.setDescription(mapped.getDescription());
             existing.setPrice(mapped.getPrice());
@@ -331,14 +313,9 @@ public class ItemService {
             existing.setLocation(mapped.getLocation());
             existing.setItemType(mapped.getItemType());
 
-            // Preserve fields you DON'T want reset by DTO mapping
-            // existing.setAvailable(existing.isAvailable()); // already preserved since we never touched it
-            // existing.setUser(existing.getUser());         // preserved
-            // existing.setReleaseDate(existing.getReleaseDate()); // preserved
 
-            // Image behavior: replace only if new images provided
+            // replace only if new images provided
             if (images != null && !images.isEmpty()) {
-                // orphanRemoval=true means these DB rows will be deleted
                 existing.getImages().clear();
 
                 for (MultipartFile file : images) {
@@ -347,7 +324,6 @@ public class ItemService {
                     img.setImage_type(file.getContentType());
                     img.setImage_date(file.getBytes());
 
-                    // sets img.item = existing and adds to list
                     existing.addImage(img);
                 }
             }
@@ -409,7 +385,6 @@ public class ItemService {
                         key,
                         key,
                         spec.get(key).getClass().getSimpleName()
-                        //normalizeType(value) //consider normalizing later if
                 ));
             }
 
@@ -423,7 +398,6 @@ public class ItemService {
         try {
             return cls.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
-            // This is a server configuration/code issue, not client fault
             throw new RuntimeException("Failed to instantiate DTO type for schema: " + cls.getName(), e);
         }
     }
@@ -432,7 +406,6 @@ public class ItemService {
         if (value == null) return "string"; // or "unknown"
         if (value instanceof Number) return "number";
         if (value instanceof Boolean) return "boolean";
-        // you can add LocalDate, Instant, etc. if you use them in defaults
         return "string";
     }
 

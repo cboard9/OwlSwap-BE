@@ -21,13 +21,6 @@ public class RequestDto extends ItemDto
     }
 
 
-
-/*    public RequestDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, String image_name, String image_type, byte[] image_date, String deadline)
-    {
-        super(itemId, name, description, price, userId, category, releaseDate, available, location, locationId, itemType, image_name, image_type, image_date);
-        this.deadline = deadline;
-    }*/
-
     public RequestDto(Integer itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, List<ItemImageDto> images, String deadline)
     {
         super(itemId, name, description, price, userId, category, releaseDate, available, location, locationId, itemType, images);

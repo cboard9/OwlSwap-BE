@@ -87,34 +87,6 @@ public class TransactionService
                 );
     }
 
-/*    public ResponseEntity<String> purchaseItem(int itemId, int buyerId)
-    {
-        try
-        {
-            Item item = itemDao.findByItemId(itemId);
-            User buyer = userDao.findById(buyerId);
-
-            UserArchive buyerArc = userArchiveDao.findById(buyerId);
-            UserArchive sellerArc = userArchiveDao.findById(item.getUser().getUserId());
-
-            Transaction sale = new Transaction();
-            sale.setItem(item);
-            sale.setBuyer(buyerArc);
-            sale.setSeller(sellerArc);
-            transactionDao.save(sale);
-
-            item.setUser(buyer);
-            item.setAvailable(false);
-            itemDao.save(item);
-
-            return new ResponseEntity<>("Sale successful", HttpStatus.OK);
-        }
-        catch(Exception e)
-        {
-            return new ResponseEntity<>("Error occurred", HttpStatus.BAD_REQUEST);
-        }
-
-    }*/
 
     @Transactional
     public void purchaseItem(int itemId)

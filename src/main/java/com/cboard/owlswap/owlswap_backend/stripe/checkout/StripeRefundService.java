@@ -44,8 +44,7 @@ public class StripeRefundService {
         Order order = orderDao.findById(orderId)
                 .orElseThrow(() -> new NotFoundException("Order not found."));
 
-        // For now: seller can refund paid orders.
-        // Later may also allow admin.
+        // seller or admin can refund paid orders.
         if (!order.getSeller().getUserId().equals(userId) && !currentUser.isAdmin()) {
             throw new AccessDeniedException("You do not have permission to refund this order.");
         }

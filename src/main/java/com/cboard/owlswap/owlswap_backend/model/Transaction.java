@@ -17,8 +17,7 @@ public class Transaction
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id")
     private Item item;
-    //private String paymentType;
-    //private double cost;
+
 
     public Transaction() {
     }
@@ -29,13 +28,6 @@ public class Transaction
         this.seller = seller;
         this.item = item;
     }
-    /*    public Transaction(int transaction_id, UserArchive buyer, UserArchive seller, String paymentType, double cost) {
-        this.transaction_id = transaction_id;
-        this.buyer = buyer;
-        this.seller = seller;
-        this.paymentType = paymentType;
-        this.cost = cost;
-    }*/
 
     public int getTransactionId() {
         return transactionId;

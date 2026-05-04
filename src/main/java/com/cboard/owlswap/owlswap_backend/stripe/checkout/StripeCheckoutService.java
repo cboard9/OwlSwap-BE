@@ -55,7 +55,6 @@ public class StripeCheckoutService {
 
         // Only the buyer can initiate checkout for this order
         if (!order.getBuyer().getUserId().equals(userId)) {
-            //throw new ForbiddenException("You cannot pay for this order.");
             throw new AccessDeniedException("You cannot pay for this order.");
         }
 
@@ -93,7 +92,6 @@ public class StripeCheckoutService {
         }
 
         // Prevent duplicate checkout sessions for orders already linked to a successful/active flow
-        // For now, allow re-creation if desired; later you can decide whether to reuse an open session.
         long amountInCents = toSmallestCurrencyUnit(order.getAmount());
         long applicationFeeAmount = calculateApplicationFee(amountInCents, platformFeePercent);
 
@@ -148,7 +146,6 @@ public class StripeCheckoutService {
 
         Session session = Session.create(params);
 
-        // Persist Stripe references on the order
         order.setPaymentProvider(PaymentProvider.STRIPE);
         order.setCheckoutSessionId(session.getId());
         order.setLatestPaymentStatus(session.getPaymentStatus());
@@ -202,7 +199,6 @@ public class StripeCheckoutService {
             order.setStatus(OrderStatus.EXPIRED);
             order.setCheckoutSessionId(null);
 
-            // optional, depending on your design
             order.setReservedUntil(null);
 
             Item item = itemDao.findByIdForUpdate(order.getItem().getItemId()).orElse(null);

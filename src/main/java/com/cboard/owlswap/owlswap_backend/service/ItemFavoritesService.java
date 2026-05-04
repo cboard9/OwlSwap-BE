@@ -40,7 +40,6 @@ public class ItemFavoritesService
     private final ItemToDtoFactory toDtoFactory;
     private final DtoToItemFactory fromDtoFactory;
 
-    //this automatically adds all the different dto mappers through injection
     public ItemFavoritesService(ItemFavoritesDao dao, ItemToDtoFactory toDtoFactory, DtoToItemFactory fromDtoFactory) {
         this.dao = dao;
         this.toDtoFactory = toDtoFactory;
@@ -103,7 +102,6 @@ public class ItemFavoritesService
         ItemFavoriteId id = new ItemFavoriteId(itemId, userId);
 
         if (dao.existsById(id)) {
-            //consider changing this to a specific CONFLICT exception
             throw new NotAvailableException("Item is already favorited.");
         }
 

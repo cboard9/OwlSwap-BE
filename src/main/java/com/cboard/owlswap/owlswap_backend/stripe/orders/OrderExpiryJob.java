@@ -31,20 +31,6 @@ public class OrderExpiryJob {
         List<Order> expired = orderDao.findByStatusAndReservedUntilBefore(OrderStatus.PENDING, now);
 
         for (Order order : expired) {
-            /*order.setStatus(OrderStatus.EXPIRED);
-            orderDao.save(order);
-
-            Item item = itemDao.findByIdForUpdate(order.getItem().getItemId()).orElse(null);
-            if (item != null
-                    && item.getReservedByOrder() != null
-                    && item.getReservedByOrder().getOrderId().equals(order.getOrderId())) {
-
-                item.setListingStatus(ListingStatus.AVAILABLE);
-                item.setReservedByOrder(null);
-                item.setReservedUntil(null);
-                item.setAvailable(true); // legacy
-                itemDao.save(item);
-            }*/
             stripeCheckoutService.expireCheckoutSessionIfOpen(order.getOrderId());
         }
     }

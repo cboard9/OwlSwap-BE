@@ -30,11 +30,6 @@ public class UserController
     @Autowired
     UserMapper userMapper;
 
-    /*@GetMapping("all")
-    public ResponseEntity<List<UserDto>> getAllUsers()
-    {
-        return ResponseEntity.ok(service.getAllUsers());
-    }*/
 
     @GetMapping("profile")
     public ResponseEntity<UserDto> getProfile() {

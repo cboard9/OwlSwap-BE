@@ -17,12 +17,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         com.cboard.owlswap.owlswap_backend.model.User user = userDao.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        //var authorities = org.springframework.security.core.authority.AuthorityUtils.createAuthorityList("ROLE_USER");
-
-        /*return User.withUsername(user.getUsername())
-                .password(user.getPassword())
-                .roles("USER") //must assign a role
-                .build();*/
 
         String roleAuthority = "ROLE_" + user.getRole().name();
         var authorities = org.springframework.security.core.authority.AuthorityUtils.createAuthorityList(roleAuthority);

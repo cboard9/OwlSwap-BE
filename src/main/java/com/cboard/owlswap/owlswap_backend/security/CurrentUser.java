@@ -16,21 +16,6 @@ public class CurrentUser {
         this.userDao = userDao;
     }
 
-/*    public String username()
-    {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
-            throw new org.springframework.security.access.AccessDeniedException("Unauthenticated");
-        }
-        return auth.getName(); // username
-    }
-
-    public Integer userId() {
-        String username = username();
-        User user = userDao.findByUsername(username)
-                .orElseThrow(() -> new org.springframework.security.core.userdetails.UsernameNotFoundException(username));
-        return user.getUserId();
-    }*/
 
     public AppUserPrincipal principal() {
         var auth = SecurityContextHolder.getContext().getAuthentication();

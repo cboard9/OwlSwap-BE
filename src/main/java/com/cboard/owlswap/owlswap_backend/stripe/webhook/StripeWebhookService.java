@@ -35,18 +35,13 @@ public class StripeWebhookService {
             case "checkout.session.completed" -> handleCheckoutSessionCompleted(event);
             case "checkout.session.expired" -> handleCheckoutSessionExpired(event);
             default -> {
-                // Ignore unsupported events for now
+
             }
         }
     }
 
     @Transactional
     public void handleCheckoutSessionCompleted(Event event) {
-        /*if (event.getDataObjectDeserializer().getObject().isEmpty()) {
-            throw new IllegalStateException("Stripe event payload could not be deserialized.");
-        }
-
-        Session session = (Session) event.getDataObjectDeserializer().getObject().get();*/
 
         Session session;
 
@@ -84,7 +79,7 @@ public class StripeWebhookService {
             return;
         }
 
-        // Optional sanity check: only allow paid completion for pending orders
+        // only allow paid completion for pending orders
         if (order.getStatus() != OrderStatus.PENDING) {
             throw new IllegalStateException("Order is not in a payable state.");
         }
@@ -111,7 +106,7 @@ public class StripeWebhookService {
         item.setListingStatus(ListingStatus.SOLD);
         item.setReservedByOrder(null);
         item.setReservedUntil(null);
-        item.setAvailable(false); // legacy sync for now
+        item.setAvailable(false); // legacy sync
 
         itemDao.save(item);
     }
@@ -147,7 +142,7 @@ public class StripeWebhookService {
                             ));
                 });
 
-        // Idempotency / already resolved
+
         if (order.getStatus() == OrderStatus.PAID || order.getStatus() == OrderStatus.FULFILLED
                 || order.getStatus() == OrderStatus.CANCELLED || order.getStatus() == OrderStatus.REFUNDED) {
             return;

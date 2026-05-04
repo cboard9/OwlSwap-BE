@@ -38,14 +38,6 @@ public class TransactionController
         return ResponseEntity.ok(transactionService.getAllTransactionsBySeller(sellerId, pageable));
     }
 
-
-/*    @PostMapping("purchase/{itemId}/{buyerId}")
-    public ResponseEntity<String> purchaseItem(@PathVariable("itemId") int itemId,
-                                               @PathVariable("buyerId") int buyerId)
-    {
-        return transactionService.purchaseItem(itemId, buyerId);
-    }*/
-
     @PostMapping("purchase/{itemId}")
     public ResponseEntity<String> purchaseItem(@PathVariable("itemId") int itemId)
     {

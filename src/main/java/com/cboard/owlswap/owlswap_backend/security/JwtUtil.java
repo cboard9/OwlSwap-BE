@@ -12,9 +12,6 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-    /*private final String SECRET_KEY = "supersecuresecretkeythatis32chars!";
-    private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
-    private final long EXPIRATION_TIME = 86400000; // 24 hours*/
 
     private final Key key;
     private final long accessExpMs;

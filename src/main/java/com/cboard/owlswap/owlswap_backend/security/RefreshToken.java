@@ -25,7 +25,6 @@ public class RefreshToken {
     private Instant revokedAt;
     private Instant lastUsedAt;
 
-    // Optional (nice for later threat analysis)
     private String userAgent;
     private String ip;
 

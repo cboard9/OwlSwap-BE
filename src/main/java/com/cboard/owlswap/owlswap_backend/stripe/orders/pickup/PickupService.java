@@ -20,7 +20,6 @@ public class PickupService {
     private final CurrentUser currentUser;
     private final PickupCodeUtil pickupCodeUtil;
 
-    // how long we reserve an item before it expires
     private static final int RESERVATION_MINUTES = 30;
 
     public PickupService(OrderDao orderDao,

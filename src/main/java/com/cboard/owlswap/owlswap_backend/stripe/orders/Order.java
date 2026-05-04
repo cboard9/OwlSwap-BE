@@ -53,7 +53,6 @@ public class Order {
     @Column(name = "latest_payment_status")
     private String latestPaymentStatus;
 
-    // MySQL-managed timestamps
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 

@@ -109,12 +109,6 @@ public class RefundWorkflowService {
         order.setRefundDecisionReason(decisionReason);
         order.setStatus(OrderStatus.REFUND_DENIED);
 
-        /*
-         * Option A: Leave REFUND_DENIED as final visible status.
-         * Option B: Return it to previous after recording decision.
-         *
-         * I recommend Option B for smoother fulfillment flow.
-         */
         if (previous == OrderStatus.PAID || previous == OrderStatus.READY_FOR_PICKUP) {
             order.setStatus(previous);
         }

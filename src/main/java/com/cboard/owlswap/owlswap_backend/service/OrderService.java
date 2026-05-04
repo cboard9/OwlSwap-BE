@@ -36,8 +36,6 @@ public class OrderService
     private final OrderToDtoMapper orderToDtoMapper;
     private final StripeWebhookService stripeWebhookService;
     private final PickupCodeUtil pickupCodeUtil;
-
-    // how long we reserve an item before it expires
     private static final int RESERVATION_MINUTES = 30;
 
     public OrderService(OrderDao orderDao,
@@ -107,7 +105,7 @@ public class OrderService
         item.setReservedUntil(reservedUntil);
         item.setReservedByOrder(saved);
 
-        // Optional: keep legacy available in sync (for now)
+        //keep legacy available in sync (for now)
         item.setAvailable(false);
 
         itemDao.save(item);
@@ -116,9 +114,6 @@ public class OrderService
     }
 
 
-
-
-    //BELOW IS NOT USED ANYMORE?
 
 
     @Transactional
@@ -173,77 +168,6 @@ public class OrderService
         return order;
     }
 
-
-    // TEMPORARY: do this now to test end-to-end without Stripe.
-    // Later: Stripe webhook sets PAID.
-    @Transactional
-    public Order markPaid(Integer orderId)
-    {
-        if (!currentUser.isEmailVerified()) {
-            throw new AccessDeniedException("Email verification required.");
-        }
-
-        Integer userId = currentUser.userId();
-
-        Order order = orderDao.findById(orderId)
-                .orElseThrow(() -> new NotFoundException("Order not found."));
-
-        // only buyer can mark paid (temporary)
-        if (!order.getBuyer().getUserId().equals(userId)) {
-            throw new AccessDeniedException("You cannot pay for this order.");
-        }
-
-        if (order.getStatus() != OrderStatus.PENDING) {
-            throw new BadRequestException("Order is not pending.");
-        }
-
-        // Validate reservation not expired
-        if (order.getReservedUntil() != null && order.getReservedUntil().isBefore(LocalDateTime.now())) {
-            throw new BadRequestException("Order reservation expired.");
-        }
-
-        // mark order paid
-        order.setStatus(OrderStatus.PAID);
-        orderDao.save(order);
-
-        // mark item sold
-        Item item = itemDao.findByIdForUpdate(order.getItem().getItemId())
-                .orElseThrow(() -> new NotFoundException("Item not found."));
-
-        item.setListingStatus(ListingStatus.SOLD);
-        item.setReservedUntil(null);
-        item.setReservedByOrder(null);
-        item.setAvailable(false); // legacy
-        itemDao.save(item);
-
-        return order;
-    }
-
-
-    @Transactional
-    public Order fulfill(Integer orderId)
-    {
-        if (!currentUser.isEmailVerified()) {
-            throw new AccessDeniedException("Email verification required.");
-        }
-
-        Integer userId = currentUser.userId();
-
-        Order order = orderDao.findById(orderId)
-                .orElseThrow(() -> new NotFoundException("Order not found."));
-
-        // only seller can fulfill
-        if (!order.getSeller().getUserId().equals(userId)) {
-            throw new AccessDeniedException("You cannot fulfill this order.");
-        }
-
-        if (order.getStatus() != OrderStatus.PAID) {
-            throw new BadRequestException("Only paid orders can be fulfilled.");
-        }
-
-        order.setStatus(OrderStatus.FULFILLED);
-        return orderDao.save(order);
-    }
 
 
     public List<OrderDto> getAllOrdersByBuyer(int buyerId)

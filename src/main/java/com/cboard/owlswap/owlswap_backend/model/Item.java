@@ -58,30 +58,12 @@ public abstract class Item
     @JoinColumn(name = "reserved_by_order_id")
     private Order reservedByOrder;
 
-/*    @Version
-    @Column(name = "version", nullable = false)
-    private Integer version;*/
 
 
 
     public Item() {
     }
 
-/*    public Item(int itemId, String name, String description, Double price, User user, Category category, String releaseDate, boolean available, Location location, String itemType, String image_name, String image_type, byte[] image_date) {
-        this.itemId = itemId;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.user = user;
-        this.category = category;
-        this.releaseDate = releaseDate;
-        this.available = available;
-        this.location = location;
-        this.itemType = itemType;
-        this.image_name = image_name;
-        this.image_type = image_type;
-        this.image_date = image_date;
-    }*/
 
     public Item(Integer itemId, String name, String description, Double price, User user, Category category, String releaseDate, boolean available, Location location, String itemType, List<ItemImage> images) {
         this.itemId = itemId;

@@ -10,7 +10,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "product")
-//@DiscriminatorValue("product")
 public class Product extends Item
 {
     @NotNull(message = "Quantity is required...")

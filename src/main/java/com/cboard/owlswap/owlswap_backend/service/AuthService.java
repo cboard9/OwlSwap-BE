@@ -132,10 +132,10 @@ public class AuthService {
 
             User user = userOpt.get();
 
-            // 1) ACCESS TOKEN (keep your existing method for now)
-            String accessToken = jwtUtil.generateAccessToken(user); // later we will shorten exp + rename
+            // 1) ACCESS TOKEN
+            String accessToken = jwtUtil.generateAccessToken(user);
 
-            // 2) REFRESH TOKEN (opaque)
+            // 2) REFRESH TOKEN
             String rawRefresh = RefreshTokenUtil.generateRawToken();
             String hash = RefreshTokenUtil.hash(rawRefresh);
 
@@ -151,7 +151,7 @@ public class AuthService {
             // 3) Set refresh token cookie (HttpOnly)
             ResponseCookie cookie = ResponseCookie.from(refreshCookieName, rawRefresh)
                     .httpOnly(true)
-                    .secure(refreshCookieSecure)     // false on localhost http, true in prod https
+                    .secure(refreshCookieSecure)
                     .sameSite("Lax")
                     .path("/api/auth/refresh")       // only send cookie to refresh endpoint
                     .maxAge(Duration.ofDays(refreshExpDays))
@@ -195,7 +195,7 @@ public class AuthService {
         User user = existing.getUser();
 
         // 5) Issue new access token
-        String newAccessToken = jwtUtil.generateAccessToken(user); // for now keep existing; later shorten exp
+        String newAccessToken = jwtUtil.generateAccessToken(user);
 
         // 6) Create new refresh token row
         String newRawRefresh = RefreshTokenUtil.generateRawToken();

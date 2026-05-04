@@ -38,12 +38,9 @@ public class ItemController
     @Autowired
     private CategoryService categoryService;
 
-    //returns all available items
     @GetMapping("all")
     public ResponseEntity<Page<ItemDto>> getAllItems(@PageableDefault(size=6) Pageable pageable)
     {
-        //could potentially throw a runtime exception if cant map an item, consider handling this later?
-        //return service.getAllItems(pageable);
         return ResponseEntity.ok(service.getAllItems(pageable));
     }
 
@@ -89,8 +86,6 @@ public class ItemController
             @RequestPart(value = "image", required = false) List<MultipartFile> images)
     throws IOException
     {
-        //System.out.println(dto.getSpecificFields());
-
         ItemDto updated = service.updateItemWithImages(dto, images);
         return ResponseEntity.ok(updated);
 

@@ -51,15 +51,10 @@ public abstract class ItemDto
     @NotNull(message = "Location is required")
     private Integer locationId;
 
-    // Output-only structured location data for frontend display.
-    // For create/update operations, locationId should be used as the authoritative input.
     private LocationDto locationDto;
     @NotBlank(message = "Item type is required")
     private String itemType;
     private List<ItemImageDto> images = new ArrayList<>();
-    /*private String image_name;
-    private String image_type;
-    private byte[] image_date;*/
     private Map<@NotBlank String, @NotNull(message="Value cannot be blank") Object> specificFields;
 
 
@@ -70,40 +65,6 @@ public abstract class ItemDto
     public ItemDto() {
     }
 
-/*
-    public ItemDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String itemType, String image_name, String image_type, byte[] image_date) {
-        this.itemId = itemId;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.userId = userId;
-        this.category = category;
-        this.releaseDate = releaseDate;
-        this.available = available;
-        //this.location = location;
-        this.itemType = itemType;
-        this.image_name = image_name;
-        this.image_type = image_type;
-        this.image_date = image_date;
-    }
-*/
-
-/*    public ItemDto(int itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, String image_name, String image_type, byte[] image_date) {
-        this.itemId = itemId;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.userId = userId;
-        this.category = category;
-        this.releaseDate = releaseDate;
-        this.available = available;
-        this.location = location;
-        this.locationId = locationId;
-        this.itemType = itemType;
-        this.image_name = image_name;
-        this.image_type = image_type;
-        this.image_date = image_date;
-    }*/
 
     public ItemDto(Integer itemId, String name, String description, Double price, int userId, String category, String releaseDate, boolean available, String location, Integer locationId, String itemType, List<ItemImageDto> images) {
         this.itemId = itemId;

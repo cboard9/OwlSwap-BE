@@ -33,11 +33,6 @@ public class StripeWebhookController {
                                                 @RequestHeader("Stripe-Signature") String signature)
             throws IOException {
 
-        /*String payload;
-        try (BufferedReader reader = request.getReader()) {
-            payload = reader.lines().collect(Collectors.joining(System.lineSeparator()));
-        }*/
-
         String payload = new String(request.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 
         Event event;
